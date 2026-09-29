@@ -142,7 +142,3 @@ Works in any current version of Chrome, Edge, Firefox or Safari. You need a mous
 ## Disclaimer
 
 This is a non-commercial project. All art and sound are generated in code.
-
-## License
-
-Add a license of your choice, for example [MIT](https://opensource.org/licenses/MIT).
