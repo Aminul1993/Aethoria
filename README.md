@@ -27,7 +27,8 @@ The only network request is for the **Cinzel** and **Spectral** fonts from Googl
 - **Formations.** Line, Square and Wedge. Group moves keep the shape, with infantry in front, ranged units behind and riders at the tip of a wedge.
 - **AI opponent.** It runs its own economy, builds houses, barracks, an archery range, a stable and towers, advances through the ages and defends its base. It trains a mixed army weighted to counter yours. It attacks in waves: the army gathers in formation, then the infantry go in with the archers behind them while the riders swing round a flank.
 - **Fog of war.** Unexplored areas are black, and areas you've explored but can't currently see are dimmed.
-- **Minimap.** Click on it to move the camera, or right-click to send orders.
+- **Minimap.** Click or tap it to look around, double-click or double-tap to zoom in on that spot, and right-click or long-press to send your selected units there.
+- **Zoom.** The camera zooms from 0.5× to 3× with smooth, animated steps, and the spot under the cursor or between your fingers stays put. There are four tactical layers: Close, Medium, Far and Strategic. At Strategic zoom units become team-coloured icons. Your last zoom is remembered between visits.
 - **A\* pathfinding** on a 64×64 tile grid, with 8-direction movement and no corner-cutting.
 - **Procedural pixel art.** Units are drawn from ASCII sprite maps, with idle, walk, attack and death animations. Trees, mines, buildings and terrain use seeded noise.
 - **Synthesized sound.** Chopping, mining, combat, the building-complete bell and the age-up fanfare are all generated with the Web Audio API.
@@ -36,8 +37,8 @@ The only network request is for the **Cinzel** and **Spectral** fonts from Googl
 - **Upgrades.** Eleven technologies researched at the Storage Pit, Town Center, Barracks, Archery Range and Stable.
 - **Missions, score and achievements.** A mission tracker guides you through a 12-step campaign. You earn points for your economy, army and conquests, and there's a persistent high score, an XP rank and 15 achievements.
 - **Three difficulty levels** (Easy, Normal, Hard) that change the enemy's income, army size and attack timing.
-- **Settings.** Master, effects and music volume, difficulty, three interface themes (Classic, Midnight, High contrast), interface size, scroll speed, edge scrolling, swapped mouse buttons, reduced motion, colour-blind-friendly team colours and longer on-screen messages. Settings are remembered between visits.
-- **Touch and small screens.** You can play on phones and tablets, and the layout adapts to narrow and landscape screens.
+- **Settings.** Master, effects and music volume, difficulty, three interface themes (Classic, Midnight, High contrast), automatic interface fitting and UI scale, scroll speed, edge scrolling, swapped mouse buttons, touch controls, one-finger drag, pinch zoom, zoom and gesture sensitivity, touch feedback, reduced motion, colour-blind-friendly team colours and longer on-screen messages. Settings are remembered between visits.
+- **Touch screens.** The game is fully playable on phones, tablets and touch laptops. Pinch to zoom, use two fingers to scroll, long-press for a command menu, and tap with three fingers for the strategic overview. Touch mode switches on automatically and makes every control at least 48×48 px. Hover tooltips become tap-to-view details and long-press information cards. On a phone held sideways, the minimap and commands move to a side column. The interface scales to the screen, and the battlefield renders at the screen's pixel density.
 - **Generative music.** A quiet ambient score is played by the Web Audio API alongside the sound effects.
 
 ---
@@ -51,8 +52,15 @@ The only network request is for the **Cinzel** and **Spectral** fonts from Googl
 | Select all units of one type on screen | Double click |
 | Move / gather / attack / help build / drop off | Right click |
 | Place a building | Choose it in the command panel, then left click (right click cancels) |
-| Scroll the camera | `W` `A` `S` `D`, arrow keys, screen edges, or mouse wheel |
+| Scroll the camera | `W` `A` `S` `D`, arrow keys, screen edges, or drag with the middle mouse button |
+| Zoom in and out at the cursor | Mouse wheel |
+| Fine zoom | `Ctrl` + mouse wheel (a trackpad pinch works too) |
+| Zoom in / out | `+` / `−`, or the zoom buttons in the bottom-right corner |
+| Reset the zoom to 1× | `Home` |
+| Strategic overview (press again to return) | `Z` |
+| Step through the zoom levels | Click the zoom level between − and + |
 | Look around with the minimap | Left click or drag on the minimap |
+| Zoom in on an area | Double click on the minimap |
 | Give orders on the minimap | Right click on the minimap |
 | Find an idle villager (press again for the next one) | `.` or the **Idle** button |
 | Jump to your Town Center | `Space` or the **Home** button |
@@ -68,10 +76,42 @@ The only network request is for the **Cinzel** and **Spectral** fonts from Googl
 | Select a unit, building or resource | Tap |
 | Give an order to the selected units (move, gather, attack, build, drop off, farm) | Tap the ground, resource, enemy or building site |
 | Select all units of one type on screen | Double tap a unit |
-| Box-select units | Long-press and then drag, or tap **Box select** and then drag |
-| Scroll the camera | Drag with one or two fingers, or tap the minimap |
+| Box-select units | Drag one finger |
+| Command menu, with an information card for whatever is under your finger | Long-press the map |
+| Scroll the camera | Drag with two fingers |
+| Zoom | Pinch: spread two fingers to zoom in and bring them together to zoom out |
+| Strategic overview (again to zoom back in where you tapped) | Tap with three fingers |
+| Look around with the minimap | Tap or drag on the minimap |
+| Zoom in on an area | Double tap on the minimap |
+| Send the selected units somewhere | Long-press on the minimap |
+| Read a command's information card without using it | Long-press a command button |
+| See what a resource is for | Tap its counter in the top bar |
 | Place a building | Choose it in the command panel, then tap the map. **Cancel build** stops placing |
 | Clear the selection | **Deselect** button (top right) |
+
+Four or more fingers are ignored. A gesture never steps down to fewer fingers: after a pinch, a finger left on the screen does nothing until you lift it. If you'd rather scroll with one finger, set **Settings → Touch & zoom → One-finger drag** to *Scrolls the map*. A **Box select** button then appears for drawing a selection box.
+
+### Zoom levels
+
+| Layer | Zoom | What you see |
+|---|---|---|
+| Close | 1.5× – 3× (button: 2×) | Units in detail |
+| Medium | 0.87× – 1.5× (button: 1×) | Standard play |
+| Far | 0.62× – 0.87× (button: 0.75×) | Army management. Shadows and idle animations are left out |
+| Strategic | 0.5× – 0.62× (button: 0.5×) | Map overview. Units become icons: ● villager, ■ infantry, ▲ ranged, ◆ cavalry |
+
+### Touch & zoom settings
+
+| Setting | Default | Effect |
+|---|---|---|
+| Touch controls (mobile mode) | Automatic | Turns on for phones and tablets and after your first touch. *Always on* and *Off* override it |
+| One-finger drag | Draws a selection box | Or *Scrolls the map* |
+| Enable pinch zoom | On | Off: two fingers only scroll |
+| Zoom sensitivity | 100% | How far a pinch, a wheel step or a key press zooms (50–200%) |
+| Gesture sensitivity | 100% | Higher values react to shorter drags and shorter long-presses (50–200%) |
+| Touch feedback | On | A ripple where your finger lands, and a short vibration on orders |
+| Fit the interface to this screen automatically | On | Scales the interface from the screen size: a little smaller on phones, 10% larger on touch tablets, larger on big monitors |
+| UI scale | 100% | Your own scale on top of the automatic fit (80–140%) |
 
 ---
 
@@ -183,9 +223,9 @@ Everything is stored in your browser's `localStorage` under keys that start with
 | `aethoria.backup.slot.1` … `aethoria.backup.slot.5` | A slot's previous save, kept only while that slot is being overwritten |
 | `aethoria.save.quarantine` | The last save that failed validation, kept only so it isn't lost silently |
 | `aethoria.profile.v1` | High score, XP and rank, achievements and lifetime statistics |
-| `aethoria.settings.v1` | Your settings |
+| `aethoria.settings.v1` | Your settings, including the last camera zoom |
 
-Each save is one JSON record. It holds the slot name, save time, play time, player level, completion percentage, difficulty, age, score, resources, location on the map, a small screenshot and the game version, plus the whole game: every unit, building, resource, order, path, training and research queue, projectile, the fog of war, the AI's state, camera, selection, score, statistics and missions. A checksum covers the entire record.
+Each save is one JSON record. It holds the slot name, save time, play time, player level, completion percentage, difficulty, age, score, resources, location on the map, a small screenshot and the game version, plus the whole game: every unit, building, resource, order, path, training and research queue, projectile, the fog of war, the AI's state, camera, selection, score, statistics and missions. It also stores your camera preferences (`zoomLevel`, `uiScale`, `pinchSensitivity`, `touchMode`), and loading the save restores them. A checksum covers the entire record.
 
 - **Save slots.** The five slots are independent, and nothing writes to one without you asking. **Save Game** in the pause menu opens the save screen. Pick a slot, confirm if it already holds a save, and you get a confirmation message. `Ctrl` + `S` and **Quick Save** save straight to the slot your game belongs to. **Save & Quit** saves there too.
 - **Autosaves.** The game autosaves every 30 seconds of play. It also autosaves after age-ups, missions, achievements, upgrades, resource milestones, completed or lost buildings and the fall of the enemy Town Center, and when you pause, switch away or close the page. Autosaves rotate through three slots (1 → 2 → 3 → 1), so the two older copies are always intact. They never overwrite a manual slot. An unchanged game isn't written again, and routine autosaves are spaced at least 8 seconds apart. The indicator in the top bar shows *Autosaving…*, *Saved ✓* or *Save failed*.
@@ -224,13 +264,14 @@ The script is a single `<script type="module">`, so nothing is added to `window`
 | `projectiles` | The `Projectiles` manager: `fire`, `update` (flight, target tracking, hits and misses) and `draw` (arcs and shadows) |
 | `formations` | `formationSlots` and `formationMove` for Line, Square and Wedge |
 | `AI` | Economy balancing, build order, age-ups, upgrades, an army mix that counters yours, defence, and attack waves that gather in formation and flank with cavalry |
-| `fog` / `rendering` / `minimap` | Visibility, Y-sorted drawing, fog overlay, minimap |
+| `camera` | The `cam` object: position, `zoomCurrent` easing toward `zoomTarget`, the anchor that keeps the zoomed-on spot in place, clamping, tactical layers and the strategic overview |
+| `fog` / `rendering` / `minimap` | Visibility. One world transform (zoom × pixel density) with view culling, a pooled Y-sorted draw queue, simplified drawing at Far zoom and icons at Strategic zoom. The fog is drawn as merged runs in device pixels, and the minimap fog as one image |
 | `HUD` / `command panel` | Resource bar, selection info, context-sensitive command buttons |
 | `progression` | Score, milestones, achievements, missions and debounced save requests |
 | `serializer` | `GameSerializer.serialize` / `validate` / `restore`, which convert between the live world and plain JSON |
 | `game controller` / `UI` | New game, load, pause, restart and quit; the overlay stack, confirm / prompt / choice dialog, save-slot screen, settings, records and end screen |
-| `input` | Mouse, touch, keyboard and minimap handlers, and the lifecycle autosave hooks |
-| `main loop` | `requestAnimationFrame` loop with a timestep capped at 50 ms |
+| `input` | Mouse (wheel zoom, middle-button scroll), the touch gesture recogniser (tap, double tap, long-press, drag, pinch, three-finger overview), the long-press command menu and information cards, keyboard and minimap handlers, smart mobile mode, and the lifecycle autosave hooks |
+| `main loop` | `requestAnimationFrame` loop with a timestep capped at 50 ms. If a high-density canvas keeps drawing slowly (software rendering), it drops to 1× pixel density for the rest of the session |
 
 ### Built with
 - HTML5 Canvas 2D
@@ -241,7 +282,7 @@ The script is a single `<script type="module">`, so nothing is added to `window`
 
 ## Browser support
 
-Works in any current version of Chrome, Edge, Firefox or Safari, with a mouse and keyboard or with touch. The interface-size setting uses CSS `zoom`, which needs Firefox 126 or later.
+Works in any current version of Chrome, Edge, Firefox or Safari, with a mouse and keyboard or with touch. The interface scaling uses CSS `zoom`, which needs Firefox 126 or later. Over the game, pinches and `Ctrl` + wheel zoom the map, not the page, so the browser's own page zoom is blocked while you play. Use **UI scale** to make the interface larger.
 
 ---
 
@@ -249,13 +290,13 @@ Works in any current version of Chrome, Edge, Firefox or Safari, with a mouse an
 - There's one map layout and one AI opponent. Of the upgrades, the AI researches only Fletching and Horse Breeding.
 - The AI gets a passive trickle of resources on top of what it gathers, scaled by difficulty.
 - Saves live in one browser. Use export and import to move them to another browser or device.
-- There are no walls, siege units or zoom. The counter table already has a siege row, and the projectile manager supports spears and fire arrows, so siege units only need data and art.
+- There are no walls or siege units. The counter table already has a siege row, and the projectile manager supports spears and fire arrows, so siege units only need data and art.
+- Touch gestures were tested with simulated touch events and phone-sized screens, not on physical devices.
 
 ## Ideas for contributions
 - A siege workshop with rams and stone throwers
 - Random map seeds and more map layouts
 - Attack-move and patrol orders
-- Pinch-to-zoom on touch screens
 
 ---
 

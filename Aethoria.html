@@ -38,7 +38,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:var(--titleBg)}
-body{font-family:'Cinzel',serif;color:var(--text);touch-action:manipulation}
+body{font-family:'Cinzel',serif;color:var(--text);touch-action:pan-x pan-y}   /* no browser pinch-zoom or double-tap zoom: pinches belong to the map */
 button{font:inherit}
 button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #app{display:flex;flex-direction:column;height:100%;padding:env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left)}
@@ -75,6 +75,18 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
 #mission .mp{font-family:'Spectral',serif;font-size:11px;color:var(--accent)}
 #floatBtns{position:absolute;right:8px;top:8px;z-index:3;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
 #floatBtns .btn{padding:6px 12px;font-size:11px}
+#zoomCtl{position:absolute;right:8px;bottom:8px;z-index:3;display:flex;gap:4px;align-items:stretch}
+#zoomCtl .btn{min-width:34px;height:34px;padding:0 8px;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center}
+#zoomCtl .zl{flex-direction:column;min-width:72px;font-size:12px;gap:1px}
+#zoomCtl .zl small{font-size:8px;letter-spacing:1.5px;color:var(--muted)}
+#ctxBack{position:absolute;inset:0;z-index:6}
+#ctxMenu{position:absolute;z-index:46;overflow:auto;max-width:calc(100% - 16px)}   /* above the toasts: it is what the player is touching */
+#ctxMenu .ctxIn{background:var(--tipBg);border:1px solid var(--tipBorder);box-shadow:0 6px 18px rgba(0,0,0,.55);padding:8px;width:236px;display:flex;flex-direction:column;gap:6px}
+#ctxMenu .cn{font-weight:700;font-size:14px;color:var(--accent)}
+#ctxMenu .cn small{color:var(--bad);font-size:11px}
+#ctxMenu .cs{font-family:'Spectral',serif;font-size:12px;color:var(--soft);line-height:1.45}
+#ctxMenu .ca{display:flex;flex-direction:column;gap:4px;margin-top:2px}
+#ctxMenu .ca .btn{text-align:left;padding:7px 12px;font-size:12px}
 /* ===== bottom command bar ===== */
 #bottombar{height:150px;flex:none;display:flex;gap:8px;padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:var(--bar);
  box-shadow:inset 0 2px 0 var(--barHi),inset 0 -2px 0 var(--barLo),inset 2px 0 0 var(--barSide),inset -2px 0 0 var(--barSide)}
@@ -103,6 +115,7 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
 #tip .tc{font-family:'Spectral',serif;font-size:12px;color:var(--soft)}
 #tip .tcost{color:var(--muted);font-weight:400}
 #tip .treq{color:var(--bad)}
+#tip .tclose{display:block;margin-top:5px;font-family:'Spectral',serif;font-size:11px;color:var(--muted)}
 /* ===== buttons / overlays ===== */
 .btn{font-family:'Cinzel',serif;font-weight:700;font-size:13px;letter-spacing:1px;color:var(--btnText);background:var(--btn);
  padding:8px 22px;border:2px solid;border-color:var(--btnHi) var(--btnLo) var(--btnLo) var(--btnHi);cursor:pointer}
@@ -234,6 +247,34 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
  #pano{max-height:26vh;width:auto}
 }
 @media (pointer:coarse){ .btn{padding:10px 20px} .tbtn{padding:6px 10px!important} .btn.sm{padding:8px 14px} .lnk{padding:8px} }
+/* ===== touch mode (Settings → Touch controls): every control at least 48×48 px, at any UI scale ===== */
+:root{--tap:max(48px,calc(48px / var(--uiScale,1)));--cb:max(52px,var(--tap))}
+.touch-ui .cbtn{width:var(--cb);height:var(--cb)}
+.touch-ui .btn,.touch-ui .lnk,.touch-ui .choice,.touch-ui .diffGrid button{min-height:var(--tap)}
+.touch-ui .tbtn{min-width:var(--tap)}
+.touch-ui #floatBtns{flex-direction:row;align-items:flex-start}
+.touch-ui #floatBtns .btn,.touch-ui #zoomCtl .btn{min-width:var(--tap);height:var(--tap);font-size:18px;padding:0 10px}
+.touch-ui #zoomCtl .zl{min-width:calc(var(--tap) * 1.6);font-size:13px}
+.touch-ui #ctxMenu .ctxIn{width:264px}
+.touch-ui .srow{min-height:var(--tap)}
+.touch-ui .srow input[type=checkbox]{width:26px;height:26px}
+.touch-ui .srow select{min-height:40px}
+@media (max-width:900px),(max-height:500px){ .touch-ui #floatBtns .lbl2{display:none} }
+@media (max-width:1000px){ .touch-ui #saveInd{display:none} }
+@media (max-width:620px){ .touch-ui #cmds{max-height:calc(var(--cb) * 2 + 16px)} .touch-ui #topbar{flex-wrap:wrap;row-gap:2px} }   /* portrait phones: the 48 px buttons wrap to a second row */
+@media (max-height:500px) and (orientation:landscape){
+ /* phones held sideways: the minimap and commands move to a side column, so the battlefield keeps its height */
+ .touch-ui #app{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto minmax(0,1fr)}
+ .touch-ui #topbar{grid-column:1/-1}
+ .touch-ui #vp{grid-row:2;grid-column:1}
+ .touch-ui #bottombar{grid-row:2;grid-column:2;height:auto;min-height:0;flex-direction:column;flex-wrap:nowrap;gap:4px;padding:4px 4px calc(4px + env(safe-area-inset-bottom));overflow:hidden}
+ .touch-ui #mmWrap{align-self:center}
+ .touch-ui #info{order:0;flex:none;height:auto;max-height:60px;width:calc(var(--cb) * 3 + 22px);padding:3px 6px;align-items:flex-start;flex-wrap:wrap;gap:2px 6px}
+ .touch-ui #multiGrid{max-height:30px}.touch-ui #multiGrid canvas{width:28px;height:28px}
+ .touch-ui #info .hpbarO{display:none}
+ .touch-ui #info canvas{width:36px!important;height:36px!important}
+ .touch-ui #cmds{flex:1 1 0;min-height:0;width:calc(var(--cb) * 3 + 22px);max-height:none;overflow-y:auto}
+}
 </style>
 </head>
 <body>
@@ -256,10 +297,17 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
     <canvas id="game" aria-label="Game map"></canvas>
     <div id="mission" class="scaled hidden" title="Current mission — tap for the full list"><div class="mh">MISSION <span id="misNum"></span></div><div class="mt" id="misText"></div><div class="mp" id="misProg"></div></div>
     <div id="floatBtns" class="scaled">
-      <button class="btn hidden" id="cancelPlaceBtn">&#10005; Cancel build</button>
-      <button class="btn hidden" id="deselectBtn">&#10005; Deselect</button>
-      <button class="btn hidden" id="boxBtn" title="Touch: next drag draws a selection box">&#9633; Box select</button>
+      <button class="btn hidden" id="cancelPlaceBtn" aria-label="Cancel build">&#10005;<span class="lbl2"> Cancel build</span></button>
+      <button class="btn hidden" id="deselectBtn" aria-label="Deselect">&#10005;<span class="lbl2"> Deselect</span></button>
+      <button class="btn hidden" id="boxBtn" title="Touch: next drag draws a selection box" aria-label="Box select">&#9633;<span class="lbl2"> Box select</span></button>
     </div>
+    <div id="zoomCtl" class="scaled hidden" role="group" aria-label="Zoom">
+      <button class="btn" id="zoomOutBtn" title="Zoom out (− key, mouse wheel or pinch)" aria-label="Zoom out">&minus;</button>
+      <button class="btn zl" id="zoomLbl" title="Zoom level: Close, Medium, Far or Strategic. Click to switch (Z: strategic overview)" aria-label="Change zoom level"><b id="zoomVal">1.0×</b><small id="zoomTier">MEDIUM</small></button>
+      <button class="btn" id="zoomInBtn" title="Zoom in (+ key, mouse wheel or pinch)" aria-label="Zoom in">+</button>
+    </div>
+    <div id="ctxBack" class="hidden"></div>
+    <div id="ctxMenu" class="hidden" role="menu" aria-label="Commands"></div>
     <div id="toasts" class="scaled" aria-live="polite"></div>
     <div id="ageBanner"></div>
   </div>
@@ -291,7 +339,7 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
         <button class="btn danger" id="resetBtnT">RESET PROGRESS</button>
       </div>
     </div>
-    <div class="hint">Mouse: left click / drag to select · right click to command · WASD or arrows to scroll<br>Touch: tap to select, tap again to command · drag to scroll · long-press and drag to box-select</div>
+    <div class="hint">Mouse: click or drag to select · right click to command · wheel to zoom · WASD or arrows to scroll<br>Touch: tap to select, tap again to command · drag to box-select · two fingers to scroll, pinch to zoom · long-press for commands</div>
   </div>
 </div>
 
@@ -317,14 +365,20 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
     <ul>
       <li><span class="k">Select</span> — left click, or left drag a box. Double click picks all of one type on screen.</li>
       <li><span class="k">Command</span> — right click ground to move, trees / berries / gold / stone to gather, an enemy to attack, your construction site to help build.</li>
-      <li><span class="k">Camera</span> — WASD / arrows / screen edges / wheel. Minimap: left drag to look, right click to send orders.</li>
+      <li><span class="k">Camera</span> — WASD / arrows / screen edges / middle-button drag. Minimap: left drag to look, double click to zoom in there, right click to send orders.</li>
+      <li><span class="k">Zoom</span> — the mouse wheel zooms on the cursor; <span class="k">Ctrl</span> + wheel zooms in fine steps. <span class="k">+</span> / <span class="k">−</span> zoom, <span class="k">Home</span> resets to 1×, <span class="k">Z</span> toggles the strategic overview.</li>
       <li><span class="k">Keys</span> — <span class="k">.</span> idle villager · <span class="k">Space</span> Town Center · <span class="k">Esc</span> cancel / menu · <span class="k">P</span> pause · <span class="k">Ctrl+S</span> quick save · <span class="k">M</span> mute.</li>
     </ul>
     <h3>Touch</h3>
     <ul>
-      <li><span class="k">Tap</span> a unit, building or resource to select it. With your units selected, <span class="k">tap</span> ground, a resource, an enemy or a building site to give an order.</li>
-      <li><span class="k">Drag</span> with one or two fingers to scroll. <span class="k">Long-press then drag</span> (or the Box select button) to draw a selection box. <span class="k">Double tap</span> a unit to pick all of its type.</li>
-      <li>Use <span class="k">Deselect</span> and <span class="k">Cancel build</span> in the top-right corner, and the minimap to jump around.</li>
+      <li><span class="k">Tap</span> a unit, building or resource to select it. With your units selected, <span class="k">tap</span> ground, a resource, an enemy or a building site to give an order. <span class="k">Double tap</span> a unit to pick every unit of its type on screen.</li>
+      <li><span class="k">Drag</span> one finger to draw a selection box (Settings can make it scroll instead). <span class="k">Two fingers</span> scroll the map; <span class="k">pinch</span> to zoom around the spot between your fingers. <span class="k">Tap with three fingers</span> for the strategic overview, and again to zoom back in where you tapped.</li>
+      <li><span class="k">Long-press</span> the map for a command menu with details of whatever is under your finger. Long-press a command button to read its information card without using it. Tap a resource counter to see what it pays for.</li>
+      <li><span class="k">Minimap</span> — tap to look, double tap to zoom in there, long-press to send your selected units. The zoom buttons are in the bottom-right corner; <span class="k">Deselect</span> and <span class="k">Cancel build</span> in the top-right.</li>
+    </ul>
+    <h3>Zoom levels</h3>
+    <ul>
+      <li><span class="k">Close</span> (2×) for detail, <span class="k">Medium</span> (1×) for normal play, <span class="k">Far</span> (0.75×) to manage armies, and <span class="k">Strategic</span> (0.5×), where units become team-coloured icons: ● villager, ■ infantry, ▲ ranged, ◆ cavalry. The zoom button between − and + steps through them.</li>
     </ul>
     <h3>Economy &amp; progress</h3>
     <ul>
@@ -443,6 +497,8 @@ const dist=(ax,ay,bx,by)=>Math.hypot(ax-bx,ay-by);
 const isNum=v=>typeof v==='number'&&Number.isFinite(v);
 const isInt=v=>Number.isInteger(v);
 const isObj=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
+/** Drop items from an array in place (no new array every frame). */
+function compact(a,keep){let j=0;for(let i=0;i<a.length;i++)if(keep(a[i]))a[j++]=a[i];a.length=j;return a;}
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtInt=n=>Math.floor(n).toLocaleString('en-US');
 const fmtTime=sec=>{sec=Math.max(0,Math.floor(sec));const h=sec/3600|0,m=(sec%3600)/60|0,s=sec%60;
@@ -490,7 +546,10 @@ const CONFIG=Object.freeze({
  MAX_SAVE_BYTES:2_000_000,
  THUMB_MAX:30_000,          // characters of the screenshot data URL kept with a save
  CAM_SPEED_DEFAULT:520, EDGE_PX:22,
- TOUCH_TAP_SLOP:10, TOUCH_LONGPRESS_MS:450, DOUBLE_TAP_MS:320,
+ TOUCH_TAP_SLOP:10, TOUCH_LONGPRESS_MS:450, DOUBLE_TAP_MS:320,   // base values: Gesture sensitivity scales the slop and the long-press
+ TRI_TAP_MS:600,            // a three-finger tap (strategic overview) lifts within this time
+ PINCH_DEADZONE:.05,        // two fingers spread or close 5% before a scroll becomes a pinch
+ MAX_DPR:2,                 // the battlefield renders at the screen's pixel density, up to 2×
  KEYS:Object.freeze({settings:'aethoria.settings.v1',profile:'aethoria.profile.v1',quarantine:'aethoria.save.quarantine',
   slot:'aethoria.slot.',autosave:'aethoria.autosave.',backup:'aethoria.backup.slot.',   // + slot number
   legacySave:'aethoria.save.v1',legacyBackup:'aethoria.save.v1.bak'})                   // Aethoria 1.1 single save
@@ -500,6 +559,12 @@ const DIFFICULTY=Object.freeze({
  normal:{name:'Normal',desc:'The classic challenge.',                 trickle:1,  attackEvery:50,firstAttack:50, armyToAttack:7,aiVillagers:12,startRes:{wood:200,food:200,gold:0,stone:0},aiBonus:{wood:0,food:0,gold:0,stone:0},score:1},
  hard:  {name:'Hard',  desc:'A relentless, well-fed enemy.',          trickle:1.8,attackEvery:36,firstAttack:40, armyToAttack:6,aiVillagers:15,startRes:{wood:200,food:200,gold:0,stone:0},aiBonus:{wood:150,food:150,gold:50,stone:0},score:1.5}
 });
+/** Camera zoom: limits, the four tactical layers with their preset zooms, and TIERS: [layer, zoom below which it applies]. */
+const ZOOM=Object.freeze({MIN:.5,MAX:3,DEFAULT:1,
+ PRESETS:Object.freeze({close:2,medium:1,far:.75,strategic:.5}),
+ TIERS:Object.freeze([['strategic',.62],['far',.87],['medium',1.5],['close',Infinity]]),
+ NAMES:Object.freeze({close:'Close',medium:'Medium',far:'Far',strategic:'Strategic'}),
+ MARKER_PX:12});            // on-screen size of a unit icon at Strategic zoom
 
 /* ================= persistence: storage manager ================= */
 function createMemoryStore(){const m=new Map();
@@ -890,11 +955,18 @@ const SETTINGS_FIELDS=[
  {path:'gameplay.autoPause',label:'Pause when the window loses focus',type:'bool',def:true},
  {path:'gameplay.showMission',label:'Show the mission tracker',type:'bool',def:true},
  {path:'display.theme',section:'Display',label:'Interface theme',type:'enum',def:'classic',options:[['classic','Classic wood'],['midnight','Midnight'],['contrast','High contrast']]},
- {path:'display.uiScale',label:'Interface size',type:'range',min:.8,max:1.4,step:.05,def:1,fmt:pct},
+ {path:'display.autoScale',label:'Fit the interface to this screen automatically',type:'bool',def:true},
+ {path:'display.uiScale',label:'UI scale',type:'range',min:.8,max:1.4,step:.05,def:1,fmt:pct},
  {path:'controls.scrollSpeed',section:'Controls',label:'Camera scroll speed',type:'range',min:200,max:1200,step:20,def:CONFIG.CAM_SPEED_DEFAULT,fmt:v=>String(v)},
  {path:'controls.edgeScroll',label:'Scroll at screen edges',type:'bool',def:true},
  {path:'controls.swapButtons',label:'Swap mouse buttons (left click commands)',type:'bool',def:false},
- {path:'controls.haptics',label:'Vibrate on touch actions',type:'bool',def:true},
+ {path:'touch.mode',section:'Touch & zoom',label:'Touch controls (mobile mode)',type:'enum',def:'auto',options:[['auto','Automatic'],['on','Always on'],['off','Off']]},
+ {path:'touch.drag',label:'One-finger drag',type:'enum',def:'box',options:[['box','Draws a selection box'],['pan','Scrolls the map']]},
+ {path:'touch.pinchZoom',label:'Enable pinch zoom',type:'bool',def:true},
+ {path:'camera.zoomSensitivity',label:'Zoom sensitivity (pinch, wheel and keys)',type:'range',min:.5,max:2,step:.1,def:1,fmt:pct},
+ {path:'touch.gestureSensitivity',label:'Gesture sensitivity (taps, drags, long-press)',type:'range',min:.5,max:2,step:.1,def:1,fmt:pct},
+ {path:'touch.feedback',label:'Touch feedback (ripples and vibration)',type:'bool',def:true},
+ {path:'camera.zoom',label:'Last camera zoom',type:'range',min:ZOOM.MIN,max:ZOOM.MAX,step:.01,def:ZOOM.DEFAULT,fmt:v=>v+'×',hidden:true},   // restored on the next visit
  {path:'access.reducedMotion',section:'Accessibility',label:'Reduce motion',type:'bool',def:PREFERS_REDUCED},
  {path:'access.colorSafe',label:'Colour-blind friendly team colours',type:'bool',def:false},
  {path:'access.longMessages',label:'Keep messages on screen longer',type:'bool',def:false}
@@ -905,6 +977,8 @@ const Settings={
  /** Keep every valid field; replace missing or invalid ones with defaults. */
  sanitize(raw){
   const out={};let repaired=!isObj(raw);
+  if(isObj(raw)&&getPath(raw,'touch.feedback')===undefined&&typeof getPath(raw,'controls.haptics')==='boolean')   // "Vibrate on touch actions" became "Touch feedback"
+   raw={...raw,touch:{...(isObj(raw.touch)?raw.touch:{}),feedback:raw.controls.haptics}};
   for(const f of SETTINGS_FIELDS){
    let v=isObj(raw)?getPath(raw,f.path):undefined;
    const ok=f.type==='range'?isNum(v):f.type==='bool'?typeof v==='boolean':f.options.some(o=>o[0]===v);
@@ -918,21 +992,44 @@ const Settings={
   const next=JSON.parse(JSON.stringify(this.data));setPath(next,path,value);
   this.data=this.sanitize(next).value;this.apply();
   if(!storage.saveSettings(this.data))toast('Settings could not be saved','bad');},
- reset(){this.data=this.defaults();this.apply();storage.saveSettings(this.data);},
+ /** Change several settings at once: one apply, one write. */
+ update(values){
+  const next=JSON.parse(JSON.stringify(this.data));for(const p in values)setPath(next,p,values[p]);
+  this.data=this.sanitize(next).value;this.apply();
+  if(!storage.saveSettings(this.data))toast('Settings could not be saved','bad');},
+ /** Store a value the game tracks itself (the last camera zoom) without re-applying every setting. */
+ remember(path,value){
+  const next=JSON.parse(JSON.stringify(this.data));setPath(next,path,value);
+  this.data=this.sanitize(next).value;storage.saveSettings(this.data);},
+ reset(){this.data=this.defaults();this.apply();storage.saveSettings(this.data);cam.zoomTo(ZOOM.DEFAULT,vw/2,vh/2,{instant:true});},
  load(){const r=storage.loadSettings();this.data=r.data;this.apply();return r;},
  /** Push settings into the page, the audio engine and the renderer. */
  apply(){
   const d=this.data,root=document.documentElement;
   root.dataset.theme=d.display.theme;
-  root.style.setProperty('--uiScale',d.display.uiScale);
   root.classList.toggle('reduce-motion',d.access.reducedMotion);
   root.style.setProperty('--toastDur',d.access.longMessages?'5.5s':'2.6s');
   Sound.setVolumes(d.audio);
   setTeamColors(d.access.colorSafe);
+  applyTouchMode();applyUiScale();               // touch mode first: the automatic scale depends on it
   if(typeof applyMissionVisibility==='function')applyMissionVisibility();
+  if(cmdsReady)updFloatBtns();
   if(typeof resize==='function')requestAnimationFrame(resize);
  }
 };
+/** Automatic interface scale from the screen size: a little denser on phones, larger on big monitors and touch tablets. */
+function autoUiScale(){
+ const short=Math.min(innerWidth||1024,innerHeight||768);
+ let s=short<420?.92:short<=1100?1:Math.min(1.45,1+(short-1100)/1600);
+ if(isTouchUI&&short>=600)s*=1.1;                  // tablets and touch laptops: bigger targets for fingers
+ return s;
+}
+/** The interface scale actually used (--uiScale): the automatic fit for this screen × the player's UI scale. */
+function applyUiScale(){
+ const d=Settings.data.display,s=clamp((d.autoScale?autoUiScale():1)*d.uiScale,.7,1.8);
+ document.documentElement.style.setProperty('--uiScale',s.toFixed(3));
+ return s;
+}
 
 /* ================= profile (high score, XP, achievements, lifetime stats) ================= */
 const RANKS=['Wanderer','Settler','Elder','Chieftain','Warlord','Lord','High Lord','King','High King','Legend of Aethoria'];
@@ -1367,9 +1464,25 @@ function buildResSprites(){RSPR.trees=[0,1,2,3,4,5].map(i=>makeTree(i*7919+3));R
 function setTeamColors(safe){
  const next=safe?TEAM_COLORS.safe:TEAM_COLORS.classic;
  if(next===PCOL&&USPR.length&&BSPR.length)return;
- PCOL=next;buildUnitSprites();buildBldSprites();
+ PCOL=next;buildUnitSprites();buildUnitMarkers();buildBldSprites();
  if(RSPR.trees)drawPano();
  if(typeof refreshCmds==='function'&&cmdsReady){refreshCmds(true);updInfo();}
+}
+/** Strategic-zoom unit icons: a team-coloured disc with the class glyph (● villager, ■ infantry, ▲ ranged, ◆ cavalry). */
+const UMARK=[];
+function buildUnitMarkers(){
+ for(let p=0;p<2;p++){UMARK[p]={};
+  for(const cls of['villager','infantry','ranged','cavalry','siege']){
+   const c=cv(24,24),g=c.getContext('2d');
+   g.fillStyle='#120c04';g.beginPath();g.arc(12,12,11.5,0,7);g.fill();
+   g.fillStyle=PCOL[p][0];g.beginPath();g.arc(12,12,9.5,0,7);g.fill();
+   g.fillStyle='#f4ead0';g.beginPath();
+   if(cls==='villager')g.arc(12,12,3.5,0,7);
+   else if(cls==='infantry')g.rect(7.5,7.5,9,9);
+   else if(cls==='ranged'){g.moveTo(12,5.5);g.lineTo(18.5,17.5);g.lineTo(5.5,17.5);g.closePath();}
+   else if(cls==='cavalry'){g.moveTo(12,5);g.lineTo(19,12);g.lineTo(12,19);g.lineTo(5,12);g.closePath();}
+   else g.rect(5.5,10,13,5);                      // siege (future): a beam
+   g.fill();UMARK[p][cls]=c;}}
 }
 
 /* ================= icons ================= */
@@ -1470,7 +1583,6 @@ const block=new Uint8Array(MAP*MAP);
 const explored=new Uint8Array(MAP*MAP);
 const vis=new Uint8Array(MAP*MAP);
 const ENT={};let nextId=1;
-const cam={x:0,y:0};
 const ai={t:3,attackT:50,wave:null};        // wave: an attack being mustered {tid, sx, sy, t}
 const lastSfx={};
 const canAfford=(p,c)=>{for(const k in c)if(state.res[p][k]<c[k])return false;return true;};
@@ -1494,6 +1606,71 @@ function resetWorld(diff){
  for(const k in ENT)delete ENT[k];
  nextId=1;ai.t=3;ai.attackT=D.firstAttack;
  for(const k in lastSfx)delete lastSfx[k];
+}
+
+/* ================= camera ================= */
+/**
+ * The camera is a world-space top-left corner (x, y) and a zoom (screen pixels per world pixel). zoomCurrent eases
+ * toward zoomTarget every frame. While it does, `anchor` pins a world point to a screen point (the cursor, or the
+ * midpoint between two fingers), so the spot being zoomed on stays put and the view never jumps.
+ */
+const cam={x:0,y:0,zoomCurrent:ZOOM.DEFAULT,zoomTarget:ZOOM.DEFAULT,anchor:null,rate:14,overviewFrom:null,
+ get z(){return this.zoomCurrent;},
+ viewW(){return vw/this.zoomCurrent;},
+ viewH(){return vh/this.zoomCurrent;},
+ center(){return{x:this.x+this.viewW()/2,y:this.y+this.viewH()/2};},
+ toWorld(sx,sy){return{x:this.x+sx/this.zoomCurrent,y:this.y+sy/this.zoomCurrent};},
+ /** Keep the view on the map. A view wider or taller than the map (far zoom on a big screen) centres the map instead. */
+ clamp(){const w=this.viewW(),h=this.viewH();
+  this.x=w>=WPX?(WPX-w)/2:clamp(this.x,0,WPX-w);
+  this.y=h>=WPX?(WPX-h)/2:clamp(this.y,0,WPX-h);},
+ centerOn(wx,wy){this.anchor=null;this.x=wx-this.viewW()/2;this.y=wy-this.viewH()/2;this.clamp();},
+ /** Scroll by a distance in screen pixels (drags, keys, screen edges), so scrolling feels the same at any zoom. */
+ moveBy(dsx,dsy){const dx=dsx/this.zoomCurrent,dy=dsy/this.zoomCurrent;this.x+=dx;this.y+=dy;
+  if(this.anchor){this.anchor.wx+=dx;this.anchor.wy+=dy;}this.clamp();},
+ /** Zoom to z around screen point (sx, sy): the world point under it stays there. Animated unless `instant`. */
+ zoomTo(z,sx=vw/2,sy=vh/2,{instant=false,rate=14}={}){
+  const w=this.toWorld(sx,sy);this.anchor={wx:w.x,wy:w.y,sx,sy};this.rate=rate;
+  this.zoomTarget=clamp(z,ZOOM.MIN,ZOOM.MAX);
+  if(instant||Settings.data.access.reducedMotion)this.settle();
+  onZoom();},
+ zoomBy(f,sx,sy,o){this.zoomTo(this.zoomTarget*f,sx,sy,o);},
+ /** Pinch: keep world point (wx, wy) under the fingers' midpoint (sx, sy) while the zoom follows them. */
+ pinchTo(z,wx,wy,sx,sy){this.anchor={wx,wy,sx,sy};this.rate=30;this.zoomTarget=clamp(z,ZOOM.MIN,ZOOM.MAX);
+  if(Settings.data.access.reducedMotion)this.zoomCurrent=this.zoomTarget;
+  this.applyAnchor();onZoom();},
+ applyAnchor(){const a=this.anchor;if(!a)return;this.x=a.wx-a.sx/this.zoomCurrent;this.y=a.wy-a.sy/this.zoomCurrent;this.clamp();},
+ settle(){this.zoomCurrent=this.zoomTarget;this.applyAnchor();this.anchor=null;rememberZoom();},
+ /** Ease zoomCurrent toward zoomTarget, in log space so zooming in and out feel the same. */
+ step(dt){
+  if(this.zoomCurrent===this.zoomTarget){this.anchor=null;return;}
+  if(!this.anchor){const w=this.toWorld(vw/2,vh/2);this.anchor={wx:w.x,wy:w.y,sx:vw/2,sy:vh/2};}
+  const a=Math.log(this.zoomCurrent),b=Math.log(this.zoomTarget);
+  if(Math.abs(b-a)<.002)this.settle();
+  else{this.zoomCurrent=Math.exp(a+(b-a)*(1-Math.exp(-dt*this.rate)));this.applyAnchor();}
+  onZoom();},
+ /** The tactical layer for a zoom: 'close', 'medium', 'far' or 'strategic'. */
+ tier(z=this.zoomCurrent){for(const[k,below]of ZOOM.TIERS)if(z<below)return k;return'close';},
+ /** Strategic overview (three-finger tap, Z): zoom right out; the same call zooms back in on the chosen spot. */
+ toggleOverview(sx=vw/2,sy=vh/2){
+  if(this.tier(this.zoomTarget)==='strategic'){this.zoomTo(this.overviewFrom||ZOOM.DEFAULT,sx,sy);this.overviewFrom=null;}
+  else{this.overviewFrom=this.zoomTarget;this.zoomTo(ZOOM.PRESETS.strategic,sx,sy);}},
+ /** The zoom-level button: Medium → Far → Strategic → Close → Medium. */
+ cycleLevel(){const order=['medium','far','strategic','close'],i=order.indexOf(this.tier(this.zoomTarget));
+  this.overviewFrom=null;this.zoomTo(ZOOM.PRESETS[order[(i+1)%order.length]]);},
+ reset(){this.overviewFrom=null;this.zoomTo(ZOOM.DEFAULT);}
+};
+const zoomStep=()=>Math.pow(1.25,Settings.data.camera.zoomSensitivity);
+let zoomSaveT=0;
+/** Persist the zoom once it settles (debounced: a pinch settles many times). */
+function rememberZoom(){clearTimeout(zoomSaveT);zoomSaveT=setTimeout(()=>{
+ if(Settings.data&&Math.abs(Settings.data.camera.zoom-cam.zoomTarget)>.004)Settings.remember('camera.zoom',Math.round(cam.zoomTarget*100)/100);},400);}
+let zoomSig='';
+/** Keep the zoom button's label ("1.5× · CLOSE") and its −/+ limits in step with the camera. */
+function onZoom(){
+ const z=cam.zoomCurrent,t=cam.tier(z),sig=z.toFixed(2)+t+cam.zoomTarget;if(sig===zoomSig)return;zoomSig=sig;
+ $('#zoomVal').textContent=(z<1?z.toFixed(2):z.toFixed(1))+'×';$('#zoomTier').textContent=ZOOM.NAMES[t].toUpperCase();
+ $('#zoomOutBtn').disabled=cam.zoomTarget<=ZOOM.MIN+1e-6;$('#zoomInBtn').disabled=cam.zoomTarget>=ZOOM.MAX-1e-6;
 }
 
 /* ================= terrain ================= */
@@ -1992,6 +2169,7 @@ function completeTech(p,id){
  * it deals on arrival (counters and armour already applied), how far it may still fly, its aim point and flight
  * length. A true shot homes in on its target; a miss flies to a spot beside it and falls harmlessly.
  */
+const projPool=[];            // spent projectile records, reused by fire() so a battle makes little garbage
 const Projectiles={
  /** Loose a projectile at `t`. A = attacker definition (unit type or TOWER), R = its range in px. */
  fire(src,t,A,atk,R){
@@ -2002,8 +2180,10 @@ const Projectiles={
   let tx=aim.x,ty=aim.y;
   if(miss){const a=Math.random()*Math.PI*2,o=14+Math.random()*16;tx+=Math.cos(a)*o;ty+=Math.sin(a)*o*.6;}
   const l=Math.hypot(tx-sx,ty-sy)||1;
-  state.projs.push({type,sourceId:src.id,targetId:t.id,owner:src.player,x:sx,y:sy,vx:(tx-sx)/l*P.spd,vy:(ty-sy)/l*P.spd,
-   damage:hitDamage(atk,A,src,t),range:R*1.6+64,tx,ty,d0:l,miss});
+  const p=projPool.pop()||{};
+  p.type=type;p.sourceId=src.id;p.targetId=t.id;p.owner=src.player;p.x=sx;p.y=sy;p.vx=(tx-sx)/l*P.spd;p.vy=(ty-sy)/l*P.spd;
+  p.damage=hitDamage(atk,A,src,t);p.range=R*1.6+64;p.tx=tx;p.ty=ty;p.d0=l;p.miss=miss;p.dead=false;
+  state.projs.push(p);
   sfxT('bow',SFX.bow,.12);
  },
  update(dt){
@@ -2017,17 +2197,17 @@ const Projectiles={
    p.vx=dx/d*P.spd;p.vy=dy/d*P.spd;p.x+=p.vx*dt;p.y+=p.vy*dt;p.range-=step;
    if(p.range<=0)p.dead=true;
   }
-  state.projs=state.projs.filter(p=>!p.dead);
+  compact(state.projs,p=>{if(!p.dead)return true;if(projPool.length<256)projPool.push(p);return false;});
  },
- /** Projectiles fly in an arc: drawn raised above their ground shadow and tilted along the curve. */
- draw(){
+ /** Projectiles fly in an arc: drawn raised above their ground shadow and tilted along the curve. `simple` skips the shadow. */
+ draw(simple){
   for(const p of state.projs){
    if(p.owner!==0&&!vis[clamp(p.y/TILE|0,0,MAP-1)*MAP+clamp(p.x/TILE|0,0,MAP-1)])continue;
    const P=PROJ_TYPES[p.type],H=Math.min(48,p.d0*P.arc),k=clamp(1-Math.hypot(p.tx-p.x,p.ty-p.y)/p.d0,0,1);
    const h=H*Math.sin(k*Math.PI),slope=H*Math.PI*Math.cos(k*Math.PI)/p.d0;
    const sp=Math.hypot(p.vx,p.vy)||1,ux=p.vx/sp,uy=p.vy/sp,al=Math.hypot(ux,uy-slope)||1,ex=ux/al*P.len,ey=(uy-slope)/al*P.len;
    ctx.lineWidth=P.w;
-   ctx.strokeStyle='rgba(0,0,0,.22)';ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x-ux*P.len,p.y-uy*P.len);ctx.stroke();
+   if(!simple){ctx.strokeStyle='rgba(0,0,0,.22)';ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x-ux*P.len,p.y-uy*P.len);ctx.stroke();}
    if(P.glow){ctx.fillStyle='rgba(255,150,40,.45)';ctx.beginPath();ctx.arc(p.x,p.y-h,3.5,0,7);ctx.fill();}
    ctx.strokeStyle=P.col;ctx.beginPath();ctx.moveTo(p.x,p.y-h);ctx.lineTo(p.x-ex,p.y-h-ey);ctx.stroke();
    ctx.fillStyle=P.tip;ctx.fillRect(Math.round(p.x)-1,Math.round(p.y-h)-1,2,2);
@@ -2225,32 +2405,48 @@ let fogPat=null;
 
 /* ================= rendering ================= */
 const gameCv=$('#game'),ctx=gameCv.getContext('2d');
-let vw=800,vh=600;
+let vw=800,vh=600,DPR=1,lowRes=false;
+/** Fit the canvas to its box at the screen's pixel density (up to MAX_DPR), keeping the view centred where it was. */
 function resize(){
+ const keep=Game.phase!=='title'?cam.center():null;
+ applyUiScale();
  const vp=$('#vp');vw=Math.max(1,vp.clientWidth);vh=Math.max(1,vp.clientHeight);
- gameCv.width=vw;gameCv.height=vh;ctx.imageSmoothingEnabled=false;fogPat=null;
+ DPR=lowRes?1:clamp(window.devicePixelRatio||1,1,CONFIG.MAX_DPR);
+ gameCv.width=Math.round(vw*DPR);gameCv.height=Math.round(vh*DPR);fogPat=null;
+ if(keep)cam.centerOn(keep.x,keep.y);else cam.clamp();
+ if(ctxIsOpen())placeCtx();                        // keep a long-press menu inside the resized battlefield
  if(Game.phase!=='title')render();
 }
 window.addEventListener('resize',resize);
 window.addEventListener('orientationchange',()=>setTimeout(resize,250));
-/** Draw a unit with its animation: attack pose, two-frame walk, or a slow idle breath. */
-function drawUnit(u){
+/** Draw a unit with its animation: attack pose, two-frame walk, or a slow idle breath. Far zoom (`simple`) skips the extras. */
+function drawUnit(u,simple){
  const A=UANIM[u.player][u.type];if(!A)return;
  const moving=u.path.length>0||u.kiting>0,S=UNITTYPES[u.type].size;
- const spr=u.atkT>0?A.atk:moving?A.walk[(u.anim*7|0)%2]:A.idle[((state.time+u.id*.37)/.7|0)%2];
- const bob=(moving&&u.cmd&&u.cmd.type!=='deposit')?Math.abs(Math.sin(u.anim*9))*2:0;
- if(u.cmd&&u.cmd.ch&&moving){ctx.fillStyle='rgba(200,170,110,.45)';            // charge dust
-  for(let i=1;i<=3;i++){ctx.beginPath();ctx.arc(u.x-u.face*(S+i*5),u.y-1-(i%2)*2,2+i,0,7);ctx.fill();}}
- ctx.fillStyle='rgba(0,0,0,.25)';ctx.beginPath();ctx.ellipse(u.x,u.y+1,S+1,3,0,0,7);ctx.fill();
+ const spr=u.atkT>0?A.atk:moving?A.walk[(u.anim*7|0)%2]:simple?A.idle[0]:A.idle[((state.time+u.id*.37)/.7|0)%2];
+ const bob=(!simple&&moving&&u.cmd&&u.cmd.type!=='deposit')?Math.abs(Math.sin(u.anim*9))*2:0;
+ if(!simple){
+  if(u.cmd&&u.cmd.ch&&moving){ctx.fillStyle='rgba(200,170,110,.45)';            // charge dust
+   for(let i=1;i<=3;i++){ctx.beginPath();ctx.arc(u.x-u.face*(S+i*5),u.y-1-(i%2)*2,2+i,0,7);ctx.fill();}}
+  ctx.fillStyle='rgba(0,0,0,.25)';ctx.beginPath();ctx.ellipse(u.x,u.y+1,S+1,3,0,0,7);ctx.fill();}
  ctx.save();ctx.translate(Math.round(u.x),Math.round(u.y-bob));
  if(u.face<0)ctx.scale(-1,1);
  ctx.drawImage(spr,-spr.width/2,-spr.height+6);
  ctx.restore();
  if(u.flash>0){ctx.globalAlpha=.5;ctx.fillStyle='#ff4020';ctx.fillRect(u.x-8,u.y-spr.height-2,16,3);ctx.globalAlpha=1;}
- if(state.sel.includes(u)||u.hp<u.maxhp){
+ if(selSet.has(u)||u.hp<u.maxhp){
   const w=S>9?32:24,p=clamp(u.hp/u.maxhp,0,1);
   ctx.fillStyle='#241a0c';ctx.fillRect(u.x-w/2,u.y-spr.height-2,w,4);
   ctx.fillStyle=p>.5?'#3fae3f':p>.25?'#e0a020':'#c03020';ctx.fillRect(u.x-w/2+1,u.y-spr.height-1,(w-2)*p,2);}
+}
+/** Strategic zoom: a team-coloured class icon of constant on-screen size instead of the sprite. */
+function drawUnitMarker(u){
+ const z=cam.zoomCurrent,s=ZOOM.MARKER_PX/z,x=u.x-s/2,y=u.y-s*.75;
+ ctx.drawImage(UMARK[u.player][UNITTYPES[u.type].cls]||UMARK[u.player].infantry,x,y,s,s);
+ if(selSet.has(u)){ctx.strokeStyle='#f0e8c8';ctx.lineWidth=1.5/z;ctx.beginPath();ctx.arc(u.x,y+s/2,s*.64,0,7);ctx.stroke();}
+ if(u.hp<u.maxhp){const p=clamp(u.hp/u.maxhp,0,1),h=2.5/z;
+  ctx.fillStyle='#241a0c';ctx.fillRect(x,y+s+h*.4,s,h);
+  ctx.fillStyle=p>.5?'#3fae3f':p>.25?'#e0a020':'#c03020';ctx.fillRect(x,y+s+h*.4,s*p,h);}
 }
 function drawBld(b){
  const spr=BSPR[b.player][b.type];
@@ -2272,18 +2468,23 @@ function drawBld(b){
   const t=queueTime(b.queue[0]);
   ctx.fillStyle='#241a0c';ctx.fillRect(cx-16,bot+3,32,5);
   ctx.fillStyle=isTechItem(b.queue[0])?'#9fd0ff':'#ffd76a';ctx.fillRect(cx-15,bot+4,30*clamp(1-b.qt/t,0,1),3);}
- if(state.sel.includes(b)){
+ if(selSet.has(b)){
   ctx.strokeStyle='#e8e2c8';ctx.lineWidth=1;
   ctx.strokeRect(b.tx*TILE+.5,b.ty*TILE+.5,b.w*TILE-1,b.h*TILE-1);
   if(b.hp<b.maxhp||!b.done){const p=clamp(b.hp/b.maxhp,0,1);
    ctx.fillStyle='#241a0c';ctx.fillRect(cx-18,bot+9,36,5);
    ctx.fillStyle=p>.5?'#3fae3f':'#c03020';ctx.fillRect(cx-17,bot+10,34*p,3);}}
 }
-/** Death animation: the unit topples (riders only lurch), lies there and fades out. */
-function drawCorpse(c){
+function drawRes(r){
+ const spr=r.type==='tree'?RSPR.trees[(r.tx*7+r.ty*13)%6]:RSPR[r.type];
+ ctx.drawImage(spr,r.tx*TILE+16-spr.width/2,(r.ty+1)*TILE-spr.height);
+ if(selSet.has(r)){ctx.strokeStyle='#e8e2c8';ctx.lineWidth=1;ctx.strokeRect(r.tx*TILE+.5,r.ty*TILE+.5,TILE-1,TILE-1);}
+}
+/** Death animation: the unit topples (riders only lurch), lies there and fades out. Far zoom (`simple`) keeps only the stain. */
+function drawCorpse(c,simple){
  ctx.globalAlpha=Math.min(1,c.life/2);ctx.fillStyle='#5a3020';
  ctx.beginPath();ctx.ellipse(c.x,c.y,9,4,0,0,7);ctx.fill();
- const spr=c.t&&USPR[c.p][c.t];
+ const spr=!simple&&c.t&&USPR[c.p][c.t];
  if(spr&&(c.p===0||vis[clamp(c.y/TILE|0,0,MAP-1)*MAP+clamp(c.x/TILE|0,0,MAP-1)])){
   const rot=(UNITTYPES[c.t].cls==='cavalry'?.5:1.45)*Math.min(1,(6-c.life)/.35);
   ctx.globalAlpha*=.9;ctx.save();ctx.translate(Math.round(c.x),Math.round(c.y+4));ctx.scale(c.f,1);ctx.rotate(-rot);
@@ -2292,30 +2493,57 @@ function drawCorpse(c){
 }
 /** Brief ring where an order was given (feedback for mouse and touch). */
 function addMark(x,y,bad){state.marks.push({x,y,life:.6,bad:!!bad});if(state.marks.length>12)state.marks.shift();}
+/** Touch feedback: a fading ring where a finger lands (Settings → Touch feedback). Screen coordinates. */
+const ripples=[];
+function ripple(x,y){if(!Settings.data.touch.feedback)return;ripples.push({x,y,t:performance.now()});if(ripples.length>8)ripples.shift();}
+function drawRipples(){
+ if(!ripples.length)return;
+ const now=performance.now();while(ripples.length&&now-ripples[0].t>360)ripples.shift();
+ ctx.lineWidth=2;ctx.strokeStyle='#f4ead0';
+ for(const r of ripples){const k=(now-r.t)/360;ctx.globalAlpha=.7*(1-k);ctx.beginPath();ctx.arc(r.x,r.y,8+k*22,0,7);ctx.stroke();}
+ ctx.globalAlpha=1;
+}
 const mmCtx=$('#minimap').getContext('2d');
+/** Y-sorted draw queue. Its entries are pooled and reused every frame, so drawing allocates nothing per entity. */
+const drawQ=[],drawPool=[],selSet=new Set();
+const byY=(a,b)=>a.y-b.y;
+function queueDraw(y,k,e){const n=drawQ.length,o=drawPool[n]||(drawPool[n]={y:0,k:0,e:null});o.y=y;o.k=k;o.e=e;drawQ.push(o);}
+const renderStats={tier:'medium',sprites:0,markers:0,culled:0,ms:0};      // last frame, for the ?debug tests
+/**
+ * One frame. The world is drawn under a single transform (zoom × pixel density, offset by the camera); only what is in
+ * view is queued. Far zoom drops shadows and idle animation, and Strategic zoom draws units as icons. The fog and
+ * the selection box are drawn afterwards in screen space.
+ */
 function render(){
- cam.x=clamp(cam.x,0,Math.max(0,WPX-vw));cam.y=clamp(cam.y,0,Math.max(0,WPX-vh));
- const cx=cam.x|0,cy=cam.y|0;
- ctx.fillStyle='#000';ctx.fillRect(0,0,vw,vh);
- ctx.drawImage(terr,cx,cy,Math.min(vw,WPX-cx),Math.min(vh,WPX-cy),0,0,Math.min(vw,WPX-cx),Math.min(vh,WPX-cy));
- ctx.save();ctx.translate(-cx,-cy);
- for(const d of state.decals){const spr=RSPR[d.k]||RSPR.rubble;ctx.drawImage(spr,d.x-spr.width/2,d.y-spr.height);}
- for(const c of state.corpses)drawCorpse(c);
- for(const s of state.sel)if(s.kind==='u'&&ENT[s.id]){ctx.strokeStyle='#e8e2c8';ctx.lineWidth=1;
-  ctx.beginPath();ctx.ellipse(s.x,s.y+1,UNITTYPES[s.type].size+4,5,0,0,7);ctx.stroke();}
- const list=[];
- for(const r of state.ress)if(explored[r.ty*MAP+r.tx])list.push({y:(r.ty+1)*TILE,f:()=>{
-  const spr=r.type==='tree'?RSPR.trees[(r.tx*7+r.ty*13)%6]:RSPR[r.type];
-  ctx.drawImage(spr,r.tx*TILE+16-spr.width/2,(r.ty+1)*TILE-spr.height);
-  if(state.sel.includes(r)){ctx.strokeStyle='#e8e2c8';ctx.lineWidth=1;ctx.strokeRect(r.tx*TILE+.5,r.ty*TILE+.5,TILE-1,TILE-1);}}});
- for(const b of state.blds)if(b.player===0||explored[((b.ty+b.h/2)|0)*MAP+((b.tx+b.w/2)|0)])
-  list.push({y:(b.ty+b.h)*TILE-1,f:()=>drawBld(b)});
- for(const u of state.units)if(u.player===0||vis[(u.y/TILE|0)*MAP+(u.x/TILE|0)])
-  list.push({y:u.y,f:()=>drawUnit(u)});
- list.sort((a,b)=>a.y-b.y);for(const it of list)it.f();
- Projectiles.draw();
- for(const m of state.marks){const k=m.life/.6;ctx.globalAlpha=k;ctx.strokeStyle=m.bad?'#ff6a4a':'#9fe08a';ctx.lineWidth=2;
-  ctx.beginPath();ctx.ellipse(m.x,m.y,4+(1-k)*12,2+(1-k)*6,0,0,7);ctx.stroke();ctx.globalAlpha=1;}
+ const t0=performance.now();
+ cam.clamp();
+ const z=cam.zoomCurrent,S=z*DPR,ox=Math.round(cam.x*S),oy=Math.round(cam.y*S),tier=cam.tier(z);
+ const simple=tier==='far',icons=tier==='strategic';
+ const X0=cam.x-128,Y0=cam.y-48,X1=cam.x+vw/z+128,Y1=cam.y+vh/z+160;    // the view, padded for wide and tall sprites
+ const seen=(x,y)=>x>X0&&x<X1&&y>Y0&&y<Y1;
+ selSet.clear();for(const e of state.sel)selSet.add(e);
+ ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#000';ctx.fillRect(0,0,gameCv.width,gameCv.height);
+ ctx.imageSmoothingEnabled=z<1;                    // shrunken pixel art shimmers without smoothing
+ ctx.setTransform(S,0,0,S,-ox,-oy);
+ const ax=clamp(Math.floor(cam.x),0,WPX),ay=clamp(Math.floor(cam.y),0,WPX),bx=clamp(Math.ceil(cam.x+vw/z)+1,0,WPX),by=clamp(Math.ceil(cam.y+vh/z)+1,0,WPX);
+ if(bx>ax&&by>ay)ctx.drawImage(terr,ax,ay,bx-ax,by-ay,ax,ay,bx-ax,by-ay);
+ for(const d of state.decals)if(seen(d.x,d.y)){const spr=RSPR[d.k]||RSPR.rubble;ctx.drawImage(spr,d.x-spr.width/2,d.y-spr.height);}
+ if(!icons){
+  for(const c of state.corpses)if(seen(c.x,c.y))drawCorpse(c,simple);
+  for(const e of state.sel)if(e.kind==='u'&&ENT[e.id]){ctx.strokeStyle='#e8e2c8';ctx.lineWidth=1;
+   ctx.beginPath();ctx.ellipse(e.x,e.y+1,UNITTYPES[e.type].size+4,5,0,0,7);ctx.stroke();}}
+ drawQ.length=0;let culled=0,units=0;
+ for(const r of state.ress)if(explored[r.ty*MAP+r.tx]){if(seen(r.tx*TILE+16,(r.ty+1)*TILE))queueDraw((r.ty+1)*TILE,0,r);else culled++;}
+ for(const b of state.blds)if(b.player===0||explored[((b.ty+b.h/2)|0)*MAP+((b.tx+b.w/2)|0)]){
+  if(seen((b.tx+b.w/2)*TILE,(b.ty+b.h)*TILE))queueDraw((b.ty+b.h)*TILE-1,1,b);else culled++;}
+ for(const u of state.units)if(u.player===0||vis[(u.y/TILE|0)*MAP+(u.x/TILE|0)]){
+  if(seen(u.x,u.y)){queueDraw(u.y,2,u);units++;}else culled++;}
+ drawQ.sort(byY);
+ for(const o of drawQ)o.k===0?drawRes(o.e):o.k===1?drawBld(o.e):icons?drawUnitMarker(o.e):drawUnit(o.e,simple);
+ Projectiles.draw(simple||icons);
+ const q=Math.max(1,1/z);                          // order rings stay readable when zoomed out
+ for(const m of state.marks){const k=m.life/.6;ctx.globalAlpha=k;ctx.strokeStyle=m.bad?'#ff6a4a':'#9fe08a';ctx.lineWidth=2*q;
+  ctx.beginPath();ctx.ellipse(m.x,m.y,(4+(1-k)*12)*q,(2+(1-k)*6)*q,0,0,7);ctx.stroke();ctx.globalAlpha=1;}
  if(state.placing&&mouse.in){
   const B=BLDTYPES[state.placing];
   const tx=Math.round(mouse.wx/TILE-B.w/2),ty=Math.round(mouse.wy/TILE-B.h/2);
@@ -2325,19 +2553,46 @@ function render(){
   ctx.fillStyle=ok?'rgba(60,200,60,.25)':'rgba(220,50,30,.3)';
   ctx.fillRect(tx*TILE,ty*TILE,B.w*TILE,B.h*TILE);
   ctx.strokeStyle=ok?'#5ce05c':'#e05038';ctx.lineWidth=1;ctx.strokeRect(tx*TILE+.5,ty*TILE+.5,B.w*TILE-1,B.h*TILE-1);}
- ctx.restore();
- if(!fogPat)fogPat=ctx.createPattern(fogDim,'repeat');
- const tx0=cx/TILE|0,ty0=cy/TILE|0;
- for(let ty=ty0;ty<=ty0+vh/TILE+1;ty++)for(let tx=tx0;tx<=tx0+vw/TILE+1;tx++){
-  if(tx<0||ty<0||tx>=MAP||ty>=MAP)continue;
-  const i=ty*MAP+tx;
-  if(!explored[i]){ctx.fillStyle='#0a0805';ctx.fillRect(tx*TILE-cx,ty*TILE-cy,TILE,TILE);}
-  else if(!vis[i]){ctx.fillStyle=fogPat;ctx.fillRect(tx*TILE-cx,ty*TILE-cy,TILE,TILE);}}
+ ctx.setTransform(1,0,0,1,0,0);
+ drawFog(S,ox,oy);
+ ctx.setTransform(DPR,0,0,DPR,0,0);                // screen-space overlays, in CSS pixels
  if(drag.on){ctx.strokeStyle='#f0e8c8';ctx.lineWidth=1;
   ctx.strokeRect(Math.min(drag.x0,drag.x1)+.5,Math.min(drag.y0,drag.y1)+.5,Math.abs(drag.x1-drag.x0),Math.abs(drag.y1-drag.y0));}
+ drawRipples();
+ renderStats.tier=tier;renderStats.sprites=icons?0:units;renderStats.markers=icons?units:0;renderStats.culled=culled;renderStats.ms=performance.now()-t0;
+}
+/**
+ * Safety net for slow canvases (software rendering): if most of the last 90 frames took over 12 ms to draw at a high
+ * pixel density, drop to 1× for the rest of the session. A GPU canvas draws a frame in 1–3 ms and never trips this.
+ */
+const frameCost={n:0,slow:0};
+function watchFrameCost(ms){
+ if(lowRes||DPR<=1)return;
+ frameCost.n++;if(ms>12)frameCost.slow++;
+ if(frameCost.n<90)return;
+ if(frameCost.slow>45){lowRes=true;resize();console.info('[Aethoria] drawing at 1× pixel density to keep the frame rate up');}
+ frameCost.n=frameCost.slow=0;
+}
+/** Fog of war in device pixels, so tile edges meet exactly at any zoom. Each row's tiles merge into runs, one path per kind. */
+function drawFog(S,ox,oy){
+ if(!fogPat){fogPat=ctx.createPattern(fogDim,'repeat');const k=Math.round(DPR);
+  if(k>1&&fogPat.setTransform)try{fogPat.setTransform(new DOMMatrix([k,0,0,k,0,0]));}catch(e){}}
+ const ts=TILE*S,edge=t=>Math.round(t*ts),z=cam.zoomCurrent;
+ const tx0=Math.max(0,Math.floor(cam.x/TILE)),ty0=Math.max(0,Math.floor(cam.y/TILE));
+ const tx1=Math.min(MAP-1,Math.floor((cam.x+vw/z)/TILE)),ty1=Math.min(MAP-1,Math.floor((cam.y+vh/z)/TILE));
+ for(let pass=0;pass<2;pass++){                    // 0: never explored (black) · 1: explored but out of sight (dimmed)
+  ctx.beginPath();
+  for(let ty=ty0;ty<=ty1;ty++){
+   const y0=edge(ty)-oy,h=edge(ty+1)-oy-y0;let run=-1;
+   for(let tx=tx0;tx<=tx1+1;tx++){
+    const i=ty*MAP+tx,on=tx<=tx1&&(pass===0?!explored[i]:explored[i]&&!vis[i]);
+    if(on){if(run<0)run=tx;}
+    else if(run>=0){const x0=edge(run)-ox;ctx.rect(x0,y0,edge(tx)-ox-x0,h);run=-1;}}}
+  ctx.fillStyle=pass===0?'#0a0805':fogPat;ctx.fill();}
 }
 
 /* ================= minimap ================= */
+const mmFog=cv(MAP,MAP).getContext('2d'),mmFogImg=mmFog.createImageData(MAP,MAP);
 function renderMM(){
  mmCtx.drawImage(mmBase.canvas,0,0);
  for(const r of state.ress){if(!explored[r.ty*MAP+r.tx])continue;
@@ -2349,11 +2604,14 @@ function renderMM(){
  for(const u of state.units){const i=(u.y/TILE|0)*MAP+(u.x/TILE|0);
   if(u.player===1&&!vis[i])continue;
   mmCtx.fillStyle=u.player===0?'#8fd0ff':PCOL[1][0];mmCtx.fillRect(u.x/TILE|0,u.y/TILE|0,1,1);}
- for(let i=0;i<MAP*MAP;i++){
-  if(!explored[i]){mmCtx.fillStyle='#0a0805';mmCtx.fillRect(i%MAP,(i/MAP)|0,1,1);}
-  else if(!vis[i]){mmCtx.fillStyle='rgba(6,5,2,.5)';mmCtx.fillRect(i%MAP,(i/MAP)|0,1,1);}}
- mmCtx.strokeStyle='#f0e8c8';
- mmCtx.strokeRect(cam.x/TILE,cam.y/TILE,vw/TILE,vh/TILE);
+ const d=mmFogImg.data;                            // the fog as one 64×64 image rather than 4096 rectangles
+ for(let i=0,j=0;i<MAP*MAP;i++,j+=4){
+  if(!explored[i]){d[j]=10;d[j+1]=8;d[j+2]=5;d[j+3]=255;}
+  else if(!vis[i]){d[j]=6;d[j+1]=5;d[j+2]=2;d[j+3]=128;}
+  else d[j+3]=0;}
+ mmFog.putImageData(mmFogImg,0,0);mmCtx.drawImage(mmFog.canvas,0,0);
+ mmCtx.strokeStyle='#f0e8c8';mmCtx.lineWidth=1;
+ mmCtx.strokeRect(cam.x/TILE,cam.y/TILE,cam.viewW()/TILE,cam.viewH()/TILE);
 }
 
 /* ================= HUD ================= */
@@ -2367,6 +2625,25 @@ function updHUD(){
  const hi=Math.max(Profile.data?Profile.data.highScore:0,state.score);
  hudEls.hi.textContent=hi?'Best '+fmtInt(hi):'';
 }
+/** Tap (or click) a resource counter to see what it pays for: touch screens have no hover tooltips. */
+const RES_TIPS={Wood:'Chop trees. Pays for buildings and archers.',Food:'From berry bushes and farms. Pays for villagers, soldiers and the ages.',
+ Gold:'Mine it. Pays for stronger units and upgrades.',Stone:'Mine it. Pays for watch towers.',Population:'Units / housing. Each house adds 4, up to '+POP_MAX+'.'};
+for(const el of document.querySelectorAll('#topbar .res'))el.addEventListener('click',()=>{
+ if(Game.phase==='playing')toast(el.title+': '+el.querySelector('span').textContent+' — '+RES_TIPS[el.title]);});
+const entityName=e=>e.kind==='u'?UNITTYPES[e.type].name:e.kind==='b'?BLDTYPES[e.type].name:RNAME[e.type];
+/** Stat lines (HTML) for a unit, building or resource: the selection panel and the long-press information card. */
+function entityStats(e){
+ if(e.kind==='r')return'Remaining: '+e.amount+' '+(YIELD[e.type]||'food');
+ let stats='HP '+Math.ceil(e.hp)+' / '+e.maxhp;
+ if(e.kind==='u'&&e.type==='villager'&&e.carry.amt)stats+='<br>Carrying: '+e.carry.amt+' '+RESN[e.carry.type];
+ if(e.kind==='u'&&e.atk){const U=UNITTYPES[e.type],ar=armorOf(e);
+  stats+='<br>Attack '+e.atk+(U.range?' · Range '+Math.round(rangeOf(e)/TILE)+' tiles':'')+(ar?' · Armour '+ar:'');}
+ if(e.kind==='b'&&!e.done)stats+='<br>Building: '+(e.progress*100|0)+'%';
+ if(e.type==='farm'&&e.done)stats+='<br>Food left: '+e.amount;
+ if(e.kind==='b'&&e.queue.length){const it=e.queue[0];
+  stats+='<br>'+(isTechItem(it)?'Researching '+TECHS[it.slice(5)].name:'Training '+UNITTYPES[it].name)+' ('+Math.ceil(Math.max(0,e.qt))+'s)';}
+ return stats;
+}
 function updInfo(){
  const el=$('#info'),s=state.sel.filter(e=>ENT[e.id]);
  if(!s.length){el.innerHTML='<div class="empty">'+(isTouchUI?'Tap':'Select')+' a unit, building or resource.</div>';return;}
@@ -2375,18 +2652,7 @@ function updInfo(){
   const pc=cv(34,34);drawIcon(pc.getContext('2d'),e.type);
   pc.style.width='64px';pc.style.height='64px';pc.style.imageRendering='pixelated';
   const box=document.createElement('div');box.style.minWidth='0';
-  const name=e.kind==='u'?UNITTYPES[e.type].name:e.kind==='b'?BLDTYPES[e.type].name:RNAME[e.type];
-  let stats='';
-  if(e.kind==='r')stats='Remaining: '+e.amount+' '+(YIELD[e.type]||'food');
-  else{
-   stats='HP '+Math.ceil(e.hp)+' / '+e.maxhp;
-   if(e.kind==='u'&&e.type==='villager'&&e.carry.amt)stats+='<br>Carrying: '+e.carry.amt+' '+RESN[e.carry.type];
-   if(e.kind==='u'&&e.atk){const U=UNITTYPES[e.type],ar=armorOf(e);
-    stats+='<br>Attack '+e.atk+(U.range?' · Range '+Math.round(rangeOf(e)/TILE)+' tiles':'')+(ar?' · Armour '+ar:'');}
-   if(e.kind==='b'&&!e.done)stats+='<br>Building: '+(e.progress*100|0)+'%';
-   if(e.type==='farm'&&e.done)stats+='<br>Food left: '+e.amount;
-   if(e.kind==='b'&&e.queue.length){const it=e.queue[0];
-    stats+='<br>'+(isTechItem(it)?'Researching '+TECHS[it.slice(5)].name:'Training '+UNITTYPES[it].name)+' ('+Math.ceil(Math.max(0,e.qt))+'s)';}}
+  const name=entityName(e),stats=entityStats(e);
   box.innerHTML='<div class="pname">'+esc(name)+(e.kind!=='r'&&e.player===1?' <span style="color:var(--bad);font-size:12px">(enemy)</span>':'')+'</div><div class="pstats">'+stats+'</div>'+
    (e.kind!=='r'?'<div class="hpbarO"><div class="hpbarI" style="width:'+(clamp(e.hp/e.maxhp,0,1)*100)+'%"></div></div>':'');
   el.appendChild(pc);el.appendChild(box);
@@ -2477,22 +2743,37 @@ function runCmd(b){
  if(d.off){SFX.deny();toast(d.tip.req||'Cannot do that yet','bad');return;}
  d.fn&&d.fn();refreshCmds(true);
 }
-function showTip(b){
+/** Show a command's details. `pin` (touch long-press) keeps it open as an information card until the next tap. */
+function showTip(b,pin){
  const d=curDefs[+b.dataset.i];if(!d)return;
- tipEl.innerHTML='<div class="tn">'+esc(d.tip.n)+(d.tip.c?' <span class="tcost">— '+esc(d.tip.c)+'</span>':'')+'</div><div class="tc">'+esc(d.tip.d)+(d.tip.req?'<br><span class="treq">'+esc(d.tip.req)+'</span>':'')+'</div>';
+ tipEl.innerHTML='<div class="tn">'+esc(d.tip.n)+(d.tip.c?' <span class="tcost">— '+esc(d.tip.c)+'</span>':'')+'</div><div class="tc">'+esc(d.tip.d)+(d.tip.req?'<br><span class="treq">'+esc(d.tip.req)+'</span>':'')+'</div>'+
+  (pin?'<span class="tclose">Tap anywhere to close</span>':'');
+ tipEl.classList.toggle('pinned',!!pin);
  tipEl.style.left=Math.max(0,Math.min(b.offsetLeft,cmdsEl.clientWidth-240))+'px';
  tipEl.style.display='block';
 }
+function hideTip(){tipEl.style.display='none';tipEl.classList.remove('pinned');}
+const tipPinned=()=>tipEl.classList.contains('pinned');
 let tipTimer=0;
-cmdsEl.addEventListener('click',e=>{const b=e.target.closest('.cbtn');if(b)runCmd(b);});
+const cmdLP={t:0,x:0,y:0,fired:false};
+cmdsEl.addEventListener('click',e=>{const b=e.target.closest('.cbtn');if(!b)return;
+ if(cmdLP.fired){cmdLP.fired=false;return;}        // a long-press showed the information card instead
+ runCmd(b);});
 cmdsEl.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.classList.contains('cbtn')){e.preventDefault();e.stopPropagation();runCmd(e.target);}});
+// Touch: a tap runs the command and shows its details for a moment; a long-press only shows its information card.
 cmdsEl.addEventListener('pointerdown',e=>{if(e.pointerType!=='touch')return;const b=e.target.closest('.cbtn');if(!b)return;
- showTip(b);clearTimeout(tipTimer);tipTimer=setTimeout(()=>tipEl.style.display='none',1800);});
-cmdsEl.addEventListener('mousemove',e=>{if(isTouchUI&&e.sourceCapabilities&&e.sourceCapabilities.firesTouchEvents)return;
- const b=e.target.closest('.cbtn');if(!b){tipEl.style.display='none';return;}showTip(b);});
+ cmdLP.fired=false;cmdLP.x=e.clientX;cmdLP.y=e.clientY;clearTimeout(cmdLP.t);
+ cmdLP.t=setTimeout(()=>{cmdLP.fired=true;clearTimeout(tipTimer);showTip(b,true);haptic(12);},longPressMs());
+ showTip(b);clearTimeout(tipTimer);tipTimer=setTimeout(()=>{if(!tipPinned())hideTip();},1800);});
+cmdsEl.addEventListener('pointermove',e=>{if(e.pointerType==='touch'&&Math.hypot(e.clientX-cmdLP.x,e.clientY-cmdLP.y)>tapSlop())clearTimeout(cmdLP.t);});
+for(const ev of['pointerup','pointercancel'])cmdsEl.addEventListener(ev,()=>clearTimeout(cmdLP.t));
+cmdsEl.addEventListener('contextmenu',e=>e.preventDefault());   // a long-press must not open the browser's own menu
+cmdsEl.addEventListener('mousemove',e=>{if(isTouchUI)return;     // touch mode has no hover tooltips
+ const b=e.target.closest('.cbtn');if(!b){hideTip();return;}showTip(b);});
 cmdsEl.addEventListener('focusin',e=>{if(e.target.classList.contains('cbtn'))showTip(e.target);});
-cmdsEl.addEventListener('mouseleave',()=>tipEl.style.display='none');
-cmdsEl.addEventListener('focusout',()=>tipEl.style.display='none');
+cmdsEl.addEventListener('mouseleave',()=>{if(!tipPinned())hideTip();});
+cmdsEl.addEventListener('focusout',()=>{if(!tipPinned())hideTip();});
+document.addEventListener('pointerdown',e=>{if(tipPinned()&&!e.target.closest('.cbtn'))hideTip();},{capture:true});
 function toast(msg,cls){const t=document.createElement('div');t.className='toast'+(cls?' '+cls:'');
  t.textContent=msg;const box=$('#toasts');box.appendChild(t);while(box.children.length>5)box.firstChild.remove();
  const ms=Settings.data&&Settings.data.access.longMessages?5500:2600;setTimeout(()=>t.remove(),ms);}
@@ -2595,6 +2876,9 @@ const CMD_FIELDS=['type','x','y','tid','rtype','farm','resume','role','bid','px'
 const validCmd=c=>isObj(c)&&!!CMD_RULES[c.type]&&CMD_RULES[c.type](c)&&
  (c.resume===undefined||isInt(c.resume))&&(c.role===undefined||['wood','food','gold'].includes(c.role))&&(c.farm===undefined||typeof c.farm==='boolean')&&
  (c.spd===undefined||isNum(c.spd)&&c.spd>0)&&(c.ch===undefined||c.ch===0||c.ch===1)&&((c.wx===undefined&&c.wy===undefined)||isNum(c.wx)&&isNum(c.wy));
+/** Camera preferences stored with every save and restored when it is loaded. */
+const cameraPrefs=()=>({zoomLevel:r2(cam.zoomTarget),uiScale:Settings.data.display.uiScale,
+ pinchSensitivity:Settings.data.camera.zoomSensitivity,touchMode:Settings.data.touch.mode});
 const STAT_NUMS=['trainedVil','trainedMil','built','kills','lost','razed','bldLost','techs','peakPop'];
 const GameSerializer={
  /** Capture everything needed to resume the exact session. Transient visuals (animation, flashes) are skipped. */
@@ -2620,6 +2904,7 @@ const GameSerializer={
    decals:state.decals.map(d=>({x:r2(d.x),y:r2(d.y),k:d.k})),
    explored:packBits(explored),
    cam:{x:Math.round(cam.x),y:Math.round(cam.y)},
+   camera:cameraPrefs(),
    sel:state.sel.filter(e=>ENT[e.id]).map(e=>e.id),
    ai:{t:r2(ai.t),attackT:r2(ai.attackT),...(ai.wave?{wave:{tid:ai.wave.tid,sx:r2(ai.wave.sx),sy:r2(ai.wave.sy),t:r2(ai.wave.t)}}:{})},
    formation:[...state.formation],
@@ -2643,6 +2928,8 @@ const GameSerializer={
   if(!pair(p.techs)||!p.techs.every(t=>Array.isArray(t)&&t.every(id=>TECHS[id]!==undefined)))err('bad upgrades');
   for(const k of['units','blds','ress','projs','corpses','decals','sel','missions'])if(!Array.isArray(p[k]))err('missing '+k);
   if(!isObj(p.cam)||!isNum(p.cam.x)||!isNum(p.cam.y))err('bad camera');
+  const C=p.camera;                          // optional: saves made before zoom have none
+  if(C!==undefined&&!(isObj(C)&&[C.zoomLevel,C.uiScale,C.pinchSensitivity].every(v=>isNum(v)&&v>0&&v<=10)&&['auto','on','off'].includes(C.touchMode)))err('bad camera preferences');
   if(!isObj(p.ai)||!isNum(p.ai.t)||!isNum(p.ai.attackT))err('bad AI state');
   else if(p.ai.wave!==undefined&&!(isObj(p.ai.wave)&&isInt(p.ai.wave.tid)&&isNum(p.ai.wave.sx)&&isNum(p.ai.wave.sy)&&isNum(p.ai.wave.t)))err('bad AI state');
   if(p.formation!==undefined&&!(pair(p.formation)&&p.formation.every(f=>f==='none'||FORMATIONS[f])))err('bad formation');
@@ -2727,7 +3014,10 @@ const GameSerializer={
   state.corpses=p.corpses.map(c=>({x:c.x,y:c.y,life:c.life,t:c.t,p:c.p,f:c.f}));
   state.decals=p.decals.map(d=>({x:d.x,y:d.y,k:d.k}));
   explored.set(unpackBits(p.explored,MAP*MAP));
-  cam.x=p.cam.x;cam.y=p.cam.y;
+  cam.anchor=null;cam.overviewFrom=null;
+  if(p.camera){cam.zoomCurrent=cam.zoomTarget=clamp(p.camera.zoomLevel,ZOOM.MIN,ZOOM.MAX);cam.x=p.cam.x;cam.y=p.cam.y;cam.clamp();}
+  else cam.centerOn(p.cam.x+vw/2,p.cam.y+vh/2);  // a save from before zoom (made at 1×): keep the current zoom, centred where that view was
+  onZoom();
   ai.t=p.ai.t;ai.attackT=p.ai.attackT;ai.wave=p.ai.wave?{...p.ai.wave}:null;
   state.formation=p.formation?[...p.formation]:['none','none'];
   const st=newStats();Object.assign(st.gathered,p.stats.gathered);
@@ -2772,6 +3062,7 @@ const Game={
   try{GameSerializer.restore(r.data);}
   catch(e){console.error('[Aethoria] restore failed',e);resetWorld(Settings.data.gameplay.difficulty);
    this.quitToTitle(false);toast('That save could not be restored.','bad');return false;}
+  if(r.data.camera)applySavedCameraPrefs(r.data.camera);
   slots.activate(r);
   Sound.unlock();
   this.enter();
@@ -2811,15 +3102,19 @@ function afterWorldChange(){
  updHUD();updInfo();refreshCmds(true);checkMissions();applyMissionVisibility();updFloatBtns();
  renderMM();render();
 }
+/** A loaded save brings back its camera preferences: zoom, UI scale, pinch sensitivity and touch mode. */
+function applySavedCameraPrefs(c){
+ Settings.update({'camera.zoom':c.zoomLevel,'display.uiScale':c.uiScale,'camera.zoomSensitivity':c.pinchSensitivity,'touch.mode':c.touchMode});
+}
 function centerOnHome(){
  const tc=state.blds.find(b=>b.player===0&&b.type==='towncenter')||state.blds.find(b=>b.player===0);
- if(tc){const c=bldCenter(tc);cam.x=c.x-vw/2;cam.y=c.y-vh/2;}
+ if(tc){const c=bldCenter(tc);cam.centerOn(c.x,c.y);}
 }
 function findIdle(){
  const idle=state.units.filter(u=>u.player===0&&u.type==='villager'&&!u.cmd);
  if(!idle.length){toast('No idle villagers');return;}
  findIdle.i=((findIdle.i||0)+1)%idle.length;const v=idle[findIdle.i];
- cam.x=v.x-vw/2;cam.y=v.y-vh/2;state.sel=[v];selectionChanged();SFX.click();
+ cam.centerOn(v.x,v.y);state.sel=[v];selectionChanged();SFX.click();
 }
 function endGame(won){
  if(state.over)return;
@@ -2859,7 +3154,7 @@ function endGame(won){
 /* ================= UI: overlays, dialogs, screens ================= */
 const UI={
  stack:[],
- open(id){const el=$('#'+id);el.classList.remove('hidden');this.stack=this.stack.filter(x=>x!==id);this.stack.push(id);
+ open(id){closeCtx();hideTip();const el=$('#'+id);el.classList.remove('hidden');this.stack=this.stack.filter(x=>x!==id);this.stack.push(id);
   el.style.zIndex=String(20+this.stack.length);          // the most recently opened screen is always on top
   const f=el.querySelector('button:not([disabled]):not(.hidden),select,input:not(.hidden)');if(f&&!isTouchUI)f.focus({preventScroll:true});},
  close(id){$('#'+id).classList.add('hidden');this.stack=this.stack.filter(x=>x!==id);},
@@ -2896,6 +3191,8 @@ const UI={
 };
 /** Esc walks back one level: dialog → sub-screen → pause menu → game. */
 function handleEscape(){
+ if(ctxIsOpen()){closeCtx();return;}
+ if(tipPinned()){hideTip();return;}
  const top=UI.top();
  if(top==='confirmOv'){UI.confirmDone&&UI.confirmDone();return;}
  if(['settingsOv','helpOv','achOv','newGameOv','slotsOv'].includes(top)){UI.close(top);return;}
@@ -2990,20 +3287,27 @@ function renderSettings(){
   if(f.type==='range')ctl='<input type="range" id="'+id+'" min="'+f.min+'" max="'+f.max+'" step="'+f.step+'" value="'+v+'"><output for="'+id+'">'+f.fmt(v)+'</output>';
   else if(f.type==='bool')ctl='<input type="checkbox" id="'+id+'"'+(v?' checked':'')+'>';
   else ctl='<select id="'+id+'">'+f.options.map(o=>'<option value="'+o[0]+'"'+(o[0]===v?' selected':'')+'>'+esc(o[1])+'</option>').join('')+'</select>';
+  if(f.hidden)return;
   html+='<div class="srow"><label for="'+id+'">'+esc(f.label)+'</label><div class="ctl">'+ctl+'</div></div>';
+  if(f.path==='display.uiScale')html+='<p class="note" id="uiScaleNote"></p>';
   if(f.path==='gameplay.difficulty'&&Game.phase==='playing')html+='<p class="note">Current game: '+DIFFICULTY[state.diff].name+'. A change applies to your next new game.</p>';
  });
  $('#settingsBody').innerHTML=html;
- SETTINGS_FIELDS.forEach((f,i)=>{const el=$('#set_'+i);
+ SETTINGS_FIELDS.forEach((f,i)=>{const el=$('#set_'+i);if(!el)return;
   el.addEventListener(f.type==='range'?'input':'change',()=>{
    const v=f.type==='range'?parseFloat(el.value):f.type==='bool'?el.checked:el.value;
    Settings.set(f.path,v);
    if(f.type==='range')el.nextElementSibling.textContent=f.fmt(Settings.get(f.path));
-   if(f.path.startsWith('audio.'))SFX.click();});});
+   if(f.path.startsWith('audio.'))SFX.click();
+   updUiScaleNote();});});
+ updUiScaleNote();
  $('#storageInfo').textContent=storage.persistent?'Progress is stored in this browser (localStorage): '+CONFIG.SLOT_COUNT+' save slots and '+CONFIG.AUTOSAVE_COUNT+
   ' autosaves, about '+Math.max(1,Math.round(storage.usage()/1024))+' KB used. Export a save from Saved Games to back it up or move it to another device.':
   'This browser is blocking storage, so progress lasts only until the tab closes. Export a save from Saved Games to keep it.';
 }
+function updUiScaleNote(){const el=$('#uiScaleNote');if(!el)return;const d=Settings.data.display;
+ el.textContent='Interface size now: '+pct(applyUiScale())+(d.autoScale?' (automatic fit for this screen × your UI scale)':'')+'.'+
+  (isTouchUI?' Touch mode keeps every control at least 48 px.':'');}
 function openSettings(){renderSettings();UI.open('settingsOv');}
 function renderRecords(){
  const P=Profile.data,L=P.lifetime,lv=Profile.level(),got=ACHIEVEMENTS.filter(a=>P.achievements[a.id]).length;
@@ -3146,13 +3450,16 @@ function updFloatBtns(){
  const playing=Game.phase==='playing'&&!state.over;
  $('#cancelPlaceBtn').classList.toggle('hidden',!(playing&&state.placing));
  $('#deselectBtn').classList.toggle('hidden',!(playing&&isTouchUI&&!state.placing&&state.sel.length));
- const bb=$('#boxBtn');bb.classList.toggle('hidden',!(playing&&isTouchUI&&!state.placing));
- bb.textContent=touch.boxArmed?'▣ Drag to select…':'□ Box select';
+ // Box select is a touch button only while one-finger drag scrolls the map (otherwise a drag already draws a box)
+ const bb=$('#boxBtn');bb.classList.toggle('hidden',!(playing&&isTouchUI&&!state.placing&&Settings.data.touch.drag==='pan'));
+ const lbl=touch.boxArmed?'&#9635;<span class="lbl2"> Drag to select…</span>':'&#9633;<span class="lbl2"> Box select</span>';
+ if(bb.dataset.l!==lbl){bb.innerHTML=lbl;bb.dataset.l=lbl;}
+ $('#zoomCtl').classList.toggle('hidden',!playing);
 }
 function cancelPlacing(){if(!state.placing)return;state.placing=null;gameCv.classList.remove('placing');updFloatBtns();}
 
 /* button wiring */
-const bind=(id,fn)=>{$('#'+id).addEventListener('click',e=>{Sound.unlock();fn(e);if(e.currentTarget.blur&&e.currentTarget.closest('#topbar,#floatBtns'))e.currentTarget.blur();});};
+const bind=(id,fn)=>{$('#'+id).addEventListener('click',e=>{Sound.unlock();fn(e);if(e.currentTarget.blur&&e.currentTarget.closest('#topbar,#floatBtns,#zoomCtl'))e.currentTarget.blur();});};
 bind('continueBtn',()=>openSlots('load'));
 bind('newGameBtn',()=>openNewGame());
 bind('ngStart',async()=>{
@@ -3185,16 +3492,21 @@ bind('homeBtn',()=>{if(Game.isInteractive())centerOnHome();});
 bind('cancelPlaceBtn',cancelPlacing);
 bind('deselectBtn',()=>{state.sel=[];selectionChanged();});
 bind('boxBtn',()=>{touch.boxArmed=!touch.boxArmed;updFloatBtns();});
+bind('zoomInBtn',()=>{if(Game.isInteractive())cam.zoomBy(zoomStep());});
+bind('zoomOutBtn',()=>{if(Game.isInteractive())cam.zoomBy(1/zoomStep());});
+bind('zoomLbl',()=>{if(Game.isInteractive())cam.cycleLevel();});
 bind('rotateClose',()=>{$('#rotateHint').style.display='none';rotateDismissed=true;});
 $('#mission').addEventListener('click',()=>{if(Game.isInteractive())Game.pause(true);});
 
 /* ================= picking & selection ================= */
-function unitAt(wx,wy){
+/** Extra pick reach in world px: fingers are less precise than a cursor, and zoomed-out units are small on screen. */
+const pickPad=()=>((isTouchUI?14:0)+(cam.zoomCurrent<1?8:0))/cam.zoomCurrent;
+function unitAt(wx,wy,pad=pickPad()){
  let best=null,bd=1e9;
  for(const u of state.units){
   if(u.player!==0&&!vis[(u.y/TILE|0)*MAP+(u.x/TILE|0)])continue;      // hidden enemies cannot be picked
   const spr=USPR[u.player][u.type];
-  if(Math.abs(wx-u.x)<Math.max(14,spr.width/2-4)&&wy>u.y-spr.height-2&&wy<u.y+6){
+  if(Math.abs(wx-u.x)<Math.max(14,spr.width/2-4)+pad&&wy>u.y-spr.height-2-pad&&wy<u.y+6+pad){
    const d=dist(wx,wy,u.x,u.y-10);if(d<bd){bd=d;best=u;}}}
  return best;
 }
@@ -3202,9 +3514,13 @@ function bldAt(wx,wy){
  const tx=wx/TILE|0,ty=wy/TILE|0;
  return state.blds.find(b=>tx>=b.tx&&tx<b.tx+b.w&&ty>=b.ty&&ty<b.ty+b.h&&(b.player===0||explored[ty*MAP+tx]))||null;
 }
-function resAt(wx,wy){
- const tx=wx/TILE|0,ty=wy/TILE|0;
- return state.ress.find(r=>r.tx===tx&&r.ty===ty&&!r.dead&&explored[ty*MAP+tx])||null;
+function resAt(wx,wy,pad=pickPad()){
+ const tx=wx/TILE|0,ty=wy/TILE|0,ok=r=>!r.dead&&explored[r.ty*MAP+r.tx];
+ const hit=state.ress.find(r=>r.tx===tx&&r.ty===ty&&ok(r));
+ if(hit||pad<=0)return hit||null;
+ let best=null,bd=pad;                              // nothing on that tile: the nearest resource within reach
+ for(const r of state.ress)if(ok(r)){const d=dist(wx,wy,r.tx*TILE+16,r.ty*TILE+16);if(d<bd){bd=d;best=r;}}
+ return best;
 }
 function selectionChanged(){updInfo();refreshCmds(true);updFloatBtns();}
 function clickSelect(wx,wy){
@@ -3214,14 +3530,16 @@ function clickSelect(wx,wy){
  selectionChanged();
 }
 function boxSelect(sx0,sy0,sx1,sy1){
- const x0=Math.min(sx0,sx1)+cam.x,x1=Math.max(sx0,sx1)+cam.x,y0=Math.min(sy0,sy1)+cam.y,y1=Math.max(sy0,sy1)+cam.y;
+ const a=cam.toWorld(Math.min(sx0,sx1),Math.min(sy0,sy1)),b=cam.toWorld(Math.max(sx0,sx1),Math.max(sy0,sy1));
+ const x0=a.x,x1=b.x,y0=a.y,y1=b.y;
  const sel=state.units.filter(u=>u.player===0&&u.x>=x0&&u.x<=x1&&u.y>=y0-10&&u.y<=y1);
  if(sel.length){state.sel=sel;SFX.click();}
  else{const b=bldAt((x0+x1)/2,(y0+y1)/2);state.sel=b?[b]:[];}
  selectionChanged();
 }
 function selectSameType(u){
- state.sel=state.units.filter(o=>o.player===0&&o.type===u.type&&o.x>cam.x&&o.x<cam.x+vw&&o.y>cam.y&&o.y<cam.y+vh);
+ const x0=cam.x,y0=cam.y,x1=x0+cam.viewW(),y1=y0+cam.viewH();
+ state.sel=state.units.filter(o=>o.player===0&&o.type===u.type&&o.x>x0&&o.x<x1&&o.y>y0&&o.y<y1);
  SFX.click();selectionChanged();
 }
 /** Context order for the selected units: attack, build, gather, farm, drop off, or move. */
@@ -3244,6 +3562,10 @@ function rightCmd(wx,wy){
     if(prev&&ENT[prev]&&ENT[prev].kind==='r')s.cmd.resume=prev;
     any=true;}});
   if(any){SFX.click();addMark(wx,wy);return;}}
+ moveSelected(sel,wx,wy);
+}
+/** Move the given units to a point: in the player's formation for a group, otherwise in a loose cluster. */
+function moveSelected(sel,wx,wy){
  const form=state.formation[0];
  if(form!=='none'&&sel.length>1){const c=groupCenter(sel);formationMove(sel,wx,wy,wx-c.x,wy-c.y,form);}
  else sel.forEach((s,i)=>{
@@ -3267,20 +3589,35 @@ function tryPlace(){
 /* ================= input: mouse ================= */
 const mouse={x:0,y:0,wx:0,wy:0,in:false,touch:false};
 const drag={on:false,x0:0,y0:0,x1:0,y1:0};
+const pan={on:false,x:0,y:0};                      // middle-button drag scrolls the map
 const keys={};
-const keysReset=()=>{for(const k in keys)keys[k]=false;};
-let isTouchUI=typeof matchMedia==='function'&&matchMedia('(pointer: coarse)').matches;
-const haptic=ms=>{if(Settings.data.controls.haptics&&navigator.vibrate){try{navigator.vibrate(ms);}catch(e){}}};
+const keysReset=()=>{for(const k in keys)keys[k]=false;pan.on=false;};
+/**
+ * Smart mobile mode (html.touch-ui): larger controls and hit areas, the mobile HUD, gestures, and information cards
+ * instead of hover tooltips. Automatic mode turns it on for coarse pointers (phones, tablets) and at the first touch.
+ */
+const coarseMQ=typeof matchMedia==='function'?matchMedia('(pointer: coarse)'):null;
+let isTouchUI=false,touchSeen=false;
+function applyTouchMode(){
+ const m=Settings.data.touch.mode,on=m==='on'||(m==='auto'&&(touchSeen||!!(coarseMQ&&coarseMQ.matches)));
+ document.documentElement.classList.toggle('touch-ui',on);
+ if(on===isTouchUI)return;
+ isTouchUI=on;
+ if(cmdsReady){hideTip();updFloatBtns();updInfo();applyUiScale();requestAnimationFrame(resize);checkRotateHint();}
+}
+if(coarseMQ&&coarseMQ.addEventListener)coarseMQ.addEventListener('change',()=>{if(Settings.data)applyTouchMode();});
+const haptic=ms=>{if(Settings.data.touch.feedback&&navigator.vibrate){try{navigator.vibrate(ms);}catch(e){}}};
 /** Left and right buttons can be swapped in Settings → Controls. */
 const btnOf=e=>Settings.data.controls.swapButtons?(e.button===0?2:e.button===2?0:e.button):e.button;
 function screenToWorld(e){const r=gameCv.getBoundingClientRect();
  mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top;
- mouse.wx=mouse.x+cam.x;mouse.wy=mouse.y+cam.y;}
+ const w=cam.toWorld(mouse.x,mouse.y);mouse.wx=w.x;mouse.wy=w.y;}
 gameCv.addEventListener('contextmenu',e=>e.preventDefault());
 gameCv.addEventListener('mousedown',e=>{
  Sound.unlock();
  if(!Game.isInteractive())return;
  mouse.touch=false;screenToWorld(e);
+ if(e.button===1){e.preventDefault();pan.on=true;pan.x=e.clientX;pan.y=e.clientY;return;}
  const btn=btnOf(e);
  if(btn===0){
   if(state.placing){tryPlace();return;}
@@ -3292,9 +3629,11 @@ window.addEventListener('mousemove',e=>{
  const r=gameCv.getBoundingClientRect();
  mouse.in=e.clientX>=r.left&&e.clientX<r.right&&e.clientY>=r.top&&e.clientY<r.bottom;mouse.touch=false;
  if(Game.phase!=='playing')return;
+ if(pan.on&&Game.isInteractive()){cam.moveBy(pan.x-e.clientX,pan.y-e.clientY);pan.x=e.clientX;pan.y=e.clientY;}
  screenToWorld(e);
  if(drag.on){drag.x1=mouse.x;drag.y1=mouse.y;}
 });
+window.addEventListener('mouseup',e=>{if(e.button===1)pan.on=false;});
 window.addEventListener('mouseup',e=>{
  if(!drag.on||e.button!==drag.btn)return;
  drag.on=false;
@@ -3309,61 +3648,114 @@ gameCv.addEventListener('dblclick',e=>{
  const u=unitAt(mouse.wx,mouse.wy);
  if(u&&u.player===0)selectSameType(u);
 });
+/** Mouse wheel zooms on the cursor. Ctrl + wheel (and a trackpad pinch, which arrives as one) zooms in fine steps. */
 gameCv.addEventListener('wheel',e=>{e.preventDefault();if(!Game.isInteractive())return;
- cam.y+=e.deltaY;cam.x+=e.deltaX;},{passive:false});
+ const r=gameCv.getBoundingClientRect(),dy=e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?vh:1);if(!dy)return;
+ const fine=e.ctrlKey||e.metaKey;
+ cam.zoomBy(Math.exp(-clamp(dy,-300,300)*(fine?.0007:.0022)*Settings.data.camera.zoomSensitivity),e.clientX-r.left,e.clientY-r.top,{rate:fine?24:14});
+},{passive:false});
 
-/* ================= input: touch ================= */
+/* ================= input: touch gestures ================= */
 /**
- * Tap = select (or, with your units selected, give an order) · drag = scroll · two fingers = scroll
- * long-press then drag (or the Box select button) = selection box · double tap a unit = all of its type.
+ * One finger: tap selects (or, with your units selected, gives an order) · double tap selects that unit type on screen
+ * · long-press opens the command menu · drag draws a selection box (or scrolls: Settings → One-finger drag).
+ * Two fingers: drag scrolls and pinch zooms, holding the world point under the fingers in place. A three-finger tap
+ * toggles the strategic overview; four or more fingers are ignored. A gesture never steps down to fewer fingers:
+ * after a pinch, a finger left on the glass does nothing until every finger is lifted.
  */
-const touch={id:null,sx:0,sy:0,lx:0,ly:0,mode:null,lp:0,boxArmed:false,lastTap:{t:0,x:0,y:0},cx:0,cy:0};
+const touch={mode:null,id:null,sx:0,sy:0,lx:0,ly:0,lp:0,boxArmed:false,lastTap:{t:0,x:0,y:0},pinch:null,tri:null};
+const gestureSens=()=>Settings.data.touch.gestureSensitivity;
+const tapSlop=()=>CONFIG.TOUCH_TAP_SLOP/gestureSens();
+const longPressMs=()=>CONFIG.TOUCH_LONGPRESS_MS/gestureSens();
 function localPt(t){const r=gameCv.getBoundingClientRect();return{x:t.clientX-r.left,y:t.clientY-r.top};}
-function setMouseFromTouch(p){mouse.x=p.x;mouse.y=p.y;mouse.wx=p.x+cam.x;mouse.wy=p.y+cam.y;mouse.in=true;mouse.touch=true;}
+function setMouseFromTouch(p){mouse.x=p.x;mouse.y=p.y;const w=cam.toWorld(p.x,p.y);mouse.wx=w.x;mouse.wy=w.y;mouse.in=true;mouse.touch=true;}
 function centroid(list){let x=0,y=0;for(const t of list){x+=t.clientX;y+=t.clientY;}return{x:x/list.length,y:y/list.length};}
-function becomeTouchUI(){if(isTouchUI)return;isTouchUI=true;updFloatBtns();updInfo();}
+/** The first touch turns on touch mode, once that gesture ends: the layout never shifts under the fingers. */
+function becomeTouchUI(){if(touchSeen)return;touchSeen=true;
+ const done=e=>{if(e.touches.length)return;document.removeEventListener('touchend',done);document.removeEventListener('touchcancel',done);applyTouchMode();};
+ document.addEventListener('touchend',done);document.addEventListener('touchcancel',done);}
+/** A one-finger gesture that more fingers have taken over: no tap, no box, no menu. */
+function dropSingle(){clearTimeout(touch.lp);drag.on=false;touch.id=null;}
+function startPinch(e){
+ const a=localPt(e.touches[0]),b=localPt(e.touches[1]),w=cam.toWorld((a.x+b.x)/2,(a.y+b.y)/2);
+ touch.pinch={d0:Math.max(1,Math.hypot(a.x-b.x,a.y-b.y)),z0:cam.zoomTarget,wx:w.x,wy:w.y,zooming:false};
+}
+/** Two fingers: the world point first under them follows their midpoint (scroll); spreading or closing them zooms. */
+function movePinch(e){
+ const P=touch.pinch,a=localPt(e.touches[0]),b=localPt(e.touches[1]),d=Math.max(1,Math.hypot(a.x-b.x,a.y-b.y));
+ let z=cam.zoomTarget;
+ if(Settings.data.touch.pinchZoom){
+  if(!P.zooming&&Math.abs(Math.log(d/P.d0))>CONFIG.PINCH_DEADZONE/gestureSens()){P.zooming=true;P.d0=d;P.z0=cam.zoomTarget;}   // starts from here: no jump
+  if(P.zooming){
+   z=P.z0*Math.pow(d/P.d0,Settings.data.camera.zoomSensitivity);
+   if(z<ZOOM.MIN||z>ZOOM.MAX){z=clamp(z,ZOOM.MIN,ZOOM.MAX);P.z0=z;P.d0=d;}}}    // past a limit: re-base, so reversing responds at once
+ cam.pinchTo(z,P.wx,P.wy,(a.x+b.x)/2,(a.y+b.y)/2);
+}
 gameCv.addEventListener('touchstart',e=>{
  e.preventDefault();Sound.unlock();becomeTouchUI();
  if(!Game.isInteractive())return;
- clearTimeout(touch.lp);
- if(e.touches.length>=2){touch.mode='pan2';drag.on=false;const c=centroid(e.touches);touch.cx=c.x;touch.cy=c.y;return;}
+ const n=e.touches.length;
+ if(n>=4){dropSingle();touch.pinch=null;touch.tri=null;touch.mode='ignore';return;}
+ if(n===3){if(touch.mode==='ignore')return;
+  dropSingle();touch.pinch=null;const c=centroid(e.touches);
+  touch.tri={t:performance.now(),x:c.x,y:c.y,moved:false,at:new Map([...e.touches].map(t=>[t.identifier,{x:t.clientX,y:t.clientY}]))};
+  touch.mode='tri';return;}
+ if(n===2){if(touch.mode==='tri'||touch.mode==='ignore')return;
+  dropSingle();touch.mode='pinch';startPinch(e);return;}
+ clearTimeout(touch.lp);touch.pinch=null;touch.tri=null;  // the only finger on the glass: always a fresh gesture
  const t=e.changedTouches[0],p=localPt(t);
  touch.id=t.identifier;touch.sx=touch.lx=t.clientX;touch.sy=touch.ly=t.clientY;
- setMouseFromTouch(p);
+ setMouseFromTouch(p);ripple(p.x,p.y);
  if(touch.boxArmed){touch.mode='box';touch.boxArmed=false;drag.on=true;drag.x0=drag.x1=p.x;drag.y0=drag.y1=p.y;updFloatBtns();return;}
  touch.mode='pending';
- touch.lp=setTimeout(()=>{if(touch.mode==='pending'){touch.mode='box';drag.on=true;drag.x0=drag.x1=mouse.x;drag.y0=drag.y1=mouse.y;haptic(15);}},CONFIG.TOUCH_LONGPRESS_MS);
+ touch.lp=setTimeout(()=>{if(touch.mode!=='pending'||!Game.isInteractive())return;
+  touch.mode='menu';haptic(15);openCtxMenu(p.x,p.y);},longPressMs());
 },{passive:false});
 gameCv.addEventListener('touchmove',e=>{
  e.preventDefault();
  if(!Game.isInteractive())return;
- if(e.touches.length>=2||touch.mode==='pan2'){
-  if(touch.mode!=='pan2'){touch.mode='pan2';drag.on=false;clearTimeout(touch.lp);const c=centroid(e.touches);touch.cx=c.x;touch.cy=c.y;return;}
-  const c=centroid(e.touches);cam.x-=c.x-touch.cx;cam.y-=c.y-touch.cy;touch.cx=c.x;touch.cy=c.y;return;}
+ const m=touch.mode;
+ if(m==='pinch'){if(e.touches.length>=2&&touch.pinch)movePinch(e);return;}
+ if(m==='tri'){                                   // each finger against its own start: lifting one finger first is not a move
+  for(const t of e.touches){const s0=touch.tri.at.get(t.identifier);if(s0&&Math.hypot(t.clientX-s0.x,t.clientY-s0.y)>tapSlop()*2)touch.tri.moved=true;}
+  return;}
+ if(m!=='pending'&&m!=='pan'&&m!=='box')return;   // the menu is open, a pinch is ending, or the fingers are ignored
  const t=[...e.changedTouches].find(x=>x.identifier===touch.id);if(!t)return;
  const p=localPt(t);
- if(touch.mode==='pending'&&Math.hypot(t.clientX-touch.sx,t.clientY-touch.sy)>CONFIG.TOUCH_TAP_SLOP){touch.mode='pan';clearTimeout(touch.lp);}
- if(touch.mode==='pan'){cam.x-=t.clientX-touch.lx;cam.y-=t.clientY-touch.ly;}
+ if(m==='pending'&&Math.hypot(t.clientX-touch.sx,t.clientY-touch.sy)>tapSlop()){
+  clearTimeout(touch.lp);
+  if(Settings.data.touch.drag==='pan')touch.mode='pan';
+  else{touch.mode='box';const s=localPt({clientX:touch.sx,clientY:touch.sy});drag.on=true;drag.x0=s.x;drag.y0=s.y;}}
+ if(touch.mode==='pan')cam.moveBy(touch.lx-t.clientX,touch.ly-t.clientY);
  else if(touch.mode==='box'){drag.x1=p.x;drag.y1=p.y;}
  touch.lx=t.clientX;touch.ly=t.clientY;
  setMouseFromTouch(p);
 },{passive:false});
 function endTouch(e,cancelled){
- e.preventDefault();clearTimeout(touch.lp);
- if(touch.mode==='pan2'){if(e.touches.length===0)touch.mode=null;return;}
- const t=[...e.changedTouches].find(x=>x.identifier===touch.id);if(!t)return;
- const mode=touch.mode;touch.mode=null;touch.id=null;
- if(!Game.isInteractive()||cancelled){drag.on=false;return;}
+ e.preventDefault();
+ const m=touch.mode,left=e.touches.length;
+ if(m==='pinch'||m==='after'||m==='tri'||m==='ignore'){
+  if(m==='pinch'){touch.mode='after';touch.pinch=null;}
+  if(left===0){
+   const T=touch.tri;touch.mode=null;touch.tri=null;
+   if(m==='tri'&&T&&!cancelled&&!T.moved&&performance.now()-T.t<CONFIG.TRI_TAP_MS&&Game.isInteractive()){
+    const r=gameCv.getBoundingClientRect();cam.toggleOverview(T.x-r.left,T.y-r.top);haptic(12);}}
+  return;}
+ clearTimeout(touch.lp);
+ const t=[...e.changedTouches].find(x=>x.identifier===touch.id);
+ if(!t){if(left===0)touch.mode=null;return;}
+ touch.mode=null;touch.id=null;
+ if(!Game.isInteractive()||cancelled||m==='menu'){drag.on=false;return;}
  const p=localPt(t);setMouseFromTouch(p);
- if(mode==='box'){drag.on=false;drag.x1=p.x;drag.y1=p.y;boxSelect(drag.x0,drag.y0,drag.x1,drag.y1);}
- else if(mode==='pending')handleTap(p);
+ if(m==='box'){drag.on=false;drag.x1=p.x;drag.y1=p.y;boxSelect(drag.x0,drag.y0,drag.x1,drag.y1);}
+ else if(m==='pending')handleTap(p);
  if(!state.placing)mouse.in=false;
 }
 gameCv.addEventListener('touchend',e=>endTouch(e,false),{passive:false});
 gameCv.addEventListener('touchcancel',e=>endTouch(e,true),{passive:false});
 /** Smart tap: selects your own units/buildings, otherwise orders the current selection. */
 function handleTap(p){
- const wx=p.x+cam.x,wy=p.y+cam.y,now=performance.now();
+ const w=cam.toWorld(p.x,p.y),wx=w.x,wy=w.y,now=performance.now();
  if(state.placing){tryPlace();return;}
  const u=unitAt(wx,wy);
  const dbl=now-touch.lastTap.t<CONFIG.DOUBLE_TAP_MS&&Math.hypot(p.x-touch.lastTap.x,p.y-touch.lastTap.y)<28;
@@ -3379,20 +3771,106 @@ function handleTap(p){
  }
  rightCmd(wx,wy);haptic(8);
 }
+// Pinches belong to the map, not the page: no browser zoom over the game (Safari gesture events, Ctrl + wheel, trackpad pinch).
+for(const t of['gesturestart','gesturechange'])document.addEventListener(t,e=>e.preventDefault(),{passive:false});
+window.addEventListener('wheel',e=>{if(e.ctrlKey&&Game.phase==='playing')e.preventDefault();},{passive:false});
+
+/* ================= touch: long-press command menu & information cards ================= */
+const ctxEl=$('#ctxMenu'),ctxBack=$('#ctxBack');
+let ctxActs=[],ctxAt={x:0,y:0};
+const ctxIsOpen=()=>!ctxEl.classList.contains('hidden');
+function closeCtx(){if(!ctxIsOpen())return;ctxEl.classList.add('hidden');ctxBack.classList.add('hidden');ctxActs=[];}
+/** Long-press on the map: an information card for whatever is under the finger, and the commands that fit there. */
+function openCtxMenu(sx,sy){
+ const w=cam.toWorld(sx,sy),u=unitAt(w.x,w.y),b=u?null:bldAt(w.x,w.y),r=u||b?null:resAt(w.x,w.y),e=u||b||r;
+ const sel=state.sel.filter(x=>ENT[x.id]&&x.kind==='u'&&x.player===0&&x.hp>0),vils=sel.filter(v=>v.type==='villager');
+ const acts=[],add=(label,fn,danger)=>acts.push({label,fn,danger});
+ const order=()=>{rightCmd(w.x,w.y);haptic(8);};
+ if(state.placing){
+  add('Build the '+BLDTYPES[state.placing].name.toLowerCase()+' here',()=>{mouse.wx=w.x;mouse.wy=w.y;mouse.in=true;tryPlace();});   // the spot pressed, even if the view moved since
+  add('Cancel building',cancelPlacing);
+ }else{
+  if(sel.length&&e){
+   if(e.kind!=='r'&&e.player===1)add('Attack',order,true);
+   else if(b&&b.player===0&&!b.done&&vils.length)add('Help build',order);
+   else if(r&&vils.length)add('Gather '+RESN[YIELD[r.type]||'food'].toLowerCase(),order);
+   else if(b&&b.player===0&&b.done&&b.type==='farm'&&vils.length)add('Work this farm',order);
+   else if(b&&b.player===0&&b.done&&(b.type==='towncenter'||b.type==='storagepit')&&vils.some(v=>v.carry.amt>0))add('Drop off resources',order);}
+  if(sel.length)add(sel.length>1&&state.formation[0]!=='none'?'Move here in formation':'Move here',()=>{moveSelected(sel,w.x,w.y);haptic(8);});
+  if(e&&!(state.sel.length===1&&state.sel[0]===e))add(e.kind!=='r'&&e.player===0?'Select':'Select to inspect',()=>{state.sel=[e];selectionChanged();SFX.click();});
+  if(u&&u.player===0)add('Select all of this type on screen',()=>selectSameType(u));
+  add('Centre the view here',()=>cam.centerOn(w.x,w.y));
+  if(state.sel.length)add('Deselect',()=>{state.sel=[];selectionChanged();});
+ }
+ const tile=clamp(w.y/TILE|0,0,MAP-1)*MAP+clamp(w.x/TILE|0,0,MAP-1);
+ const head=e?'<div class="cn">'+esc(entityName(e))+(e.kind!=='r'&&e.player===1?' <small>(enemy)</small>':'')+'</div><div class="cs">'+entityStats(e)+'</div>':
+  '<div class="cn">'+(explored[tile]?'Open ground':'Unexplored land')+'</div><div class="cs">'+esc(regionName(w.x,w.y))+
+  (sel.length?' · '+sel.length+' unit'+(sel.length>1?'s':'')+' selected':'')+'</div>';
+ ctxActs=acts;
+ ctxEl.innerHTML='<div class="ctxIn scaled">'+head+'<div class="ca">'+
+  acts.map((a,i)=>'<button class="btn'+(a.danger?' danger':'')+'" data-i="'+i+'" role="menuitem">'+esc(a.label)+'</button>').join('')+'</div></div>';
+ ctxEl.classList.remove('hidden');ctxBack.classList.remove('hidden');
+ ctxAt={x:sx,y:sy};placeCtx();
+}
+/** Beside the finger, kept inside the battlefield. */
+function placeCtx(){
+ ctxEl.style.maxHeight=Math.max(80,vh-16)+'px';
+ const W=ctxEl.offsetWidth,H=ctxEl.offsetHeight;
+ ctxEl.style.left=clamp(ctxAt.x+16,8,Math.max(8,vw-W-8))+'px';ctxEl.style.top=clamp(ctxAt.y-H/2,8,Math.max(8,vh-H-8))+'px';
+}
+ctxEl.addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(!b)return;
+ const a=ctxActs[+b.dataset.i];closeCtx();
+ if(a&&Game.isInteractive()){a.fn();refreshCmds(true);updFloatBtns();}});
+// A tap beside the menu only closes it (touchstart is cancelled, so no mouse click reaches the map beneath).
+ctxBack.addEventListener('touchstart',e=>{e.preventDefault();closeCtx();},{passive:false});
+ctxBack.addEventListener('mousedown',e=>{e.preventDefault();closeCtx();});
+ctxBack.addEventListener('contextmenu',e=>e.preventDefault());
 
 /* ================= input: minimap ================= */
+/** Mouse: left click or drag looks, double click zooms in there, right click sends orders, the wheel zooms.
+ *  Touch: tap or drag looks, double tap zooms in there, long-press sends the selected units. */
 const mm=$('#minimap');
 function mmWorld(cx,cy){const r=mm.getBoundingClientRect();
  return{wx:(cx-r.left)/r.width*MAP*TILE,wy:(cy-r.top)/r.height*MAP*TILE};}
-function mmLook(w){cam.x=w.wx-vw/2;cam.y=w.wy-vh/2;if(Game.phase==='playing')render();}
+function mmLook(w){cam.centerOn(w.wx,w.wy);if(Game.phase==='playing')render();}
+/** Zoom to area: fly there and zoom in close. */
+function mmZoomTo(w){cam.centerOn(w.wx,w.wy);cam.zoomTo(Math.max(ZOOM.PRESETS.close,cam.zoomTarget));}
+function mmCommand(w){
+ if(!state.sel.some(s=>ENT[s.id]&&s.kind==='u'&&s.player===0)){toast('Select units first, then long-press the minimap to send them there','bad');SFX.deny();return;}
+ rightCmd(w.wx,w.wy);haptic(15);
+}
 mm.addEventListener('contextmenu',e=>e.preventDefault());
 let mmDown=false;
 mm.addEventListener('mousedown',e=>{e.preventDefault();if(!Game.isInteractive())return;mmDown=true;const w=mmWorld(e.clientX,e.clientY);
  if(btnOf(e)===0)mmLook(w);else rightCmd(w.wx,w.wy);});
 window.addEventListener('mouseup',()=>mmDown=false);
 mm.addEventListener('mousemove',e=>{if(mmDown&&(e.buttons&1)&&Game.isInteractive())mmLook(mmWorld(e.clientX,e.clientY));});
-mm.addEventListener('touchstart',e=>{e.preventDefault();becomeTouchUI();if(!Game.isInteractive())return;const t=e.touches[0];mmLook(mmWorld(t.clientX,t.clientY));},{passive:false});
-mm.addEventListener('touchmove',e=>{e.preventDefault();if(!Game.isInteractive())return;const t=e.touches[0];mmLook(mmWorld(t.clientX,t.clientY));},{passive:false});
+mm.addEventListener('dblclick',e=>{if(Game.isInteractive()&&btnOf(e)===0)mmZoomTo(mmWorld(e.clientX,e.clientY));});
+mm.addEventListener('wheel',e=>{e.preventDefault();if(!Game.isInteractive())return;
+ cam.zoomBy(Math.exp(-clamp(e.deltaY,-300,300)*.0022*Settings.data.camera.zoomSensitivity));},{passive:false});
+const mmT={id:null,sx:0,sy:0,mode:null,lp:0,lastTap:0};
+mm.addEventListener('touchstart',e=>{e.preventDefault();becomeTouchUI();if(!Game.isInteractive())return;
+ clearTimeout(mmT.lp);
+ if(e.touches.length>1){mmT.mode='ignore';return;}          // extra fingers on the minimap are ignored
+ const t=e.changedTouches[0];mmT.id=t.identifier;mmT.sx=t.clientX;mmT.sy=t.clientY;mmT.mode='pending';
+ mmT.lp=setTimeout(()=>{if(mmT.mode!=='pending'||!Game.isInteractive())return;mmT.mode='done';mmCommand(mmWorld(mmT.sx,mmT.sy));},longPressMs());
+},{passive:false});
+mm.addEventListener('touchmove',e=>{e.preventDefault();if(!Game.isInteractive()||(mmT.mode!=='pending'&&mmT.mode!=='look'))return;
+ const t=[...e.touches].find(x=>x.identifier===mmT.id);if(!t)return;
+ if(mmT.mode==='pending'&&Math.hypot(t.clientX-mmT.sx,t.clientY-mmT.sy)>tapSlop()){clearTimeout(mmT.lp);mmT.mode='look';}
+ if(mmT.mode==='look')mmLook(mmWorld(t.clientX,t.clientY));
+},{passive:false});
+function mmTouchEnd(e,cancelled){
+ e.preventDefault();clearTimeout(mmT.lp);
+ const m=mmT.mode;if(e.touches.length===0)mmT.mode=null;
+ if(m!=='pending'||cancelled||!Game.isInteractive())return;
+ const t=[...e.changedTouches].find(x=>x.identifier===mmT.id);if(!t)return;
+ const w=mmWorld(t.clientX,t.clientY),now=performance.now();
+ if(now-mmT.lastTap<CONFIG.DOUBLE_TAP_MS){mmT.lastTap=0;mmZoomTo(w);haptic(10);}
+ else{mmT.lastTap=now;mmLook(w);}
+}
+mm.addEventListener('touchend',e=>mmTouchEnd(e,false),{passive:false});
+mm.addEventListener('touchcancel',e=>mmTouchEnd(e,true),{passive:false});
 
 /* ================= input: keyboard ================= */
 window.addEventListener('keydown',e=>{
@@ -3403,13 +3881,17 @@ window.addEventListener('keydown',e=>{
   else if((k==='p'||k==='P')&&UI.top()==='menuOv')Game.resume();
   return;}
  if(Game.phase!=='playing'||state.over||e.ctrlKey||e.metaKey||e.altKey)return;
- if(k===' '||k.startsWith('Arrow'))e.preventDefault();
+ if(k===' '||k==='Home'||k.startsWith('Arrow'))e.preventDefault();
  keys[k]=true;keys[k.toLowerCase()]=true;
  if(k==='Escape')handleEscape();
  else if(k==='p'||k==='P'||k==='Pause')Game.togglePause();
  else if(k==='m'||k==='M')Sound.toggleMute();
  else if(k==='.')findIdle();
  else if(k===' ')centerOnHome();
+ else if(k==='+'||k==='=')cam.zoomBy(zoomStep());
+ else if(k==='-'||k==='_')cam.zoomBy(1/zoomStep());
+ else if(k==='Home')cam.reset();
+ else if(k==='z'||k==='Z')cam.toggleOverview();
 });
 window.addEventListener('keyup',e=>{keys[e.key]=false;keys[e.key.toLowerCase()]=false;});
 
@@ -3441,18 +3923,18 @@ function update(dt){
  if(C.edgeScroll&&mouse.in&&!mouse.touch&&!drag.on){
   if(mouse.x<CONFIG.EDGE_PX)sx-=1;if(mouse.x>vw-CONFIG.EDGE_PX)sx+=1;
   if(mouse.y<CONFIG.EDGE_PX)sy-=1;if(mouse.y>vh-CONFIG.EDGE_PX)sy+=1;}
- cam.x=clamp(cam.x+sx*C.scrollSpeed*dt,0,Math.max(0,WPX-vw));
- cam.y=clamp(cam.y+sy*C.scrollSpeed*dt,0,Math.max(0,WPX-vh));
- if(mouse.in){mouse.wx=mouse.x+cam.x;mouse.wy=mouse.y+cam.y;}
+ if(sx||sy)cam.moveBy(sx*C.scrollSpeed*dt,sy*C.scrollSpeed*dt);
+ cam.step(dt);
+ if(mouse.in){const w=cam.toWorld(mouse.x,mouse.y);mouse.wx=w.x;mouse.wy=w.y;}
  for(const u of[...state.units])if(ENT[u.id])updUnit(u,dt);
  for(const b of[...state.blds])if(ENT[b.id])updBld(b,dt);
  Projectiles.update(dt);
  separate(dt);
  for(const c of state.corpses)c.life-=dt;
- state.corpses=state.corpses.filter(c=>c.life>0);
+ compact(state.corpses,c=>c.life>0);
  for(const m of state.marks)m.life-=dt;
- state.marks=state.marks.filter(m=>m.life>0);
- state.sel=state.sel.filter(e=>ENT[e.id]&&(e.hp>0||e.kind==='r'));
+ compact(state.marks,m=>m.life>0);
+ compact(state.sel,e=>ENT[e.id]&&(e.hp>0||e.kind==='r'));
  visT-=dt;if(visT<=0){visT=.2;computeVis();}
  updAges(dt);
  aiTick(dt);
@@ -3472,7 +3954,7 @@ function loop(ts){
  update(Math.min(.05,realDt));
  if(Game.phase!=='playing')return;             // the game may have just ended
  Game.tick(realDt);
- render();
+ render();watchFrameCost(renderStats.ms);
 }
 
 /* ================= title panorama ================= */
@@ -3511,14 +3993,15 @@ window.addEventListener('resize',checkRotateHint);
 (function boot(){
  buildResSprites();
  const settingsLoad=Settings.load();            // also builds the team-coloured sprites and the title art
+ cam.zoomCurrent=cam.zoomTarget=Settings.data.camera.zoom;   // the last zoom, remembered between visits
  drawTopIcons();genTerrain();
  const profileLoad=Profile.load();
  slots.bind({snapshot:()=>GameSerializer.serialize(),canSave:()=>Game.canSave(),profile:()=>Profile.data,
-  meta:()=>({level:Profile.level()+1,location:regionName(cam.x+vw/2,cam.y+vh/2),thumbnail:captureThumb()})});
+  meta:()=>{const c=cam.center();return{level:Profile.level()+1,location:regionName(c.x,c.y),thumbnail:captureThumb()};}});
  slots.onStatus=onSaveStatus;
  resetWorld(Settings.data.gameplay.difficulty);
  cmdsReady=true;
- resize();updHUD();updInfo();refreshCmds(true);
+ resize();updHUD();updInfo();refreshCmds(true);onZoom();
  UI.open('title');
  // Check every save before offering Continue (nothing is loaded automatically): a 1.1 save moves into a slot,
  // damaged slots are reported, and one with a surviving backup is offered for restore.
@@ -3535,7 +4018,9 @@ window.addEventListener('resize',checkRotateHint);
   window.__aethoria={state,Game,storage,slots,Settings,Profile,GameSerializer,ENT,UI,update,render,endGame,cam,MISSIONS,ACHIEVEMENTS,CONFIG,
    UNITTYPES,BLDTYPES,TECHS,TRAINS,PROJ_TYPES,FORMATIONS,USPR,UANIM,BSPR,block,vis,Projectiles,ai,aiTick,aiArmyPlan,aiUnitFor,aiMuster,aiWave,
    makeUnit,placeBld,killEnt,queueTrain,queueResearch,completeTech,orderAttack,orderMove,formationSlots,formationMove,setFormation,
-   hitDamage,hasLOS,findPath,smoothPath,separate,rangeOf,rateOf,armorOf,cmdDefs,computeVis};
+   hitDamage,hasLOS,findPath,smoothPath,separate,rangeOf,rateOf,armorOf,cmdDefs,computeVis,
+   ZOOM,renderStats,renderMM,applyUiScale,autoUiScale,applyTouchMode,openCtxMenu,closeCtx,unitAt,resAt,selectSameType,
+   touch,mouse,drag,pickPad,mmZoomTo,showTip,hideTip,cameraPrefs,watchFrameCost,get lowRes(){return lowRes;},get isTouchUI(){return isTouchUI;},get DPR(){return DPR;},get vw(){return vw;},get vh(){return vh;}};
  requestAnimationFrame(loop);
 })();
 </script>
