@@ -15,7 +15,7 @@
  --btn:#7d6f57;--btnHover:#8f8068;--btnHi:#b9a98a;--btnLo:#3c3222;--btnText:#f0dc9a;
  --text:#f4e3ae;--accent:#ffd76a;--brand:#e8c35a;--muted:#a08a54;--soft:#d8c79c;--bad:#ff9d7a;--good:#9fe08a;
  --shadow:#241a0c;--tipBg:#241c10;--tipBorder:#8a744a;
- --parchBg:#d9c79c;--parchText:#3a2c16;--parchBorder:#7a5c30;--parchHead:#5a3c14;--parchKey:#1e1206;--parchRule:rgba(90,60,20,.3);
+ --parchBg:#d9c79c;--parchText:#3a2c16;--parchBorder:#7a5c30;--parchHead:#5a3c14;--parchKey:#1e1206;--parchRule:rgba(90,60,20,.3);--parchWarn:#9a2a10;
  --overlay:rgba(10,7,3,.92);--titleBg:#0d0a06;--hpBack:#3a1210;--hp:#3fae3f;
 }
 [data-theme="midnight"]{
@@ -24,7 +24,7 @@
  --btn:#3a4459;--btnHover:#4a5670;--btnHi:#6f7d99;--btnLo:#151a24;--btnText:#dfe8ff;
  --text:#e3e9f5;--accent:#9fd0ff;--brand:#c9d8ff;--muted:#8391ab;--soft:#b8c3d8;--bad:#ff9d8a;--good:#9fe0b0;
  --shadow:#05070c;--tipBg:#141925;--tipBorder:#56627a;
- --parchBg:#1f2533;--parchText:#dfe6f3;--parchBorder:#56627a;--parchHead:#9fd0ff;--parchKey:#ffffff;--parchRule:rgba(160,180,220,.25);
+ --parchBg:#1f2533;--parchText:#dfe6f3;--parchBorder:#56627a;--parchHead:#9fd0ff;--parchKey:#ffffff;--parchRule:rgba(160,180,220,.25);--parchWarn:#ff9d8a;
  --overlay:rgba(6,8,14,.93);--titleBg:#080a10;--hpBack:#2a1416;--hp:#3fae6f;
 }
 [data-theme="contrast"]{
@@ -33,7 +33,7 @@
  --btn:#000;--btnHover:#333;--btnHi:#ffff00;--btnLo:#ffff00;--btnText:#ffff00;
  --text:#fff;--accent:#ffff00;--brand:#ffff00;--muted:#e6e6e6;--soft:#fff;--bad:#ff8a8a;--good:#8aff8a;
  --shadow:#000;--tipBg:#000;--tipBorder:#fff;
- --parchBg:#000;--parchText:#fff;--parchBorder:#ffff00;--parchHead:#ffff00;--parchKey:#ffff00;--parchRule:rgba(255,255,255,.4);
+ --parchBg:#000;--parchText:#fff;--parchBorder:#ffff00;--parchHead:#ffff00;--parchKey:#ffff00;--parchRule:rgba(255,255,255,.4);--parchWarn:#ff8a8a;
  --overlay:rgba(0,0,0,.95);--titleBg:#000;--hpBack:#400;--hp:#0f0;
 }
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
@@ -96,6 +96,7 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
 .cbtn:active{border-color:var(--btnLo) var(--btnHi) var(--btnHi) var(--btnLo)}
 .cbtn canvas{width:100%;height:100%;image-rendering:pixelated;pointer-events:none}
 .cbtn.off{filter:grayscale(1) brightness(.6);cursor:default}
+.cbtn.on{border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent)}
 .cbtn .q{position:absolute;right:1px;bottom:1px;background:var(--shadow);color:var(--accent);font-size:10px;font-weight:700;padding:0 3px}
 #tip{position:absolute;bottom:calc(100% + 2px);left:0;display:none;background:var(--tipBg);border:1px solid var(--tipBorder);padding:6px 10px;max-width:230px;z-index:5;pointer-events:none}
 #tip .tn{font-weight:700;font-size:13px;color:var(--accent)}
@@ -165,6 +166,33 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
 #endOv .scoreLine{font-family:'Cinzel',serif;font-size:18px;margin-bottom:4px}
 .badge{display:inline-block;font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px;background:var(--parchHead);color:var(--parchBg);padding:1px 6px;margin-left:6px;vertical-align:middle}
 #confirmOv .parch{text-align:center}
+#saveSummary .warnT{color:var(--bad)}
+.parch.wide{width:min(720px,100%)}
+.parch input[type=text]{font-family:'Spectral',serif;font-size:15px;padding:5px 8px;background:var(--parchBg);color:var(--parchText);border:1px solid var(--parchBorder);user-select:text;-webkit-user-select:text}
+#cfInput{width:100%;margin:4px 0 2px}
+#ngName{width:200px}
+/* ===== save slots ===== */
+.slotList{display:flex;flex-direction:column;gap:8px}
+.slot{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;border:2px solid var(--parchRule);padding:8px 10px}
+.slot.cur{border-color:var(--parchHead)}
+.slot.bad{border-style:dashed;border-color:var(--parchWarn)}
+.slot .thumb{width:128px;height:72px;object-fit:cover;border:1px solid var(--parchBorder);background:#0d0a06;display:block}
+.slot .thumb.none{display:flex;align-items:center;justify-content:center;background:transparent;border-style:dashed;color:var(--parchRule);font-family:'Cinzel',serif;font-size:22px}
+.slot .thumb.none.warn{color:var(--parchWarn);border-color:var(--parchWarn)}
+.slot .sh{font-family:'Cinzel',serif;font-size:11px;letter-spacing:1.5px;opacity:.85}
+.slot .sn{font-family:'Cinzel',serif;font-weight:700;font-size:16px;color:var(--parchHead);overflow-wrap:anywhere;line-height:1.3}
+.slot .sn.dim{opacity:.55;font-weight:400}
+.slot .sn small{font-family:'Spectral',serif;font-weight:400;font-size:12px;color:var(--parchText)}
+.slot .sm{font-size:13px;line-height:1.5;margin-top:2px}
+.slot .acts{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 4px;align-items:center}
+.warn{color:var(--parchWarn)}
+.btn.sm{padding:4px 12px;font-size:11px}
+.lnk{background:none;border:0;padding:4px 6px;font-family:'Spectral',serif;font-size:13px;color:var(--parchText);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.lnk:hover{color:var(--parchHead)}
+.choiceList{display:flex;flex-direction:column;gap:6px;margin:8px 0 4px}
+.choice{text-align:left;padding:8px 10px;background:transparent;border:2px solid var(--parchRule);color:var(--parchText);cursor:pointer;font-family:'Spectral',serif;font-size:13px;line-height:1.35}
+.choice b{font-family:'Cinzel',serif;color:var(--parchHead)}
+.choice:hover{border-color:var(--parchHead)}
 #rotateHint{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:40;background:var(--tipBg);border:1px solid var(--tipBorder);color:var(--text);font-family:'Spectral',serif;font-size:12px;padding:6px 12px;display:none;align-items:center;gap:10px}
 .reduce-motion .toast{animation:tstatic var(--toastDur,2.6s) forwards}
 .reduce-motion #ageBanner.show{animation:abstatic 3.4s forwards}
@@ -192,6 +220,8 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
  #mission{max-width:58%}
  .achList{grid-template-columns:1fr}
  .srow input[type=range]{width:110px}
+ .slot .thumb{width:88px;height:50px}
+ #ngName{width:150px}
 }
 @media (max-height:500px) and (orientation:landscape){
  #topbar{min-height:32px;padding:2px 8px}
@@ -203,7 +233,7 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
  #info canvas{width:44px!important;height:44px!important}
  #pano{max-height:26vh;width:auto}
 }
-@media (pointer:coarse){ .btn{padding:10px 20px} .tbtn{padding:6px 10px!important} }
+@media (pointer:coarse){ .btn{padding:10px 20px} .tbtn{padding:6px 10px!important} .btn.sm{padding:8px 14px} .lnk{padding:8px} }
 </style>
 </head>
 <body>
@@ -248,7 +278,7 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
     <div class="sub">A STRATEGY GAME IN THE BROWSER</div>
     <div id="profileCard"></div>
     <div class="menuCol">
-      <button class="btn wide hidden" id="continueBtn">CONTINUE GAME</button>
+      <button class="btn wide hidden" id="continueBtn">CONTINUE</button>
       <div id="saveSummary"></div>
       <button class="btn wide" id="newGameBtn">NEW GAME</button>
       <div class="menuRow">
@@ -257,7 +287,7 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
         <button class="btn" id="achBtnT">RECORDS</button>
       </div>
       <div class="menuRow">
-        <button class="btn" id="importBtnT">IMPORT SAVE</button>
+        <button class="btn" id="slotsBtnT">SAVED GAMES</button>
         <button class="btn danger" id="resetBtnT">RESET PROGRESS</button>
       </div>
     </div>
@@ -271,6 +301,8 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
     <h2 id="ngTitle" class="center">NEW GAME</h2>
     <p class="center">Choose how fiercely the enemy fights.</p>
     <div class="diffGrid" id="diffGrid"></div>
+    <div class="srow"><label for="ngSlot">Save slot</label><div class="ctl"><select id="ngSlot"></select></div></div>
+    <div class="srow"><label for="ngName">Name</label><div class="ctl"><input type="text" id="ngName" maxlength="32" autocomplete="off" spellcheck="false"></div></div>
     <p class="note center" id="ngWarn"></p>
     <div class="foot"><button class="btn" id="ngStart">BEGIN THE CAMPAIGN</button><button class="btn" id="ngCancel">BACK</button></div>
   </div>
@@ -298,7 +330,17 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
     <ul>
       <li><span class="k">Build</span> with villagers: houses raise population, farms give steady food, storage pits accept wood / gold / stone, barracks train soldiers, towers need stone and the Tool Age.</li>
       <li><span class="k">Advance</span> at the Town Center to the Tool and Bronze Ages. <span class="k">Research</span> upgrades at the Storage Pit, Town Center and Barracks.</li>
-      <li><span class="k">Saving</span> — the game saves itself every 30 seconds and at key moments (age-ups, missions, upgrades, pausing, leaving the page). Use <span class="k">Continue</span> on the title screen to resume.</li>
+    </ul>
+    <h3>Armies</h3>
+    <ul>
+      <li><span class="k">Archery Range</span> (Tool Age) trains archers, skirmishers and composite archers. They shoot real arrows and javelins: long shots can miss, buildings block a shot, and archers step back from melee attackers while they reload.</li>
+      <li><span class="k">Stable</span> (Bronze Age) trains scout cavalry, horsemen and heavy cavalry. Riders are fast and see far, and an attack begun 3 or more tiles away is a charge that hits 50% harder.</li>
+      <li><span class="k">Counters</span> — archers beat villagers and infantry · skirmishers beat archers · cavalry run down archers · infantry hold off light cavalry · heavy cavalry crush infantry · watch towers punish light cavalry.</li>
+      <li><span class="k">Formations</span> — with soldiers selected, pick Line (archers), Square (infantry) or Wedge (cavalry). Group moves then keep that shape, with ranged units behind the front rank.</li>
+    </ul>
+    <h3>Saving</h3>
+    <ul>
+      <li><span class="k">Saving</span> — five independent save slots. <span class="k">Save Game</span> in the pause menu writes to the slot you choose; <span class="k">Ctrl+S</span> quick-saves to your current slot. Three rotating autosaves (every 30 seconds and at key moments) never touch your slots. <span class="k">Continue</span> on the title screen lets you pick which save to load.</li>
     </ul>
     <div class="foot"><button class="btn" id="helpClose">RETURN</button></div>
   </div>
@@ -311,9 +353,9 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
     <div class="menuCol">
       <button class="btn wide" id="resumeBtn">RESUME</button>
       <button class="btn wide" id="saveBtn">SAVE GAME</button>
-      <button class="btn wide" id="loadBtn">LOAD LAST SAVE</button>
+      <button class="btn wide" id="loadBtn">LOAD GAME</button>
+      <div class="menuRow"><button class="btn" id="quickSaveBtn" title="Save to your current slot (Ctrl+S)">QUICK SAVE</button><button class="btn" id="restartBtn">RESTART</button></div>
       <div class="menuRow"><button class="btn" id="settingsBtnM">SETTINGS</button><button class="btn" id="helpBtnM">HOW TO PLAY</button></div>
-      <div class="menuRow"><button class="btn" id="exportBtnM">EXPORT SAVE</button><button class="btn" id="restartBtn">RESTART</button></div>
       <button class="btn wide" id="quitBtn">SAVE &amp; QUIT TO TITLE</button>
     </div>
     <h3>Missions</h3>
@@ -329,8 +371,7 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
     <div id="settingsBody"></div>
     <h3>Save data</h3>
     <div class="menuRow" style="justify-content:flex-start">
-      <button class="btn" id="exportBtnS">EXPORT SAVE</button>
-      <button class="btn" id="importBtnS">IMPORT SAVE</button>
+      <button class="btn" id="slotsBtnS">SAVED GAMES</button>
       <button class="btn danger" id="resetBtnS">RESET PROGRESS</button>
     </div>
     <p class="note" id="storageInfo" style="margin-top:6px"></p>
@@ -356,11 +397,26 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
   </div>
 </div>
 
-<!-- ===== confirm dialog ===== -->
+<!-- ===== save / load slots ===== -->
+<div id="slotsOv" class="overlay top hidden" role="dialog" aria-modal="true" aria-labelledby="slotsTitle">
+  <div class="parch wide scaled">
+    <h2 id="slotsTitle">LOAD GAME</h2>
+    <p class="note" id="slotsHint"></p>
+    <div class="slotList" id="slotList"></div>
+    <h3>Autosaves</h3>
+    <div class="slotList" id="autoList"></div>
+    <p class="note" id="slotsInfo" style="margin-top:8px"></p>
+    <div class="foot"><button class="btn" id="slotsClose">RETURN</button></div>
+  </div>
+</div>
+
+<!-- ===== confirm / prompt / choice dialog ===== -->
 <div id="confirmOv" class="overlay top hidden" role="alertdialog" aria-modal="true" aria-labelledby="cfTitle">
   <div class="parch narrow scaled">
     <h2 id="cfTitle"></h2>
     <p id="cfText"></p>
+    <input type="text" id="cfInput" class="hidden" maxlength="32" aria-labelledby="cfTitle" autocomplete="off" spellcheck="false">
+    <div id="cfChoices" class="choiceList hidden"></div>
     <div class="foot"><button class="btn" id="cfOk">CONFIRM</button><button class="btn" id="cfCancel">CANCEL</button></div>
   </div>
 </div>
@@ -373,7 +429,7 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
 /* =====================================================================
    AETHORIA — single-file RTS.
    Module script: nothing leaks onto window (except the opt-in ?debug hook).
-   Sections: helpers · config · persistence (StorageManager, Settings, Profile)
+   Sections: helpers · config · persistence (StorageManager, SaveSlotManager, Settings, Profile)
    · audio · game data · sprites · game state · simulation · AI · rendering
    · HUD · progression (score, missions, achievements) · serializer
    · game controller · UI · input (mouse, keyboard, touch) · boot
@@ -393,6 +449,14 @@ const fmtTime=sec=>{sec=Math.max(0,Math.floor(sec));const h=sec/3600|0,m=(sec%36
  return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(s).padStart(2,'0');};
 const fmtClock=ts=>new Date(ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
 const fmtDate=ts=>new Date(ts).toLocaleString([],{dateStyle:'medium',timeStyle:'short'});
+/** Save-slot play time: "12h 34m", "34m" or "under 1m". */
+const fmtPlay=sec=>{sec=Math.max(0,Math.floor(sec));const h=sec/3600|0,m=(sec%3600)/60|0;return h?h+'h '+String(m).padStart(2,'0')+'m':m?m+'m':'under 1m';};
+/** "Today, 14:02", "Yesterday, 09:10" or a full date. */
+function fmtSaved(ts){
+ if(!ts)return'unknown';
+ const day=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(),n=Math.round((day(new Date())-day(new Date(ts)))/864e5);
+ return n===0?'Today, '+fmtClock(ts):n===1?'Yesterday, '+fmtClock(ts):fmtDate(ts);
+}
 const getPath=(o,p)=>p.split('.').reduce((a,k)=>a==null?undefined:a[k],o);
 const setPath=(o,p,v)=>{const ks=p.split('.'),last=ks.pop();let t=o;for(const k of ks){if(!isObj(t[k]))t[k]={};t=t[k];}t[last]=v;};
 function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
@@ -412,16 +476,24 @@ function unpackBits(b64,len){const s=atob(b64);if(s.length!==Math.ceil(len/8))th
 
 /* ================= config ================= */
 const CONFIG=Object.freeze({
- VERSION:'1.1.0',
- SAVE_SCHEMA:1, SETTINGS_SCHEMA:1, PROFILE_SCHEMA:1,
+ VERSION:'1.2.0',
+ SAVE_SCHEMA:2,             // game-state layout (the record's `data`); 2 = projectile manager records
+ SAVE_FORMAT:2,             // save-record layout: 2 = slot record with metadata; 1.1 saves have no format field
+ SETTINGS_SCHEMA:1, PROFILE_SCHEMA:1,
+ SLOT_COUNT:5,              // independent manual save slots
+ AUTOSAVE_COUNT:3,          // rotating autosave slots
+ SLOT_NAME_MAX:32,
  AUTOSAVE_INTERVAL:30,      // seconds of active play between automatic saves
+ AUTOSAVE_MIN_GAP:8,        // seconds: routine event autosaves wait this long after the last one, so the rotation spans real play
  SAVE_DEBOUNCE:1.2,         // seconds: bursts of state-change saves are coalesced into one write
  MILESTONE_STEP:500,        // resources gathered between "resource milestone" saves
  MAX_SAVE_BYTES:2_000_000,
+ THUMB_MAX:30_000,          // characters of the screenshot data URL kept with a save
  CAM_SPEED_DEFAULT:520, EDGE_PX:22,
  TOUCH_TAP_SLOP:10, TOUCH_LONGPRESS_MS:450, DOUBLE_TAP_MS:320,
- KEYS:Object.freeze({save:'aethoria.save.v1',backup:'aethoria.save.v1.bak',quarantine:'aethoria.save.quarantine',
-  settings:'aethoria.settings.v1',profile:'aethoria.profile.v1'})
+ KEYS:Object.freeze({settings:'aethoria.settings.v1',profile:'aethoria.profile.v1',quarantine:'aethoria.save.quarantine',
+  slot:'aethoria.slot.',autosave:'aethoria.autosave.',backup:'aethoria.backup.slot.',   // + slot number
+  legacySave:'aethoria.save.v1',legacyBackup:'aethoria.save.v1.bak'})                   // Aethoria 1.1 single save
 });
 const DIFFICULTY=Object.freeze({
  easy:  {name:'Easy',  desc:'A slow, timid enemy. Ideal for learning.',trickle:.35,attackEvery:80,firstAttack:160,armyToAttack:9,aiVillagers:9, startRes:{wood:300,food:300,gold:0,stone:0},aiBonus:{wood:0,food:0,gold:0,stone:0},score:.75},
@@ -434,34 +506,29 @@ function createMemoryStore(){const m=new Map();
  return{getItem:k=>m.has(k)?m.get(k):null,setItem:(k,v)=>{m.set(k,String(v));},removeItem:k=>{m.delete(k);}};}
 
 /**
- * All localStorage access goes through this class.
- * Every record is wrapped in an envelope {app, kind, schema, version, savedAt, checksum, data}.
- * Game saves rotate: the previous good save is kept as a backup and used to recover from damage.
+ * All localStorage access goes through this class. Settings and the profile are stored in an envelope
+ * {app, kind, schema, version, savedAt, checksum, data}; game saves are managed by SaveSlotManager on top of it.
  */
 class StorageManager{
  constructor(keys){
   this.keys=keys;
   this.persistent=true;
   this.store=this.#probe();
-  this.lastSavedAt=0;
-  this.adapter={snapshot:()=>null,canSave:()=>false,profile:()=>null};
-  this.onStatus=()=>{};                        // (status:'saving'|'saved'|'failed', reason, detail) => void
  }
- /** Wire the manager to the running game (snapshot provider, save gate, profile provider). */
- bind(adapter){Object.assign(this.adapter,adapter);}
  #probe(){
   try{const s=window.localStorage,k='__aethoria_probe__';s.setItem(k,k);s.removeItem(k);return s;}
   catch(e){this.persistent=false;console.warn('[Aethoria] localStorage unavailable; progress lasts only for this tab.',e);return createMemoryStore();}
  }
- #read(key){try{return this.store.getItem(key);}catch(e){return null;}}
- #write(key,value){
+ read(key){try{return this.store.getItem(key);}catch(e){return null;}}
+ write(key,value){
   try{this.store.setItem(key,value);return true;}
-  catch(e){                                    // usually QuotaExceededError: drop optional copies, retry once
-   try{this.store.removeItem(this.keys.quarantine);if(key!==this.keys.backup)this.store.removeItem(this.keys.backup);
-    this.store.setItem(key,value);return true;}
+  catch(e){                                    // usually QuotaExceededError: drop the quarantine copy, retry once
+   try{this.store.removeItem(this.keys.quarantine);this.store.setItem(key,value);return true;}
    catch(e2){console.warn('[Aethoria] storage write failed',e2);return false;}}
  }
- #remove(key){try{this.store.removeItem(key);}catch(e){}}
+ remove(key){try{this.store.removeItem(key);}catch(e){}}
+ /** Keep the last record that failed validation, so damaged data is never lost silently. */
+ quarantine(raw){if(raw)this.write(this.keys.quarantine,String(raw).slice(0,CONFIG.MAX_SAVE_BYTES));}
  #envelope(kind,schema,data){
   const body=JSON.stringify(data);
   return '{"app":"aethoria","kind":"'+kind+'","schema":'+schema+',"version":"'+CONFIG.VERSION+'","savedAt":'+Date.now()+
@@ -469,128 +536,347 @@ class StorageManager{
  }
  #unwrap(raw,kind){
   if(raw==null||raw==='')return{ok:false,code:'missing',error:'No data'};
-  if(typeof raw!=='string'||raw.length>CONFIG.MAX_SAVE_BYTES)return{ok:false,code:'size',error:'Save is too large or not text'};
-  let env;try{env=JSON.parse(raw);}catch(e){return{ok:false,code:'json',error:'Save is not valid JSON (it may be cut off)'};}
-  if(!isObj(env)||env.app!=='aethoria'||env.kind!==kind)return{ok:false,code:'shape',error:'This is not an Aethoria '+kind+' file'};
-  if(!isInt(env.schema)||env.data===undefined||typeof env.checksum!=='string')return{ok:false,code:'shape',error:'Save header is incomplete'};
-  if(cyrb53(JSON.stringify(env.data))!==env.checksum)return{ok:false,code:'checksum',error:'Save data is damaged (checksum mismatch)'};
+  if(typeof raw!=='string'||raw.length>CONFIG.MAX_SAVE_BYTES)return{ok:false,code:'size',error:'Data is too large or not text'};
+  let env;try{env=JSON.parse(raw);}catch(e){return{ok:false,code:'json',error:'Data is not valid JSON (it may be cut off)'};}
+  if(!isObj(env)||env.app!=='aethoria'||env.kind!==kind)return{ok:false,code:'shape',error:'This is not Aethoria '+kind+' data'};
+  if(!isInt(env.schema)||env.data===undefined||typeof env.checksum!=='string')return{ok:false,code:'shape',error:'Header is incomplete'};
+  if(cyrb53(JSON.stringify(env.data))!==env.checksum)return{ok:false,code:'checksum',error:'Data is damaged (checksum mismatch)'};
   return{ok:true,env};
  }
- #quarantine(raw){if(raw)this.#write(this.keys.quarantine,String(raw).slice(0,CONFIG.MAX_SAVE_BYTES));}
 
- /** Full validation of a raw game save: JSON, envelope, checksum, schema migration, then deep content checks. */
- validateSave(raw){
-  const u=this.#unwrap(raw,'game');if(!u.ok)return u;
-  let{schema,data}=u.env;
+ saveSettings(data){return this.write(this.keys.settings,this.#envelope('settings',CONFIG.SETTINGS_SCHEMA,data));}
+ loadSettings(){
+  const raw=this.read(this.keys.settings);
+  if(raw==null)return{data:Settings.defaults(),repaired:false,fresh:true};
+  const u=this.#unwrap(raw,'settings');
+  if(!u.ok){this.remove(this.keys.settings);return{data:Settings.defaults(),repaired:true,error:u.error};}
+  const s=Settings.sanitize(u.env.data);
+  return{data:s.value,repaired:s.repaired};
+ }
+ saveProfile(data){return data?this.write(this.keys.profile,this.#envelope('profile',CONFIG.PROFILE_SCHEMA,data)):false;}
+ loadProfile(){
+  const raw=this.read(this.keys.profile);
+  if(raw==null)return{data:Profile.defaults(),repaired:false};
+  const u=this.#unwrap(raw,'profile');
+  if(!u.ok){this.quarantine(raw);this.remove(this.keys.profile);return{data:Profile.defaults(),repaired:true,error:u.error};}
+  const s=Profile.sanitize(u.env.data);
+  return{data:s.value,repaired:s.repaired};
+ }
+ /** Every localStorage key Aethoria uses. */
+ allKeys(){
+  const K=this.keys,out=[K.settings,K.profile,K.quarantine,K.legacySave,K.legacyBackup];
+  for(let i=1;i<=CONFIG.SLOT_COUNT;i++)out.push(K.slot+i,K.backup+i);
+  for(let i=1;i<=CONFIG.AUTOSAVE_COUNT;i++)out.push(K.autosave+i);
+  return out;
+ }
+ /** Reset Progress: delete every save slot, autosave, backup and the profile. Settings are preferences and are kept. */
+ resetProgress(){for(const k of this.allKeys())if(k!==this.keys.settings)this.remove(k);}
+ /** Approximate bytes used by Aethoria keys (UTF-16 → 2 bytes per char). */
+ usage(){let n=0;for(const k of this.allKeys()){const v=this.read(k);if(v)n+=(v.length+k.length)*2;}return n;}
+}
+/** Upgrade functions keyed by the schema they upgrade FROM. Schema 1 is the first release. */
+const SAVE_MIGRATIONS={
+ 1:d=>({...d,projs:[]})        // 1 → 2: projectiles gained a type, source, owner and velocity; drop the few in flight
+};
+
+/* ================= persistence: save slots ================= */
+const newCampaignId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+/** A printable, single-line, length-limited save name ('' when nothing usable is left). */
+const cleanName=s=>typeof s==='string'?s.replace(/[\u0000-\u001f\u007f]/g,' ').replace(/\s+/g,' ').trim().slice(0,CONFIG.SLOT_NAME_MAX):'';
+const REGIONS=[['North-west Wilds','Northern Reach','North-east Wilds'],['Western Vale','Heartlands','Eastern Vale'],['South-west Wilds','Southern Reach','South-east Wilds']];
+/** Map region under a world position: the "current location" shown on a save. */
+const regionName=(wx,wy)=>{const c=v=>clamp(Math.floor(v/WPX*3),0,2);return REGIONS[c(wy)][c(wx)];};
+const THUMB_RE=/^data:image\/(png|jpeg);base64,[A-Za-z0-9+/=]+$/;
+const validThumb=t=>typeof t==='string'&&t.length<=CONFIG.THUMB_MAX&&THUMB_RE.test(t);
+
+/**
+ * Multi-slot saves: independent manual slots (ids 1–5), rotating autosaves ('auto1'–'auto3') and a safety backup
+ * per manual slot. A record is one JSON object {checksum, app, kind, format, schema, version, slotId, slotName,
+ * savedAt, playtime, level, progress, difficulty, age, score, resources, location, campaignId, linkedSlot,
+ * thumbnail, data} whose checksum covers every other field. Autosaves never write to a manual slot.
+ */
+class SaveSlotManager{
+ #cache=new Map();          // raw record -> parse result, so a record is validated once rather than on every redraw
+ #lastAutoHash='';          // game-state hash of the newest autosave: an unchanged game is not written again
+ constructor(storage){
+  this.storage=storage;this.keys=storage.keys;
+  this.adapter={snapshot:()=>null,canSave:()=>false,profile:()=>null,meta:()=>({})};
+  this.onStatus=()=>{};                        // (status:'saving'|'saved'|'failed', reason, detail, slotId) => void
+  this.active=null;                            // manual slot the running game belongs to (quick-save target), or null
+  this.activeName='';this.campaignId='';       // campaignId links a game's slot, its copies and its autosaves
+  this.lastSavedAt=0;this.lastAutoAt=0;
+  this.autoIndex=0;                            // next autosave slot to write (0-based)
+ }
+ /** Wire the manager to the running game (snapshot, save gate, profile and metadata providers). */
+ bind(adapter){Object.assign(this.adapter,adapter);}
+ isManual(id){return isInt(id)&&id>=1&&id<=CONFIG.SLOT_COUNT;}
+ isAuto(id){return typeof id==='string'&&/^auto[1-9]$/.test(id)&&+id.slice(4)<=CONFIG.AUTOSAVE_COUNT;}
+ label(id){return this.isManual(id)?'Slot '+id:'Autosave '+String(id).slice(4);}
+ keyOf(id){return this.isManual(id)?this.keys.slot+id:this.isAuto(id)?this.keys.autosave+id.slice(4):null;}
+ #backupKey(id){return this.isManual(id)?this.keys.backup+id:null;}
+ manualIds(){return Array.from({length:CONFIG.SLOT_COUNT},(_,i)=>i+1);}
+ autoIds(){return Array.from({length:CONFIG.AUTOSAVE_COUNT},(_,i)=>'auto'+(i+1));}
+
+ /**
+  * Validate a raw record: size, JSON, header, checksum, schema migration, then deep game-state checks.
+  * Also accepts the single-slot saves written and exported by Aethoria 1.1. Never throws.
+  */
+ parse(raw){
+  if(raw==null||raw==='')return{ok:false,code:'missing',error:'No save data'};
+  if(typeof raw!=='string'||raw.length>CONFIG.MAX_SAVE_BYTES)return{ok:false,code:'size',error:'Save is too large or not text'};
+  let r=this.#cache.get(raw);
+  if(!r){
+   try{r=this.#parse(raw);}catch(e){r={ok:false,code:'invalid',error:'Save could not be read ('+e.message+')'};}
+   if(this.#cache.size>=32)this.#cache.clear();
+   this.#cache.set(raw,r);}
+  return r;
+ }
+ #parse(raw){
+  let env;try{env=JSON.parse(raw);}catch(e){return{ok:false,code:'json',error:'Save is not valid JSON (it may be cut off)'};}
+  if(!isObj(env)||env.app!=='aethoria'||env.kind!=='game')return{ok:false,code:'shape',error:'This is not an Aethoria save'};
+  if(typeof env.checksum!=='string'||!isInt(env.schema)||env.data===undefined)return{ok:false,code:'shape',error:'Save header is incomplete'};
+  const legacy=env.format===undefined;         // 1.1 saves: the checksum covers only the game data
+  if(!legacy&&env.format!==CONFIG.SAVE_FORMAT)return isInt(env.format)&&env.format>CONFIG.SAVE_FORMAT?
+   {ok:false,code:'future',error:'This save was made by a newer version of Aethoria'}:{ok:false,code:'shape',error:'Unknown save format'};
+  const{checksum,...body}=env;
+  if(cyrb53(JSON.stringify(legacy?env.data:body))!==checksum)return{ok:false,code:'checksum',error:'Save data is damaged (checksum mismatch)'};
+  let{schema,data}=env;
   if(schema>CONFIG.SAVE_SCHEMA)return{ok:false,code:'future',error:'This save was made by a newer version of Aethoria'};
   try{while(schema<CONFIG.SAVE_SCHEMA){const m=SAVE_MIGRATIONS[schema];if(!m)return{ok:false,code:'schema',error:'No upgrade path for save schema '+schema};data=m(data);schema++;}}
   catch(e){return{ok:false,code:'schema',error:'Could not upgrade an older save'};}
   let errors;try{errors=GameSerializer.validate(data);}catch(e){errors=['Validator crashed: '+e.message];}
   if(errors.length)return{ok:false,code:'invalid',error:'Save content is invalid: '+errors[0],errors};
-  return{ok:true,data,savedAt:u.env.savedAt,version:u.env.version};
+  return{ok:true,data,info:this.#describe(env,data,legacy)};
  }
- /** The loadable save (primary, else backup) without modifying storage — used for the Continue summary. */
- peekSave(){
-  const a=this.validateSave(this.#read(this.keys.save));if(a.ok)return a;
-  const b=this.validateSave(this.#read(this.keys.backup));return b.ok?{...b,fromBackup:true}:null;
+ /** Metadata that follows from the game state itself: always derived, so it can never disagree with the save. */
+ #derive(p){
+  const R=p.res[0];
+  return{playtime:Math.floor(p.time),progress:Math.round(new Set(p.missions).size/MISSIONS.length*100),
+   difficulty:p.diff,age:p.age[0],score:p.score,
+   resources:{wood:Math.floor(R.wood),food:Math.floor(R.food),gold:Math.floor(R.gold),stone:Math.floor(R.stone)},
+   location:regionName(p.cam.x+400,p.cam.y+300)};
  }
- /** True when a loadable save (primary or backup) exists. Never modifies storage. */
- hasSaveData(){return this.peekSave()!==null;}
-
- /** Serialize the running game and persist it, plus the player profile. */
- saveGame(reason='manual'){
-  if(!this.adapter.canSave())return false;
-  this.onStatus('saving',reason);
-  try{
-   const snap=this.adapter.snapshot();
-   const problems=GameSerializer.validate(snap);          // never persist a state we could not load back
-   if(problems.length)throw new Error('Snapshot failed validation: '+problems[0]);
-   const raw=this.#envelope('game',CONFIG.SAVE_SCHEMA,snap);
-   if(raw.length>CONFIG.MAX_SAVE_BYTES)throw new Error('Save exceeds the size limit');
-   const prev=this.#read(this.keys.save);
-   if(prev&&prev!==raw&&this.#unwrap(prev,'game').ok)this.#write(this.keys.backup,prev);
-   if(!this.#write(this.keys.save,raw))throw new Error('Browser storage is full or blocked');
-   this.saveProfile(this.adapter.profile());
-   this.lastSavedAt=Date.now();
-   this.onStatus('saved',reason);
-   return true;
-  }catch(e){console.warn('[Aethoria] save failed:',e);this.onStatus('failed',reason,e.message);return false;}
+ /** Display metadata of a validated record. Stored descriptive fields are kept only when well-formed. */
+ #describe(env,data,legacy){
+  const at=typeof env.savedAt==='string'?Date.parse(env.savedAt):env.savedAt;
+  const loc=typeof env.location==='string'&&env.location.length<=40&&env.location.trim()?{location:env.location}:{};
+  return{...this.#derive(data),...loc,
+   slotName:cleanName(env.slotName)||(legacy?'Imported campaign':'Untitled save'),
+   savedAt:isNum(at)&&at>0?at:0,
+   level:isInt(env.level)&&env.level>=1&&env.level<=RANKS.length?env.level:null,
+   campaignId:typeof env.campaignId==='string'&&/^[a-z0-9]{1,24}$/.test(env.campaignId)?env.campaignId:'',
+   linkedSlot:this.isManual(env.linkedSlot)?env.linkedSlot:null,
+   thumbnail:validThumb(env.thumbnail)?env.thumbnail:null,
+   version:typeof env.version==='string'?env.version.slice(0,16):'',
+   legacy};
  }
- /** Background save used by timers and game events. */
- autoSave(reason='auto'){return this.adapter.canSave()?this.saveGame(reason):false;}
+ /** Assemble and checksum a record; `m` is metadata shaped like getSlotInfo(). */
+ #pack(slotId,m,data){
+  const body=JSON.stringify({app:'aethoria',kind:'game',format:CONFIG.SAVE_FORMAT,schema:CONFIG.SAVE_SCHEMA,version:CONFIG.VERSION,
+   slotId,slotName:m.slotName,savedAt:new Date(m.savedAt||Date.now()).toISOString(),playtime:m.playtime,level:m.level,
+   progress:m.progress,difficulty:m.difficulty,age:m.age,score:m.score,resources:m.resources,location:m.location,
+   campaignId:m.campaignId,linkedSlot:m.linkedSlot,thumbnail:m.thumbnail,data});
+  return'{"checksum":"'+cyrb53(body)+'",'+body.slice(1);
+ }
+ /** Metadata for a fresh save of the running game. */
+ #fresh(snap,name){
+  const m=this.adapter.meta()||{};
+  if(!this.campaignId)this.campaignId=newCampaignId();
+  return{...this.#derive(snap),...(typeof m.location==='string'?{location:m.location}:{}),
+   slotName:cleanName(name)||this.activeName||DIFFICULTY[snap.diff].name+' Campaign',savedAt:Date.now(),
+   level:isInt(m.level)?m.level:null,campaignId:this.campaignId,linkedSlot:null,thumbnail:validThumb(m.thumbnail)?m.thumbnail:null};
+ }
+ #snapshot(){
+  const snap=this.adapter.snapshot();
+  const problems=GameSerializer.validate(snap);          // never persist a state we could not load back
+  if(problems.length)throw new Error('Snapshot failed validation: '+problems[0]);
+  return snap;
+ }
  /**
-  * Load the game save. Falls back to the backup when the primary is damaged ("recovered").
-  * If nothing is loadable, damaged data is quarantined and removed so the game can start clean.
+  * The backup protocol for every write: copy the slot's current good save to its backup key, write the new
+  * record, read it back and compare, then drop the backup — or put the previous save back if anything failed.
+  * Autosaves have no backup key; the rotation keeps the other two intact.
   */
- loadGame(){
-  const primary=this.#read(this.keys.save),a=this.validateSave(primary);
-  if(a.ok)return{ok:true,data:a.data,savedAt:a.savedAt,recovered:false};
-  const backup=this.#read(this.keys.backup),b=this.validateSave(backup);
-  if(b.ok){
-   if(primary!=null)this.#quarantine(primary);
-   this.#write(this.keys.save,backup);
-   return{ok:true,data:b.data,savedAt:b.savedAt,recovered:true,error:a.error};
-  }
-  if(primary!=null||backup!=null){
-   this.#quarantine(primary??backup);this.#remove(this.keys.save);this.#remove(this.keys.backup);
-   return{ok:false,corrupted:true,error:a.code==='missing'?b.error:a.error};
-  }
-  return{ok:false,missing:true};
+ #commit(slotId,raw){
+  const S=this.storage,key=this.keyOf(slotId),bkey=this.#backupKey(slotId);
+  if(!key)return{ok:false,error:'Unknown save slot'};
+  if(raw.length>CONFIG.MAX_SAVE_BYTES)return{ok:false,error:'Save exceeds the size limit'};
+  const check=this.parse(raw);
+  if(!check.ok)return{ok:false,error:'The new save failed validation: '+check.error};
+  const prev=S.read(key),backedUp=!!bkey&&prev!=null&&this.parse(prev).ok;
+  if(backedUp&&!(S.write(bkey,prev)&&S.read(bkey)===prev))return{ok:false,error:'Not enough browser storage for a safety backup'};
+  if(S.write(key,raw)&&S.read(key)===raw){if(bkey)S.remove(bkey);return{ok:true};}
+  if(backedUp){if(S.write(key,prev)&&S.read(key)===prev)S.remove(bkey);}   // restore the previous save
+  else if(prev!=null)S.write(key,prev);else S.remove(key);
+  return{ok:false,error:'Browser storage is full or blocked'};
  }
- /** Remove the in-progress game (after victory or defeat). Profile and settings are untouched. */
- clearGame(){this.#remove(this.keys.save);this.#remove(this.keys.backup);}
- /** Reset Progress: delete saved game, backups and profile. Settings are preferences and are kept. */
- resetSave(){[this.keys.save,this.keys.backup,this.keys.quarantine,this.keys.profile].forEach(k=>this.#remove(k));this.lastSavedAt=0;return true;}
-
- saveSettings(data){return this.#write(this.keys.settings,this.#envelope('settings',CONFIG.SETTINGS_SCHEMA,data));}
- loadSettings(){
-  const raw=this.#read(this.keys.settings);
-  if(raw==null)return{data:Settings.defaults(),repaired:false,fresh:true};
-  const u=this.#unwrap(raw,'settings');
-  if(!u.ok){this.#remove(this.keys.settings);return{data:Settings.defaults(),repaired:true,error:u.error};}
-  const s=Settings.sanitize(u.env.data);
-  return{data:s.value,repaired:s.repaired};
- }
- saveProfile(data){return data?this.#write(this.keys.profile,this.#envelope('profile',CONFIG.PROFILE_SCHEMA,data)):false;}
- loadProfile(){
-  const raw=this.#read(this.keys.profile);
-  if(raw==null)return{data:Profile.defaults(),repaired:false};
-  const u=this.#unwrap(raw,'profile');
-  if(!u.ok){this.#quarantine(raw);this.#remove(this.keys.profile);return{data:Profile.defaults(),repaired:true,error:u.error};}
-  const s=Profile.sanitize(u.env.data);
-  return{data:s.value,repaired:s.repaired};
+ /** A slot now holds another campaign: the running game must no longer quick-save into it. */
+ #replaced(slotId,campaignId){if(slotId===this.active&&campaignId!==this.campaignId)this.active=null;}
+ #begin(slotId,name){
+  this.active=slotId;this.activeName=cleanName(name);this.campaignId=newCampaignId();
+  this.#lastAutoHash='';this.lastSavedAt=0;this.lastAutoAt=0;
  }
 
- /** Download the current save as a .json file. Saves first when a game is running. */
- exportSave(){
-  if(this.adapter.canSave())this.saveGame('export');
-  let raw=this.#read(this.keys.save);
-  if(!this.validateSave(raw).ok){raw=this.#read(this.keys.backup);if(!this.validateSave(raw).ok)return{ok:false,error:'There is no saved game to export yet.'};}
+ /** Start a campaign in manual slot 1–5: the freshly created game is bound to the slot and saved there. */
+ createSlot(slotId,name){
+  if(!this.isManual(slotId))return{ok:false,error:'Unknown save slot'};
+  this.#begin(slotId,name);
+  return this.saveToSlot(slotId,{reason:'new-game'});
+ }
+ /** A new game that has no slot yet: it lives in the autosaves until the player saves it. */
+ detach(name){this.#begin(null,name);}
+ /** Save the running game into manual slot 1–5. Only player actions call this (Save Game, quick save, save & quit). */
+ saveToSlot(slotId,{name='',reason='manual'}={}){
+  if(!this.isManual(slotId))return{ok:false,error:'Unknown save slot'};
+  if(!this.adapter.canSave())return{ok:false,error:'There is no game in progress to save'};
+  this.onStatus('saving',reason,'',slotId);
+  try{
+   const snap=this.#snapshot(),meta=this.#fresh(snap,name);
+   const r=this.#commit(slotId,this.#pack(slotId,meta,snap));
+   if(!r.ok)throw new Error(r.error);
+   this.active=slotId;this.activeName=meta.slotName;this.lastSavedAt=Date.now();
+   this.storage.saveProfile(this.adapter.profile());
+   this.onStatus('saved',reason,'',slotId);
+   return{ok:true};
+  }catch(e){console.warn('[Aethoria] save failed:',e);this.onStatus('failed',reason,e.message,slotId);return{ok:false,error:e.message};}
+ }
+ /** Rotating autosave (1 → 2 → 3 → 1 …). Writes autosave slots only, and skips a game that has not changed. */
+ autoSave(reason='auto'){
+  if(!this.adapter.canSave())return false;
+  const id=this.autoIds()[this.autoIndex];
+  try{
+   const snap=this.#snapshot(),hash=cyrb53(JSON.stringify(snap));
+   if(hash===this.#lastAutoHash)return true;
+   this.onStatus('saving',reason,'',id);
+   const r=this.#commit(id,this.#pack(id,{...this.#fresh(snap),linkedSlot:this.active},snap));
+   if(!r.ok)throw new Error(r.error);
+   this.autoIndex=(this.autoIndex+1)%CONFIG.AUTOSAVE_COUNT;this.#lastAutoHash=hash;this.lastAutoAt=Date.now();
+   this.storage.saveProfile(this.adapter.profile());
+   this.onStatus('saved',reason,'',id);
+   return true;
+  }catch(e){console.warn('[Aethoria] autosave failed:',e);this.onStatus('failed',reason,e.message,id);return false;}
+ }
+ /** Read and fully validate a slot or autosave. Changes nothing: Game.loadSlot() restores the returned data. */
+ loadFromSlot(slotId){
+  const key=this.keyOf(slotId);if(!key)return{ok:false,error:'Unknown save slot'};
+  const r=this.parse(this.storage.read(key));
+  return r.ok?{ok:true,slotId,data:r.data,info:r.info}:{ok:false,missing:r.code==='missing',corrupted:r.code!=='missing',error:r.error};
+ }
+ /**
+  * Make a loaded save the running session. A manual slot becomes the quick-save target; an autosave returns to
+  * the slot it came from, but only while that slot still holds the same campaign.
+  */
+ activate(loaded){
+  const inf=loaded.info;let slot=this.isManual(loaded.slotId)?loaded.slotId:inf.linkedSlot;
+  if(slot&&slot!==loaded.slotId){const cur=this.getSlotInfo(slot);if(!(cur.status==='ok'&&inf.campaignId&&cur.campaignId===inf.campaignId))slot=null;}
+  this.active=slot;this.activeName=inf.slotName;this.campaignId=inf.campaignId||newCampaignId();
+  this.#lastAutoHash='';this.lastSavedAt=this.isManual(loaded.slotId)?inf.savedAt:0;this.lastAutoAt=0;
+ }
+ /** Permanently remove a slot or autosave (and the slot's backup). */
+ deleteSlot(slotId){
+  const key=this.keyOf(slotId);if(!key)return{ok:false,error:'Unknown save slot'};
+  this.storage.remove(key);const b=this.#backupKey(slotId);if(b)this.storage.remove(b);
+  if(slotId===this.active)this.active=null;
+  if(this.isAuto(slotId))this.#lastAutoHash='';
+  return{ok:this.storage.read(key)==null};
+ }
+ /** Copy a slot or autosave into manual slot 1–5 (the target is overwritten). */
+ copySlot(source,target){
+  if(!this.isManual(target))return{ok:false,error:'Copies can only go into Slots 1–'+CONFIG.SLOT_COUNT};
+  if(source===target)return{ok:false,error:'Choose a different slot'};
+  const r=this.loadFromSlot(source);if(!r.ok)return{ok:false,error:r.missing?'That slot is empty':r.error};
+  const name=this.isManual(source)?cleanName(r.info.slotName.slice(0,CONFIG.SLOT_NAME_MAX-7)+' (copy)'):r.info.slotName;
+  const w=this.#commit(target,this.#pack(target,{...r.info,slotName:name,linkedSlot:null},r.data));
+  if(w.ok)this.#replaced(target,r.info.campaignId);
+  return w;
+ }
+ /** Rename a manual slot. */
+ renameSlot(slotId,name){
+  if(!this.isManual(slotId))return{ok:false,error:'Only Slots 1–'+CONFIG.SLOT_COUNT+' can be renamed'};
+  const nm=cleanName(name);if(!nm)return{ok:false,error:'Enter a name'};
+  const r=this.loadFromSlot(slotId);if(!r.ok)return{ok:false,error:r.error};
+  const w=this.#commit(slotId,this.#pack(slotId,{...r.info,slotName:nm},r.data));
+  if(w.ok&&slotId===this.active)this.activeName=nm;
+  return w;
+ }
+ /** Replace a damaged slot with its backup (the backup survives when a save was interrupted). */
+ restoreFromBackup(slotId){
+  const key=this.keyOf(slotId),bkey=this.#backupKey(slotId);
+  if(!bkey)return{ok:false,error:'Autosaves have no backup'};
+  const raw=this.storage.read(bkey),r=this.parse(raw);
+  if(!r.ok)return{ok:false,error:'The backup is missing or damaged too'};
+  const cur=this.storage.read(key);
+  if(cur!=null&&!this.parse(cur).ok)this.storage.quarantine(cur);
+  if(!(this.storage.write(key,raw)&&this.storage.read(key)===raw))return{ok:false,error:'Browser storage is full or blocked'};
+  this.storage.remove(bkey);
+  this.#replaced(slotId,r.info.campaignId);
+  return{ok:true,info:r.info};
+ }
+ /** One slot: {slotId, label, auto, hasBackup, status:'empty'|'ok'|'corrupted', error?, ...metadata}. */
+ getSlotInfo(slotId){
+  const key=this.keyOf(slotId),bkey=this.#backupKey(slotId);
+  const base={slotId,label:this.label(slotId),auto:this.isAuto(slotId),hasBackup:!!bkey&&this.parse(this.storage.read(bkey)).ok};
+  const r=this.parse(key&&this.storage.read(key));
+  if(r.ok)return{...base,status:'ok',...r.info};
+  if(r.code==='missing'&&!base.hasBackup)return{...base,status:'empty'};
+  return{...base,status:'corrupted',error:r.code==='missing'?'The save is missing, but its backup survived':r.error};
+ }
+ listSlots(){return{manual:this.manualIds().map(id=>this.getSlotInfo(id)),auto:this.autoIds().map(id=>this.getSlotInfo(id))};}
+ /** The most recently saved loadable slot or autosave, or null. */
+ latest(){const L=this.listSlots();return[...L.manual,...L.auto].filter(s=>s.status==='ok').sort((a,b)=>b.savedAt-a.savedAt)[0]||null;}
+ /** Download a slot or autosave as a .json file: the complete record (metadata, checksum and game state). */
+ exportSlot(slotId){
+  const key=this.keyOf(slotId),raw=key&&this.storage.read(key),r=this.parse(raw);
+  if(!r.ok)return{ok:false,error:r.code==='missing'?'That slot is empty.':'That save is damaged and cannot be exported.'};
   try{
    const blob=new Blob([raw],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
    const d=new Date(),p=n=>String(n).padStart(2,'0');
-   a.href=url;a.download='aethoria-save-'+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes())+'.json';
+   const slug=r.info.slotName.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,24)||'save';
+   a.href=url;a.download='aethoria-'+this.label(slotId).toLowerCase().replace(' ','')+'-'+slug+'-'+
+    d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes())+'.json';
    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);
    return{ok:true};
   }catch(e){return{ok:false,error:'Your browser blocked the download.'};}
  }
- /** Validate an exported .json file and install it as the current save. */
- async importSave(file){
-  if(!file)return{ok:false,error:'No file was chosen.'};
-  if(file.size>CONFIG.MAX_SAVE_BYTES)return{ok:false,error:'That file is too large to be an Aethoria save.'};
-  let raw;try{raw=(await file.text()).trim();}catch(e){return{ok:false,error:'The file could not be read.'};}
-  const v=this.validateSave(raw);
-  if(!v.ok)return{ok:false,error:v.error};
-  const prev=this.#read(this.keys.save);
-  if(prev&&this.validateSave(prev).ok)this.#write(this.keys.backup,prev);
-  if(!this.#write(this.keys.save,raw))return{ok:false,error:'Browser storage is full or blocked.'};
-  return{ok:true,data:v.data};
+ /**
+  * Install exported save data (JSON text or a parsed object) into manual slot 1–5 after full validation.
+  * Accepts files exported by this version and single-save exports from Aethoria 1.1.
+  */
+ importSlot(slotId,data){
+  if(!this.isManual(slotId))return{ok:false,error:'Saves can only be imported into Slots 1–'+CONFIG.SLOT_COUNT+'.'};
+  const raw=typeof data==='string'?data.trim():isObj(data)?JSON.stringify(data):'';
+  const r=this.parse(raw);
+  if(!r.ok)return{ok:false,error:r.code==='missing'?'The file is empty.':r.error};
+  const campaignId=r.info.campaignId||newCampaignId();
+  const w=this.#commit(slotId,this.#pack(slotId,{...r.info,campaignId,linkedSlot:null},r.data));
+  if(w.ok)this.#replaced(slotId,campaignId);
+  return w;
  }
- /** Approximate bytes used by Aethoria keys (UTF-16 → 2 bytes per char). */
- usage(){let n=0;for(const k of Object.values(this.keys)){const v=this.#read(k);if(v)n+=(v.length+k.length)*2;}return n;}
+ /** Boot: move a 1.1 save into a slot, resume the autosave rotation after the newest autosave, report damaged saves. */
+ init(){
+  const migrated=this.#migrateLegacy();
+  const L=this.listSlots();
+  let newest=-1,t=-1;L.auto.forEach((s,i)=>{if(s.status==='ok'&&s.savedAt>t){t=s.savedAt;newest=i;}});
+  this.autoIndex=(newest+1)%CONFIG.AUTOSAVE_COUNT;
+  return{migrated,damaged:[...L.manual,...L.auto].filter(s=>s.status==='corrupted')};
+ }
+ /** Aethoria 1.1 kept one save (plus a backup): move the newest good copy into the first free slot. */
+ #migrateLegacy(){
+  const S=this.storage,K=this.keys,raws=[S.read(K.legacySave),S.read(K.legacyBackup)];
+  if(raws.every(x=>x==null))return null;
+  const i=raws.findIndex(x=>this.parse(x).ok);
+  if(i<0){S.quarantine(raws[0]??raws[1]);S.remove(K.legacySave);S.remove(K.legacyBackup);return{ok:false,corrupted:true};}
+  const slot=this.manualIds().find(id=>S.read(this.keyOf(id))==null);
+  if(!slot)return{ok:false,error:'No free slot'};            // keep the old save; retried on the next start
+  const r=this.parse(raws[i]);
+  const w=this.#commit(slot,this.#pack(slot,{...r.info,slotName:DIFFICULTY[r.info.difficulty].name+' Campaign',campaignId:newCampaignId(),linkedSlot:null},r.data));
+  if(!w.ok)return{ok:false,error:w.error};
+  S.remove(K.legacySave);S.remove(K.legacyBackup);
+  return{ok:true,slotId:slot,fromBackup:i===1};
+ }
+ /** After Reset Progress: forget the session's slot binding and every cached record. */
+ reset(){this.#cache.clear();this.#begin(null,'');this.autoIndex=0;}
 }
-/** Upgrade functions keyed by the schema they upgrade FROM. Schema 1 is the first release. */
-const SAVE_MIGRATIONS={};
 
 /* ================= settings ================= */
 const pct=v=>Math.round(v*100)+'%';
@@ -757,35 +1043,62 @@ const SFX={
  age:()=>[440,554,659,880].forEach((f,i)=>setTimeout(()=>tone(f,.35,'triangle',.07),i*140)),
  bell:()=>{tone(1046,.45,'triangle',.06);tone(1568,.5,'triangle',.03);},
  achieve:()=>[784,988,1175].forEach((f,i)=>setTimeout(()=>tone(f,.25,'triangle',.05),i*90)),
- save:()=>tone(990,.07,'sine',.03,1320)
+ save:()=>tone(990,.07,'sine',.03,1320),
+ bow:()=>{nz(.04,.035,2400);tone(240,.06,'triangle',.025,150);},
+ charge:()=>{tone(170,.18,'sawtooth',.035,95);nz(.12,.07,320);}
 };
 
 /* ================= game data ================= */
 const MAP=64,TILE=32,WPX=MAP*TILE;
 const AGENAMES=['Stone Age','Tool Age','Bronze Age'];
 const AGES=[{cost:{food:500},time:40},{cost:{food:800},time:60}];
+/**
+ * Units. cls: 'villager' | 'infantry' | 'ranged' | 'cavalry' ('siege' is reserved in COUNTERS for future units).
+ * rate = seconds between attacks; range and los (vision) in tiles; size = collision radius in px; proj = projectile
+ * kind; bonus = damage multipliers by target class (overrides COUNTERS); light = light cavalry; tech = upgrade needed.
+ */
 const UNITTYPES={
- villager:{name:'Villager',desc:'Gathers resources and constructs buildings.',hp:25,atk:3,spd:47,cost:{food:50},time:14},
- clubman:{name:'Clubman',desc:'Cheap melee infantry.',hp:45,atk:7,spd:44,cost:{food:50},time:18,mil:true},
- axeman:{name:'Axeman',desc:'Stronger melee infantry.',hp:55,atk:10,spd:47,cost:{food:55,gold:20},time:20,age:1,mil:true}
+ villager:{name:'Villager',desc:'Gathers resources and constructs buildings.',hp:25,atk:3,spd:47,cost:{food:50},time:14,cls:'villager',rate:1,los:6,size:6},
+ clubman:{name:'Clubman',desc:'Cheap melee infantry. Holds its own against light cavalry.',hp:45,atk:7,spd:44,cost:{food:50},time:18,mil:true,cls:'infantry',rate:1,los:6,size:7},
+ axeman:{name:'Axeman',desc:'Heavy infantry. Strong against light cavalry.',hp:55,atk:10,spd:47,cost:{food:55,gold:20},time:20,age:1,mil:true,cls:'infantry',rate:1,los:6,size:7},
+ archer:{name:'Archer',desc:'Shoots arrows from 6 tiles. Strong against villagers and infantry; weak in melee.',hp:35,atk:5,spd:54,cost:{food:40,wood:25},time:20,age:1,mil:true,cls:'ranged',range:6,rate:1.5,proj:'arrow',los:8,size:7},
+ skirmisher:{name:'Skirmisher',desc:'Throws javelins from 5 tiles. +50% damage against archers.',hp:40,atk:4,spd:52,cost:{food:45,wood:35},time:20,age:1,mil:true,cls:'ranged',range:5,rate:1.4,proj:'javelin',bonus:{ranged:1.5},los:7,size:7},
+ composite:{name:'Composite Archer',desc:'Veteran archer: more damage and durability, 7-tile range.',hp:45,atk:8,spd:52,cost:{food:50,wood:40,gold:25},time:24,age:2,mil:true,cls:'ranged',range:7,rate:1.5,proj:'arrow',los:9,size:7},
+ scout:{name:'Scout Cavalry',desc:'Very fast light rider with 12-tile vision for scouting. Charges.',hp:65,atk:6,spd:96,cost:{food:80},time:22,age:2,mil:true,cls:'cavalry',light:true,rate:1.2,los:12,size:11},
+ horseman:{name:'Horseman',desc:'Fast light cavalry. +25% damage against ranged units. Charges.',hp:90,atk:12,spd:82,cost:{food:100,gold:40},time:26,age:2,mil:true,cls:'cavalry',light:true,rate:1.2,armor:1,bonus:{ranged:1.25},los:8,size:11},
+ heavycav:{name:'Heavy Cavalry',desc:'Armoured tank cavalry. Strong against infantry. Charges.',hp:140,atk:18,spd:68,cost:{food:120,gold:70},time:32,age:2,tech:'horsebreeding',mil:true,cls:'cavalry',rate:1.4,armor:2,bonus:{infantry:1.5},los:7,size:12}
 };
 const BLDTYPES={
  house:{name:'House',desc:'Supports 4 population.',cost:{wood:30},hp:75,w:1,h:1,time:12},
  farm:{name:'Farm',desc:'Renewable food. A villager works it after building.',cost:{wood:60},hp:40,w:2,h:2,time:10},
  storagepit:{name:'Storage Pit',desc:'Drop-off point for wood, gold and stone. Researches economy upgrades.',cost:{wood:120},hp:200,w:2,h:2,time:25},
  barracks:{name:'Barracks',desc:'Trains infantry and researches military upgrades.',cost:{wood:125},hp:350,w:2,h:2,time:30},
- tower:{name:'Watch Tower',desc:'Fires arrows at nearby enemies.',cost:{stone:150},hp:350,w:1,h:1,time:25,age:1},
+ tower:{name:'Watch Tower',desc:'Fires arrows at nearby enemies. Strong against light cavalry.',cost:{stone:150},hp:350,w:1,h:1,time:25,age:1},
+ archery:{name:'Archery Range',desc:'Trains archers, skirmishers and composite archers. Researches archery upgrades.',cost:{wood:175},hp:400,w:2,h:2,time:35,age:1},
+ stable:{name:'Stable',desc:'Trains scout cavalry, horsemen and heavy cavalry. Researches cavalry upgrades.',cost:{wood:200,food:100},hp:500,w:2,h:2,time:40,age:2},
  towncenter:{name:'Town Center',desc:'Trains villagers, accepts resources, advances ages.',cost:{wood:300},hp:600,w:2,h:2,time:40}
 };
-/** Upgrades researched at buildings. Effects are applied in completeTech(); `at` is the building that offers it. */
+/** Which building trains which units (drives the command panel, training checks and the AI). */
+const TRAINS={towncenter:['villager'],barracks:['clubman','axeman'],archery:['archer','skirmisher','composite'],stable:['scout','horseman','heavycav']};
+/**
+ * Upgrades researched at buildings. `at` is the building that offers it, `req` an upgrade needed first. `eff` boosts
+ * one unit class: atk, hp and range add; rate (reload time) and spd multiply; armor reduces each hit taken.
+ * Economy upgrades are special-cased in gatherRate() and placeBld().
+ */
 const TECHS={
  woodworking:{name:'Woodworking',desc:'Villagers chop wood 30% faster.',cost:{food:100,wood:50},time:25,at:'storagepit',age:0},
  prospecting:{name:'Prospecting',desc:'Villagers mine gold and stone 30% faster.',cost:{food:120,wood:80},time:30,at:'storagepit',age:1},
  domestication:{name:'Domestication',desc:'Every farm holds 100 more food.',cost:{food:150,wood:60},time:30,at:'towncenter',age:1},
- toolworking:{name:'Toolworking',desc:'Infantry deal +2 damage.',cost:{food:120,gold:40},time:35,at:'barracks',age:1},
- leatherarmor:{name:'Leather Armour',desc:'Infantry gain +15 hit points.',cost:{food:100,gold:30},time:30,at:'barracks',age:1}
+ toolworking:{name:'Toolworking',desc:'Infantry deal +2 damage.',cost:{food:120,gold:40},time:35,at:'barracks',age:1,eff:{cls:'infantry',atk:2}},
+ leatherarmor:{name:'Leather Armour',desc:'Infantry gain +15 hit points.',cost:{food:100,gold:30},time:30,at:'barracks',age:1,eff:{cls:'infantry',hp:15}},
+ fletching:{name:'Fletching',desc:'Ranged units +1 attack and +1 range.',cost:{food:100,wood:50},time:25,at:'archery',age:1,eff:{cls:'ranged',atk:1,range:1}},
+ bodkin:{name:'Bodkin Arrow',desc:'Ranged units +2 attack.',cost:{food:150,gold:60},time:35,at:'archery',age:2,req:'fletching',eff:{cls:'ranged',atk:2}},
+ compositebow:{name:'Composite Bow',desc:'Ranged units reload 20% faster.',cost:{wood:150,gold:80},time:35,at:'archery',age:2,eff:{cls:'ranged',rate:.8}},
+ horsebreeding:{name:'Horse Breeding',desc:'Cavalry +20 hit points. Unlocks Heavy Cavalry.',cost:{food:150,wood:100},time:30,at:'stable',age:2,eff:{cls:'cavalry',hp:20}},
+ steelhorseshoes:{name:'Steel Horseshoes',desc:'Cavalry move 15% faster.',cost:{food:100,gold:50},time:30,at:'stable',age:2,eff:{cls:'cavalry',spd:1.15}},
+ cavalryarmor:{name:'Cavalry Armour',desc:'Cavalry +2 armour: every hit they take deals 2 less.',cost:{food:120,gold:80},time:35,at:'stable',age:2,eff:{cls:'cavalry',armor:2}}
 };
-const TECH_BONUS=Object.freeze({gather:1.3,farmFood:100,atk:2,hp:15});
+const TECH_BONUS=Object.freeze({gather:1.3,farmFood:100});
 const FARM_FOOD=250;
 const POP_MAX=50;
 const TEAM_COLORS={classic:[['#2e5fc4','#1e3f8c'],['#c4362a','#8c2318']],safe:[['#2f6fd6','#1d4a96'],['#e89a1a','#a4680a']]};
@@ -795,6 +1108,32 @@ const RESN={wood:'Wood',food:'Food',gold:'Gold',stone:'Stone'};
 const RNAME={tree:'Tree',gold:'Gold Mine',stone:'Stone Mine',berry:'Berry Bush'};
 const RES_AMOUNT={tree:100,gold:400,stone:350,berry:150};
 const RES_BLOCK={tree:1,gold:2,stone:3,berry:4};
+/**
+ * Counter system: damage multiplier by attacker class → target class (a unit's `bonus` overrides its class row).
+ * `light` multiplies hits on light cavalry. The siege row is ready for future siege units.
+ */
+const COUNTERS={
+ villager:{},
+ infantry:{cavalry:1.25},                            // infantry hold off cavalry (heavy cavalry still win with armour and their bonus)
+ ranged:{villager:1.5,infantry:1.25,building:.5},    // archers shred villagers and infantry, barely scratch walls
+ cavalry:{ranged:1.15,building:.75},                 // riders run down archers
+ siege:{building:3,villager:.5,infantry:.5,ranged:.5,cavalry:.5},
+ tower:{light:1.5}                                   // watch towers punish light cavalry
+};
+const TOWER=Object.freeze({cls:'tower',atk:9,range:6,rate:2,proj:'arrow'});
+/** Projectile kinds. `future` kinds are fully supported in flight and on screen but no unit uses them yet. */
+const PROJ_TYPES={
+ arrow:{spd:330,len:9,arc:.16,w:1.5,col:'#e8dcc0',tip:'#6f757b'},
+ javelin:{spd:260,len:13,arc:.1,w:2,col:'#8a5a2c',tip:'#c9ced4'},
+ spear:{spd:230,len:16,arc:.07,w:2.5,col:'#6b4423',tip:'#a8adb3',future:true},
+ firearrow:{spd:300,len:9,arc:.16,w:1.5,col:'#ffb040',tip:'#ff5020',glow:true,future:true}
+};
+const FORMATIONS={
+ line:{name:'Line Formation',desc:'Wide, shallow ranks. Best for archers.'},
+ box:{name:'Square Formation',desc:'A compact block. Best for infantry.'},
+ wedge:{name:'Wedge Formation',desc:'An arrowhead with riders at the tip. Best for cavalry.'}
+};
+const CHARGE=Object.freeze({dist:3,spd:1.35,dmg:1.5});   // cavalry attacking a unit from 3+ tiles away charge: faster, harder first hit
 
 /* ================= progression tables ================= */
 const SCORE=Object.freeze({resource:1,villager:5,soldier:12,building:20,towncenter:60,kill:15,raze:40,boss:300,
@@ -838,12 +1177,59 @@ function makeSprite(rows,legend){const w=rows[0].length,h=rows.length,c=cv(w*2,h
  for(let y=0;y<h;y++)for(let x=0;x<w;x++){const ch=rows[y][x];if(ch==='.')continue;const col=legend[ch];if(!col)continue;
   g.fillStyle=col;g.fillRect(x*2,y*2,2,2);}return c;}
 const VIL=["....hhhh....","...hhhhhh...","...ssssss...","...sKssKs...","....ssss....","..sCCCCCCs..","..sCCCCCCs..","...CCCCCC...","...cCCCCc...","...ll..ll...","...ll..ll...","..bb....bb.."];
+const VIL_ATK=["....hhhh....","...hhhhhh...","...ssssss...","...sKssKs...","....ssss....","..sCCCCCCsss","..sCCCCCC...","...CCCCCC...","...cCCCCc...","...ll..ll...","...ll..ll...","..bb....bb.."];
 const CLB=["....hhhh......","...hhhhhh.....","...ssssss.....","...sKssKs.....","....ssss...WW.","..CCCCCCC.WWW.",".sCCCCCCCC.W..",".sCCCCCCCC.W..","..CCCCCCCCsW..","..cCCCCCC.....","...ll..ll.....","...ll..ll.....","..KK....KK...."];
+const CLB_ATK=["....hhhh......","...hhhhhh.....","...ssssss.....","...sKssKs.....","....ssss......","..CCCCCCC.....",".sCCCCCCCC....",".sCCCCCCCCsWWW","..CCCCCCCC.WWW","..cCCCCCC.....","...ll..ll.....","...ll..ll.....","..KK....KK...."];
 const AXE=["....hhhh......","...hhhhhh.....","...ssssss..gg.","...sKssKs..gg.","....ssss...W..","..CCCCCCC..W..",".sCCCCCCCC.W..",".sCCCCCCCC.W..","..CCCCCCCCsW..","..cCCCCCC.....","...ll..ll.....","...ll..ll.....","..KK....KK...."];
-const USPR=[];
+const AXE_ATK=["....hhhh......","...hhhhhh.....","...ssssss.....","...sKssKs.....","....ssss......","..CCCCCCC.....",".sCCCCCCCC..gg",".sCCCCCCCCsWgg","..CCCCCCCC....","..cCCCCCC.....","...ll..ll.....","...ll..ll.....","..KK....KK...."];
+const ARC=["....hhhh......","...hhhhhh..B..","...ssssss..SB.","...sKssKs..S.B","....ssss...S.B",".wCCCCCCsssS.B",".ACCCCCCC..S.B",".ACCCCCCC..SB.","..CCCCCCC..B..","..cCCCCCc.....","...ll..ll.....","...ll..ll.....","..bb....bb...."];
+const ARC_ATK=["....hhhh......","...hhhhhh...B.","...ssssss..S.B","...sKssKs.S..B","....ssss.S...B",".wCCCCCCSaaagB",".ACCCCCCCS...B",".ACCCCCCC.S..B","..CCCCCCC..SB.","..cCCCCCc.....","...ll..ll.....","...ll..ll.....","..bb....bb...."];
+const CMP=["....mggm......","...mggggm..Y..","...ssssss..SB.","...sKssKs..S.B","....ssss...S.B",".wCCCCCCsssS.B",".AYCCCCCC..S.B",".ACCCCCCC..SB.","..CCCCCCC..Y..","..YYYYYYY.....","...ll..ll.....","...ll..ll.....","..bb....bb...."];
+const CMP_ATK=["....mggm......","...mggggm...Y.","...ssssss..S.B","...sKssKs.S..B","....ssss.S...B",".wCCCCCCSaaagB",".AYCCCCCCS...B",".ACCCCCCC.S..B","..CCCCCCC..SY.","..YYYYYYY.....","...ll..ll.....","...ll..ll.....","..bb....bb...."];
+const SKR=["....hhhh....g.","...hhhhhh...g.","...wwwwww...W.","...sKssKs...W.","....ssss....W.","..CCCCCCssssW.","YWCCCCCCC...W.","WWCCCCCCC...W.","YWCCCCCCC...W.","..cCCCCCc...W.","...ll..ll.....","...ll..ll.....","..bb....bb...."];
+const SKR_ATK=["....hhhh......","...hhhhhh.....","...wwwwww.....","...sKssKs.....","....ssss......","..CCCCCCsWWWWg","YWCCCCCCC.....","WWCCCCCCC.....","YWCCCCCCC.....","..cCCCCCc.....","...ll..ll.....","...ll..ll.....","..bb....bb...."];
+const HORSE=["..MM.HHHllHHHHHHHHH.",".M..HHHHllHHHHHHHH..","M...HHHHHHHHHHHHHD..","....DHHHHHHHHHHHD...",".....HD..H...HD.H...",".....HD..H...HD.H...",".....H...H...H..H...",".....K...K...K..K..."];
+const HEAD=["................MH..","...............MHHH.","..............MHHKHH"];
+const BARDED=["..MM.gggCCCCgggmgg..",".M..ggggCCCCggggm...","M...mgggCCCCgggmD...","....DggggggggggD....",".....HD..H...HD.H...",".....HD..H...HD.H...",".....H...H...H..H...",".....K...K...K..K..."];
+const BARDED_HEAD=["................mg..","...............mggg.","..............mggKgg"];
+/** Rider rows 0-8 over a horse: rows 6-8 share space with the horse's head, rows 9-16 are the horse itself. */
+function rider(top,head=HEAD,body=HORSE){
+ return[...top.slice(0,6),...top.slice(6,9).map((r,i)=>[...r].map((ch,k)=>ch!=='.'?ch:head[i][k]).join('')),...body];}
+const SCT=rider([".......hhhh.........","......hhhhhh........","......ssssss........","......sKssKs........",".......ssss.........",".....sCCCCCCs.......",".....sCCCCCCs.g.....","......CCCCCC.g......","......cCCCCcW......."]);
+const SCT_ATK=rider([".......hhhh.........","......hhhhhh........","......ssssss........","......sKssKs........",".......ssss.........",".....sCCCCCCs.......",".....sCCCCCCsWggg...","......CCCCCC........","......cCCCCc........"]);
+const HRS=rider(["....g..mggm.........","....g.mggggm........","....W.ssssss........","....W.sKssKs........","....W..ssss.........","....WsCCCCCCs.......","....W.CCCCCC........","....W.CCCCCC........","....W.cCCCCc........"]);
+const HRS_ATK=rider([".......mggm.........","......mggggm........","......ssssss........","......sKssKs........",".......ssss.........",".....sCCCCCCs.......","......CCCCCCsWWWWWWg","......CCCCCC........","......cCCCCc........"]);
+const HVC=rider([".......YCC...g......","......mggggm.W......","......gggggg.W......","......gKggKg.W......","......mggggm.W......",".....gCCCCCCgW......",".....gCCCCCC.W......","......CCCCCC.W......","......cCCCCc........"],BARDED_HEAD,BARDED);
+const HVC_ATK=rider([".......YCC..........","......mggggm........","......gggggg........","......gKggKg........","......mggggm........",".....gCCCCCCg.......",".....gCCCCCCgWWWWWWg","......CCCCCC........","......cCCCCc........"],BARDED_HEAD,BARDED);
+/** Pixel art per unit: idle pose, attack pose, how many bottom rows are legs (walk/idle frames) and horse colours. */
+const UNIT_ART={
+ villager:{rows:VIL,atk:VIL_ATK,legs:3},clubman:{rows:CLB,atk:CLB_ATK,legs:3},axeman:{rows:AXE,atk:AXE_ATK,legs:3},
+ archer:{rows:ARC,atk:ARC_ATK,legs:3},skirmisher:{rows:SKR,atk:SKR_ATK,legs:3},composite:{rows:CMP,atk:CMP_ATK,legs:3},
+ scout:{rows:SCT,atk:SCT_ATK,legs:4,horse:{H:'#a8743e',D:'#6e4a24'}},
+ horseman:{rows:HRS,atk:HRS_ATK,legs:4,horse:{H:'#6e4426',D:'#4a2c14'}},
+ heavycav:{rows:HVC,atk:HVC_ATK,legs:4,horse:{H:'#4e4a46',D:'#2e2a26'}}
+};
+/** Walk frame: in the bottom `n` rows the legs step together (left half moves right, right half moves left). */
+function stepRows(rows,n){
+ const w=rows[0].length,out=rows.slice(0,rows.length-n);
+ for(const r of rows.slice(-n)){
+  const cols=[...r].map((ch,i)=>ch!=='.'?i:-1).filter(i=>i>=0),mid=cols.length?(cols[0]+cols[cols.length-1])/2:w/2,o=Array(w).fill('.');
+  [...r].forEach((ch,i)=>{if(ch==='.')return;const j=i<mid?i+1:i>mid?i-1:i;if(o[j]==='.')o[j]=ch;else if(o[i]==='.')o[i]=ch;});
+  out.push(o.join(''));}
+ return out;
+}
+/** Idle "breath" frame: everything above the legs sinks one pixel. */
+function breathRows(rows,n){return['.'.repeat(rows[0].length),...rows.slice(0,rows.length-n-1),...rows.slice(-n)];}
+function unitLegend(p,horse){
+ return{K:'#1c1206',h:'#4a2e12',s:'#d99f66',C:PCOL[p][0],c:PCOL[p][1],l:'#8a6a44',b:'#3a2a14',W:'#6b4423',g:'#a8adb3',m:'#6f757b',
+  B:'#9a6a34',S:'#e8e2c8',A:'#5c3a18',a:'#c9a46a',w:'#efe6cc',Y:'#e8c35a',M:'#2a1a0a',H:horse?horse.H:'#8a5a2c',D:horse?horse.D:'#5c3a18'};}
+const USPR=[],UANIM=[];
+/** Build every unit's frames per team: idle (2-frame breath), walk (2 frames), attack. USPR keeps the idle pose. */
 function buildUnitSprites(){
- for(let p=0;p<2;p++){const L={K:'#1c1206',h:'#4a2e12',s:'#d99f66',C:PCOL[p][0],c:PCOL[p][1],l:'#8a6a44',b:'#3a2a14',W:'#6b4423',g:'#a8adb3'};
-  USPR[p]={villager:makeSprite(VIL,L),clubman:makeSprite(CLB,L),axeman:makeSprite(AXE,L)};}
+ for(let p=0;p<2;p++){USPR[p]={};UANIM[p]={};
+  for(const[t,a]of Object.entries(UNIT_ART)){
+   const L=unitLegend(p,a.horse),base=makeSprite(a.rows,L);USPR[p][t]=base;
+   UANIM[p][t]={idle:[base,makeSprite(breathRows(a.rows,a.legs),L)],walk:[base,makeSprite(stepRows(a.rows,a.legs),L)],atk:makeSprite(a.atk,L)};}}
 }
 function makeTree(seed){const R=mulberry(seed),c=cv(28,34),g=c.getContext('2d');
  g.fillStyle='rgba(0,0,0,.2)';g.beginPath();g.ellipse(14,31,10,3.4,0,0,7);g.fill();
@@ -944,9 +1330,37 @@ function makeFarm(){const c=cv(66,58),g=c.getContext('2d');
  g.fillStyle='#6b4423';g.fillRect(0,0,66,3);g.fillRect(0,51,66,3);g.fillRect(0,0,3,54);g.fillRect(63,0,3,54);
  g.fillStyle='#4a3018';g.fillRect(0,2,66,1);g.fillRect(0,51,66,1);g.fillRect(2,0,1,54);g.fillRect(63,0,1,54);
  return c;}
+function makeArchery(main,dark){const c=cv(50,40),g=c.getContext('2d');
+ g.fillStyle='rgba(0,0,0,.22)';g.beginPath();g.ellipse(25,36,22,3.6,0,0,7);g.fill();
+ g.fillStyle='#c9ad74';g.fillRect(2,32,46,5);g.fillStyle='#8a6f42';g.fillRect(2,35,46,2);
+ g.fillStyle='#5c4326';g.fillRect(5,14,3,19);g.fillRect(42,14,3,19);g.fillRect(23,14,3,19);
+ g.fillStyle='#33210e';g.fillRect(8,18,15,14);g.fillRect(26,18,16,14);
+ for(let i=0;i<8;i++){const w=48-i*2.6,y=17-i;g.fillStyle=i%2?'#a8823e':'#b58e48';g.fillRect(Math.round(25-w/2),y,Math.round(w),1);}
+ g.fillStyle='#8a6a30';g.fillRect(16,9,18,1);
+ const target=(x,y)=>{g.fillStyle='#6b4423';g.fillRect(x-1,y+4,2,7);
+  for(const[r,col]of[[6,'#e8d8a8'],[4.5,'#c4362a'],[3,'#e8d8a8'],[1.5,'#c4362a']]){g.fillStyle=col;g.beginPath();g.arc(x,y,r,0,7);g.fill();}};
+ target(15,26);target(34,26);
+ g.fillStyle='#e8dcc0';g.fillRect(31,25,4,1);
+ g.fillStyle='#4a3418';g.fillRect(46,0,2,16);
+ g.fillStyle=main;g.fillRect(40,1,6,5);g.fillStyle=dark;g.fillRect(40,6,6,1);g.fillStyle='#e8c35a';g.fillRect(42,3,2,1);
+ return c;}
+function makeStable(main,dark){const c=cv(54,42),g=c.getContext('2d');
+ g.fillStyle='rgba(0,0,0,.22)';g.beginPath();g.ellipse(27,38,24,3.8,0,0,7);g.fill();
+ g.fillStyle='#c9ad74';g.fillRect(2,34,50,5);g.fillStyle='#8a6f42';g.fillRect(2,37,50,2);
+ g.fillStyle='#8a3c22';g.fillRect(6,16,42,19);
+ g.fillStyle='#6e2c18';for(let x=9;x<48;x+=4)g.fillRect(x,16,1,19);
+ g.fillStyle='#e8d8a8';g.fillRect(6,16,42,1);g.fillRect(6,34,42,1);
+ g.fillStyle='#2a1a0c';g.beginPath();g.moveTo(19,35);g.lineTo(19,23);g.arc(27,23,8,Math.PI,0);g.lineTo(35,35);g.closePath();g.fill();
+ g.strokeStyle='#e8d8a8';g.lineWidth=1;g.beginPath();g.moveTo(19.5,35);g.lineTo(34.5,23);g.moveTo(34.5,35);g.lineTo(19.5,23);g.stroke();
+ g.fillStyle='#7a4a24';g.fillRect(24,22,6,6);g.fillStyle='#4a2c12';g.fillRect(24,22,2,3);g.fillStyle='#1c1206';g.fillRect(28,24,1,1);
+ for(let i=0;i<11;i++){const w=52-i*3.4,y=16-i;g.fillStyle=i%2?'#6e3a24':'#7e4630';g.fillRect(Math.round(27-w/2),y,Math.round(w),1);}
+ g.fillStyle='#e8c35a';g.fillRect(38,28,9,6);g.fillStyle='#b8902a';g.fillRect(38,31,9,1);g.fillRect(42,28,1,6);
+ g.fillStyle='#4a3418';g.fillRect(8,0,2,17);
+ g.fillStyle=main;g.fillRect(10,1,7,5);g.fillStyle=dark;g.fillRect(10,6,7,1);g.fillStyle='#e8c35a';g.fillRect(12,3,2,2);
+ return c;}
 const BSPR=[];
 function buildBldSprites(){for(let p=0;p<2;p++){const[main,dark]=PCOL[p];
- BSPR[p]={house:makeHouse(),farm:makeFarm(),storagepit:makePit(main,dark),barracks:makeBarracks(main,dark),tower:makeTower(main),towncenter:makeTC(main,dark)};}}
+ BSPR[p]={house:makeHouse(),farm:makeFarm(),storagepit:makePit(main,dark),barracks:makeBarracks(main,dark),archery:makeArchery(main,dark),stable:makeStable(main,dark),tower:makeTower(main),towncenter:makeTC(main,dark)};}}
 const RSPR={};
 function buildResSprites(){RSPR.trees=[0,1,2,3,4,5].map(i=>makeTree(i*7919+3));RSPR.gold=makeMine(true);RSPR.stone=makeMine(false);RSPR.berry=makeBerry();RSPR.stump=makeStump();RSPR.rubble=makeRubble();}
 /** Switch team colours (colour-blind mode) and rebuild every sprite and icon that uses them. */
@@ -990,10 +1404,35 @@ function drawIcon(g,key){
   case 'leatherarmor':                        // shield
    g.fillStyle='#8a5a2c';g.beginPath();g.moveTo(7,6);g.lineTo(27,6);g.lineTo(27,17);g.lineTo(17,29);g.lineTo(7,17);g.closePath();g.fill();
    g.strokeStyle='#e8c35a';g.lineWidth=2;g.stroke();px('#5c3a18',[16,8,2,18]);px('#5c3a18',[9,14,16,2]);break;
-  case 'house':case 'farm':case 'storagepit':case 'barracks':case 'tower':case 'towncenter':fit(BSPR[0][key]);break;
-  case 'villager':case 'clubman':case 'axeman':fit(USPR[0][key]);break;
+  case 'fletching':                           // feathered arrow
+   g.strokeStyle='#c9a46a';g.lineWidth=2;g.beginPath();g.moveTo(9,25);g.lineTo(25,9);g.stroke();
+   px('#a8adb3',[23,6,5,5]);px('#efe6cc',[5,23,5,2],[9,26,2,5],[8,20,4,2],[12,24,2,4]);break;
+  case 'bodkin':                              // steel arrowhead
+   g.fillStyle='#c9ced4';g.beginPath();g.moveTo(17,3);g.lineTo(25,18);g.lineTo(17,14);g.lineTo(9,18);g.closePath();g.fill();
+   g.fillStyle='#8f959b';g.beginPath();g.moveTo(17,3);g.lineTo(17,14);g.lineTo(9,18);g.closePath();g.fill();
+   px('#c9a46a',[16,15,3,16]);break;
+  case 'compositebow':                        // recurve bow
+   g.strokeStyle='#9a6a34';g.lineWidth=3;g.beginPath();g.moveTo(11,4);g.quadraticCurveTo(30,17,11,30);g.stroke();
+   g.strokeStyle='#e8e2c8';g.lineWidth=1;g.beginPath();g.moveTo(11.5,5);g.lineTo(11.5,29);g.stroke();
+   px('#e8c35a',[8,2,5,3],[8,29,5,3]);break;
+  case 'horsebreeding':                       // horse head
+   g.fillStyle='#8a5a2c';g.beginPath();g.moveTo(11,31);g.lineTo(12,17);g.lineTo(17,6);g.lineTo(21,8);g.lineTo(29,20);g.lineTo(26,24);g.lineTo(19,18);g.lineTo(20,31);g.closePath();g.fill();
+   px('#2a1a0a',[12,9,4,13],[16,4,3,4]);px('#1c1206',[21,12,2,2]);break;
+  case 'steelhorseshoes':                     // horseshoe
+   g.strokeStyle='#a8adb3';g.lineWidth=5;g.beginPath();g.arc(17,15,9,Math.PI*.85,Math.PI*2.15);g.stroke();
+   px('#6f757b',[7,22,4,6],[23,22,4,6]);px('#3a3a34',[10,8,2,2],[22,8,2,2],[7,15,2,2],[25,15,2,2]);break;
+  case 'cavalryarmor':                        // barding shield with a horseshoe
+   g.fillStyle='#8f959b';g.beginPath();g.moveTo(7,6);g.lineTo(27,6);g.lineTo(27,17);g.lineTo(17,29);g.lineTo(7,17);g.closePath();g.fill();
+   g.strokeStyle='#e8c35a';g.lineWidth=2;g.stroke();
+   g.strokeStyle='#3a3a34';g.lineWidth=3;g.beginPath();g.arc(17,15,5,Math.PI*.85,Math.PI*2.15);g.stroke();break;
+  case 'line':case 'box':case 'wedge':{       // formation: dots in the shape, front at the top
+   const dots=key==='line'?[[3,10],[9,10],[15,10],[21,10],[27,10],[3,19],[9,19],[15,19],[21,19],[27,19]]:
+    key==='box'?[[7,6],[15,6],[23,6],[7,14],[15,14],[23,14],[7,22],[15,22],[23,22]]:[[15,4],[10,12],[20,12],[5,20],[15,20],[25,20]];
+   for(const[x,y]of dots)px('#1c1206',[x-1,y-1,6,6]),px('#e8e2c8',[x,y,4,4]);
+   px('#e8c35a',[15,29,4,3],[13,31,8,1]);break;}
   case 'tree':fit(RSPR.trees[0]);break;
   case 'gold':case 'stone':case 'berry':fit(RSPR[key]);break;
+  default:if(BSPR[0][key])fit(BSPR[0][key]);else if(USPR[0][key])fit(USPR[0][key]);
  }
 }
 function drawTopIcons(){
@@ -1024,14 +1463,15 @@ const state={
  pop:[0,0],popCap:[0,0],age:[0,0],advancing:[0,0],techs:[{},{}],
  units:[],blds:[],ress:[],projs:[],corpses:[],decals:[],marks:[],
  sel:[],placing:null,over:false,time:0,
- diff:'normal',score:0,stats:newStats(),missions:[],nextMilestone:CONFIG.MILESTONE_STEP,achNew:[]
+ diff:'normal',score:0,stats:newStats(),missions:[],nextMilestone:CONFIG.MILESTONE_STEP,achNew:[],
+ formation:['none','none']   // each player's group-move formation: 'none' | a FORMATIONS key
 };
 const block=new Uint8Array(MAP*MAP);
 const explored=new Uint8Array(MAP*MAP);
 const vis=new Uint8Array(MAP*MAP);
 const ENT={};let nextId=1;
 const cam={x:0,y:0};
-const ai={t:3,attackT:50};
+const ai={t:3,attackT:50,wave:null};        // wave: an attack being mustered {tid, sx, sy, t}
 const lastSfx={};
 const canAfford=(p,c)=>{for(const k in c)if(state.res[p][k]<c[k])return false;return true;};
 const pay=(p,c)=>{for(const k in c)state.res[p][k]-=c[k];};
@@ -1049,6 +1489,7 @@ function resetWorld(diff){
  state.units=[];state.blds=[];state.ress=[];state.projs=[];state.corpses=[];state.decals=[];state.marks=[];
  state.sel=[];state.placing=null;state.over=false;state.time=0;
  state.score=0;state.startHigh=0;state.stats=newStats();state.missions=[];state.nextMilestone=CONFIG.MILESTONE_STEP;state.achNew=[];
+ state.formation=['none','none'];ai.wave=null;
  block.fill(0);explored.fill(0);vis.fill(0);
  for(const k in ENT)delete ENT[k];
  nextId=1;ai.t=3;ai.attackT=D.firstAttack;
@@ -1091,12 +1532,21 @@ function forest(cx,cy,n){let x=cx,y=cy;for(let i=0;i<n;i++){
 function cluster(type,n,cx,cy){let placed=0,tries=0;
  while(placed<n&&tries++<80){const x=cx+(Math.random()*5-2|0),y=cy+(Math.random()*5-2|0);
   if(addRes(type,x,y,RES_AMOUNT[type]))placed++;}}
+/** One stat's upgrade bonus for a player's unit type: summed, or multiplied for rate and spd. */
+function techBonus(p,type,key){
+ const cls=UNITTYPES[type].cls,mul=key==='rate'||key==='spd';let v=mul?1:0;
+ for(const id in state.techs[p]){const e=TECHS[id]&&TECHS[id].eff;if(e&&e.cls===cls&&e[key]!==undefined)v=mul?v*e[key]:v+e[key];}
+ return v;
+}
 /** Hit points and attack for a new unit, including researched upgrades. */
-function unitStats(p,type){const U=UNITTYPES[type],T=state.techs[p];
- return{hp:U.hp+(U.mil&&T.leatherarmor?TECH_BONUS.hp:0),atk:U.atk+(U.mil&&T.toolworking?TECH_BONUS.atk:0)};}
+function unitStats(p,type){const U=UNITTYPES[type];return{hp:U.hp+techBonus(p,type,'hp'),atk:U.atk+techBonus(p,type,'atk')};}
+const speedOf=(p,type)=>UNITTYPES[type].spd*techBonus(p,type,'spd');
+const rangeOf=u=>(UNITTYPES[u.type].range+techBonus(u.player,u.type,'range'))*TILE;
+const rateOf=u=>UNITTYPES[u.type].rate*techBonus(u.player,u.type,'rate');
+const armorOf=t=>t.kind==='u'?(UNITTYPES[t.type].armor||0)+techBonus(t.player,t.type,'armor'):0;
 function makeUnit(p,type,x,y){
  const s=unitStats(p,type);
- const u={id:nextId++,kind:'u',type,player:p,x,y,maxhp:s.hp,hp:s.hp,atk:s.atk,spd:UNITTYPES[type].spd,
+ const u={id:nextId++,kind:'u',type,player:p,x,y,maxhp:s.hp,hp:s.hp,atk:s.atk,spd:speedOf(p,type),
   cmd:null,path:[],carry:{type:null,amt:0},lastRes:null,cd:0,anim:0,face:1,flash:0};
  state.units.push(u);ENT[u.id]=u;return u;
 }
@@ -1139,13 +1589,13 @@ function nearestFree(tx,ty,r){if(freeTile(tx,ty))return{x:tx,y:ty};
  for(let d=1;d<=r;d++)for(let y=ty-d;y<=ty+d;y++)for(let x=tx-d;x<=tx+d;x++){
   if(Math.max(Math.abs(x-tx),Math.abs(y-ty))!==d)continue;
   if(freeTile(x,y))return{x,y};}return null;}
-function findPath(sx,sy,tx,ty){
+function findPath(sx,sy,tx,ty,budget=4500){
  if(sx===tx&&sy===ty)return[];
  const closed=new Uint8Array(MAP*MAP),g=new Float32Array(MAP*MAP).fill(1e9),from=new Int32Array(MAP*MAP).fill(-1);
  const open=[];const H=(x,y)=>Math.abs(x-tx)+Math.abs(y-ty);
  const si=sy*MAP+sx;g[si]=0;open.push({i:si,f:H(sx,sy)});
  let iter=0,best=si,bestH=H(sx,sy);
- while(open.length&&iter++<4500){
+ while(open.length&&iter++<budget){
   let bi=0;for(let i=1;i<open.length;i++)if(open[i].f<open[bi].f)bi=i;
   const cur=open.splice(bi,1)[0].i;if(closed[cur])continue;closed[cur]=1;
   const cx=cur%MAP,cy=(cur/MAP)|0,h=H(cx,cy);
@@ -1168,17 +1618,41 @@ function pathTo(u,px,py){
  const sx=clamp(u.x/TILE|0,0,MAP-1),sy=clamp(u.y/TILE|0,0,MAP-1);
  let tx=clamp(px/TILE|0,0,MAP-1),ty=clamp(py/TILE|0,0,MAP-1);
  if(block[ty*MAP+tx]){const f=nearestFree(tx,ty,4);if(!f){u.path=[];return;}tx=f.x;ty=f.y;}
- u.path=findPath(sx,sy,tx,ty);
+ const cav=UNITTYPES[u.type].cls==='cavalry';     // riders search further and ride straight lines
+ u.path=findPath(sx,sy,tx,ty,cav?9000:4500);
+ if(cav)u.path=smoothPath(u.x,u.y,u.path);
+}
+/** True when a unit can walk straight from a to b: samples every 8 px, with some width so it never clips a corner. */
+function clearLine(ax,ay,bx,by){
+ const d=Math.hypot(bx-ax,by-ay)||1,n=Math.ceil(d/8),ox=-(by-ay)/d*6,oy=(bx-ax)/d*6;
+ for(let i=1;i<=n;i++){const x=ax+(bx-ax)*i/n,y=ay+(by-ay)*i/n;
+  if(!freeTile((x+ox)/TILE|0,(y+oy)/TILE|0)||!freeTile((x-ox)/TILE|0,(y-oy)/TILE|0))return false;}
+ return true;
+}
+/** Path smoothing (string pulling): skip every waypoint that can be bypassed by riding straight to a later one. */
+function smoothPath(x,y,path){
+ if(path.length<3)return path;
+ const out=[];
+ for(let i=0;i<path.length;){let j=path.length-1;while(j>i&&!clearLine(x,y,path[j].x,path[j].y))j--;
+  out.push(path[j]);x=path[j].x;y=path[j].y;i=j+1;}
+ return out;
 }
 /** Follow the current path; when it runs out short of the goal, re-plan (at most once a second). */
-function approach(u,x,y,dt){
- if(followPath(u,dt)){u.rp=(u.rp??0)-dt;if(u.rp<=0){u.rp=1;pathTo(u,x,y);}}
+/** A unit that makes no headway over 6 re-plans gives up its order and approach() returns true: the goal is unreachable. */
+function approach(u,x,y,dt,mul=1){
+ if(!followPath(u,dt,mul))return false;
+ u.rp=(u.rp??0)-dt;if(u.rp>0)return false;
+ u.rp=1;
+ u.stk=u.lx!==undefined&&Math.hypot(u.x-u.lx,u.y-u.ly)<4?(u.stk||0)+1:0;u.lx=u.x;u.ly=u.y;
+ if(u.stk>=6){u.stk=0;u.cmd=null;u.path=[];return true;}
+ pathTo(u,x,y);return false;
 }
-function followPath(u,dt){
+/** Step along the path at the unit's speed times `mul`. Returns true once the path is used up. */
+function followPath(u,dt,mul=1){
  if(!u.path.length)return true;
  const wp=u.path[0],dx=wp.x-u.x,dy=wp.y-u.y,d=Math.hypot(dx,dy);
  if(d<4){u.path.shift();return u.path.length===0;}
- const sp=u.spd*dt;u.x+=dx/d*sp;u.y+=dy/d*sp;u.anim+=dt;
+ const sp=Math.min(d,u.spd*mul*dt);u.x+=dx/d*sp;u.y+=dy/d*sp;u.anim+=dt;
  if(Math.abs(dx)>1)u.face=dx<0?-1:1;
  return false;
 }
@@ -1192,7 +1666,7 @@ function nearestDepot(u){
 }
 function nearestRes(type,x,y){
  let best=null,bd=1e9;
- for(const r of state.ress)if(r.type===type&&!r.dead){
+ for(const r of state.ress)if(r.type===type&&!r.dead&&!(r.unreach>state.time)){   // skip resources found unreachable
   const c=resCenter(r),d=dist(x,y,c.x,c.y);if(d<bd){bd=d;best=r;}}
  return best;
 }
@@ -1221,7 +1695,8 @@ function killRes(r){
 }
 
 /* ================= orders ================= */
-function orderMove(u,wx,wy){u.cmd={type:'move',x:wx,y:wy};pathTo(u,wx,wy);}
+/** Move order. `spd` (optional) caps the pace so a formation marches together. */
+function orderMove(u,wx,wy,spd){u.cmd={type:'move',x:wx,y:wy};if(spd)u.cmd.spd=spd;pathTo(u,wx,wy);}
 function orderGather(u,r){if(u.type!=='villager')return;
  u.cmd={type:'gather',tid:r.id,rtype:r.type};u.path=[];
  const c=resCenter(r);if(dist(u.x,u.y,c.x,c.y)>TILE*1.25)pathTo(u,c.x,c.y);}
@@ -1235,7 +1710,12 @@ function orderBuild(u,b){if(u.type!=='villager')return;
  if(dist(u.x,u.y,c.x,c.y)>reach)pathTo(u,c.x,c.y);}
 function orderDeposit(u,b){u.cmd={type:'deposit',tid:b.id};u.path=[];
  const c=bldCenter(b);if(dist(u.x,u.y,c.x,c.y)>TILE*1.8)pathTo(u,c.x,c.y);}
-function orderAttack(u,t){u.cmd={type:'attack',tid:t.id,px:-1,py:-1};u.path=[];}
+/** Attack order. Riders starting 3+ tiles from a unit charge it; `via` sends them round a flank waypoint first. */
+function orderAttack(u,t,via){
+ u.cmd={type:'attack',tid:t.id,px:-1,py:-1};u.path=[];
+ if(UNITTYPES[u.type].cls==='cavalry'&&t.kind==='u'&&dist(u.x,u.y,t.x,t.y)>=CHARGE.dist*TILE)u.cmd.ch=1;
+ if(via){u.cmd.wx=via.x;u.cmd.wy=via.y;pathTo(u,via.x,via.y);}
+}
 
 /* ================= unit update ================= */
 function sfxT(k,fn,min){const t=state.time;if(lastSfx[k]===undefined||t-lastSfx[k]>min){lastSfx[k]=t;fn();}}
@@ -1250,7 +1730,7 @@ function killEnt(t,cause){
  if(!ENT[t.id])return;
  if(t.kind==='u'){
   delete ENT[t.id];state.units=state.units.filter(o=>o!==t);
-  state.corpses.push({x:t.x,y:t.y,life:6});
+  state.corpses.push({x:t.x,y:t.y,life:6,t:t.type,p:t.player,f:t.face<0?-1:1});
   sfxT('die',SFX.die,.2);
   if(t.player===1){state.stats.kills++;award(SCORE.kill);unlock('firstblood');}
   else state.stats.lost++;
@@ -1273,18 +1753,72 @@ function killEnt(t,cause){
  updPop();
 }
 function damage(t,d){t.hp-=d;t.flash=.25;if(t.hp<=0)killEnt(t);}
+const aimPoint=t=>t.kind==='b'?{x:bldCenter(t).x,y:bldCenter(t).y-14}:{x:t.x,y:t.y-12};
+/** Distance from a unit to a target; buildings are measured to the edge of their footprint. */
+function edgeDist(u,t){
+ if(t.kind!=='b')return dist(u.x,u.y,t.x,t.y);
+ const x0=t.tx*TILE,y0=t.ty*TILE,x1=x0+t.w*TILE,y1=y0+t.h*TILE;
+ return Math.hypot(Math.max(x0-u.x,0,u.x-x1),Math.max(y0-u.y,0,u.y-y1));
+}
+/** Line of sight for a shot: any building in between blocks it (the target's own footprint does not). */
+function hasLOS(x0,y0,x1,y1,t){
+ const n=Math.ceil(Math.hypot(x1-x0,y1-y0)/10);
+ for(let i=1;i<n;i++){const x=(x0+(x1-x0)*i/n)/TILE|0,y=(y0+(y1-y0)*i/n)/TILE|0;
+  if(x<0||y<0||x>=MAP||y>=MAP)return false;
+  if(block[y*MAP+x]===5&&!(t.kind==='b'&&x>=t.tx&&x<t.tx+t.w&&y>=t.ty&&y<t.ty+t.h))return false;}
+ return true;
+}
+function nearestEnemy(u,r){let best=null;for(const e of state.units)if(e.player!==u.player){const d=dist(u.x,u.y,e.x,e.y);if(d<r){r=d;best=e;}}return best;}
+/** Damage multiplier of an attacker definition (unit type or TOWER) against a target. */
+function dmgMult(A,t){
+ const tc=t.kind==='b'?'building':UNITTYPES[t.type].cls,row=COUNTERS[A.cls]||{};
+ let m=A.bonus&&A.bonus[tc]!==undefined?A.bonus[tc]:row[tc]??1;
+ if(t.kind==='u'&&UNITTYPES[t.type].light&&row.light)m*=row.light;
+ return m;
+}
+/** One hit after counters and armour. Ranged units fighting at point-blank range hit at half strength. */
+function hitDamage(atk,A,src,t){
+ let d=atk*dmgMult(A,t);
+ if(A.range&&src.kind==='u'&&edgeDist(src,t)<TILE*1.2)d*=.5;
+ return Math.max(1,d-armorOf(t));
+}
+/** Simple kiting: while reloading, a ranged unit backs away from a melee enemy closing in. True while it steps back. */
+function kite(u,dt){
+ if(u.cd<.3)return false;
+ let th=null,bd=TILE*2.2;
+ for(const e of state.units){if(e.player===u.player)continue;const E=UNITTYPES[e.type];if(E.range||E.cls==='villager')continue;
+  const d=dist(u.x,u.y,e.x,e.y);if(d<bd){bd=d;th=e;}}
+ if(!th)return false;
+ const l=bd||1,sp=u.spd*dt,nx=u.x+(u.x-th.x)/l*sp,ny=u.y+(u.y-th.y)/l*sp;
+ if(nx<8||ny<8||nx>WPX-8||ny>WPX-8||!freeTile(nx/TILE|0,ny/TILE|0))return false;    // cornered: stand and shoot
+ u.x=nx;u.y=ny;u.anim+=dt;u.kiting=.15;u.face=th.x<u.x?-1:1;
+ return true;
+}
+/** Soldiers keep their footprint (riders are wider): overlapping soldiers ease apart. */
+function separate(dt){
+ const m=state.units.filter(u=>UNITTYPES[u.type].mil),k=Math.min(1,dt*6);
+ for(let i=0;i<m.length;i++){const a=m[i],ra=UNITTYPES[a.type].size;
+  for(let j=i+1;j<m.length;j++){const b=m[j],r=ra+UNITTYPES[b.type].size,dx=b.x-a.x,dy=b.y-a.y;
+   if(dx>=r||dx<=-r||dy>=r||dy<=-r)continue;
+   const d=Math.hypot(dx,dy);if(d>=r)continue;
+   const nx=d>.01?dx/d:1,ny=d>.01?dy/d:0,push=(r-d)*.5*k;
+   nudge(a,-nx*push,-ny*push);nudge(b,nx*push,ny*push);}}
+}
+function nudge(u,dx,dy){const x=u.x+dx,y=u.y+dy;if(x>8&&y>8&&x<WPX-8&&y<WPX-8&&freeTile(x/TILE|0,y/TILE|0)){u.x=x;u.y=y;}}
 function updUnit(u,dt){
  u.cd=Math.max(0,u.cd-dt);u.flash=Math.max(0,u.flash-dt);
- const c=u.cmd;
+ if(u.atkT>0)u.atkT-=dt;if(u.kiting>0)u.kiting-=dt;
+ const c=u.cmd,U=UNITTYPES[u.type];
  if(!c){
-  if(u.type!=='villager'){
-   for(const e of state.units)if(e.player!==u.player&&dist(u.x,u.y,e.x,e.y)<TILE*3.5){orderAttack(u,e);break;}
+  if(U.mil){                                   // idle soldiers engage enemies that come close (ranged: within range)
+   const e=nearestEnemy(u,U.range?rangeOf(u)+TILE:TILE*(U.cls==='cavalry'?4.5:3.5));
+   if(e)orderAttack(u,e);
   }
   return;
  }
  switch(c.type){
   case 'move':
-   if(followPath(u,dt))u.cmd=null;break;
+   if(followPath(u,dt,c.spd?Math.min(1,c.spd/u.spd):1))u.cmd=null;break;
   case 'gather':{
    let t;
    if(c.farm){
@@ -1305,7 +1839,7 @@ function updUnit(u,dt){
    }
    const tc=t.kind==='b'?bldCenter(t):resCenter(t);
    const rr=t.kind==='b'?TILE*1.5:TILE*1.25;
-   if(dist(u.x,u.y,tc.x,tc.y)>rr){approach(u,tc.x,tc.y,dt);break;}
+   if(dist(u.x,u.y,tc.x,tc.y)>rr){if(approach(u,tc.x,tc.y,dt)&&t.kind==='r')t.unreach=state.time+60;break;}
    u.face=tc.x<u.x?-1:1;u.path=[];
    const yieldType=YIELD[c.rtype]||c.rtype;
    if(u.carry.type&&u.carry.type!==yieldType&&u.carry.amt>0){
@@ -1348,7 +1882,7 @@ function updUnit(u,dt){
     if(b.type==='farm'&&u.type==='villager')orderFarm(u,b);else u.cmd=null;
     break;}
    const bc=bldCenter(b),rr=TILE*(Math.max(b.w,b.h)/2+1.2);
-   if(dist(u.x,u.y,bc.x,bc.y)>rr){approach(u,bc.x,bc.y,dt);break;}
+   if(dist(u.x,u.y,bc.x,bc.y)>rr){if(approach(u,bc.x,bc.y,dt))b.unreach=(b.unreach||0)+1;break;}
    u.face=bc.x<u.x?-1:1;u.path=[];
    b.progress=Math.min(1,b.progress+dt/BLDTYPES[b.type].time);
    b.hp=Math.max(1,b.maxhp*b.progress);
@@ -1358,14 +1892,33 @@ function updUnit(u,dt){
     if(b.type==='farm'&&u.type==='villager')orderFarm(u,b);else u.cmd=null;}
    break;}
   case 'attack':{
-   const t=ENT[c.tid];
+   let t=ENT[c.tid];
    if(!t||t.kind==='r'||t.hp<=0){u.cmd=null;break;}
+   if(c.wx!==undefined){                       // flanking riders reach their waypoint first
+    if(followPath(u,dt)||dist(u.x,u.y,c.wx,c.wy)<TILE){delete c.wx;delete c.wy;c.px=-1;}
+    break;}
+   if(u.player===1&&t.kind==='b'){              // AI soldiers turn on defenders rather than keep hitting walls
+    u.rt=(u.rt||0)-dt;
+    if(u.rt<=0){u.rt=.5;const e=nearestEnemy(u,U.range?rangeOf(u)+TILE:TILE*3);if(e){t=e;c.tid=e.id;c.px=-1;}}}
    const tc=t.kind==='b'?bldCenter(t):{x:t.x,y:t.y};
-   if(!reach(u,t)){
+   const chase=()=>{
     if(c.px<0||dist(tc.x,tc.y,c.px,c.py)>TILE){c.px=tc.x;c.py=tc.y;pathTo(u,tc.x,tc.y);}
-    approach(u,tc.x,tc.y,dt);break;}
+    approach(u,tc.x,tc.y,dt,c.ch?CHARGE.spd:1);};
+   if(U.range){                                // ranged: get in range with a clear shot, back off from melee, then shoot
+    const aim=aimPoint(t);
+    if(edgeDist(u,t)>rangeOf(u)||!hasLOS(u.x,u.y-12,aim.x,aim.y,t)){chase();break;}
+    u.path=[];
+    if(kite(u,dt))break;
+    u.face=tc.x<u.x?-1:1;
+    if(u.cd<=0){u.cd=rateOf(u);u.atkT=.25;Projectiles.fire(u,t,U,u.atk,rangeOf(u));}
+    break;}
+   if(!reach(u,t)){chase();break;}
    u.face=tc.x<u.x?-1:1;u.path=[];
-   if(u.cd<=0){u.cd=1;sfxT('hit',SFX.hit,.15);damage(t,u.atk);}
+   if(u.cd<=0){
+    u.cd=rateOf(u);u.atkT=.22;
+    let d=hitDamage(u.atk,U,u,t);
+    if(c.ch){d*=CHARGE.dmg;c.ch=0;sfxT('charge',SFX.charge,.3);}else sfxT('hit',SFX.hit,.15);
+    damage(t,d);}
    break;}
  }
 }
@@ -1393,14 +1946,14 @@ function updBld(b,dt){
  }
  if(b.type==='tower'&&b.done){
   b.cd=Math.max(0,b.cd-dt);
-  if(b.cd<=0){const c=bldCenter(b);
-   for(const e of state.units)if(e.player!==b.player&&dist(c.x,c.y,e.x,e.y)<TILE*6){
-    b.cd=2;state.projs.push({x:c.x,y:c.y-26,tid:e.id,tx:e.x,ty:e.y,spd:260,dmg:9});break;}}
+  if(b.cd<=0){const c=bldCenter(b),e=nearestEnemy({x:c.x,y:c.y,player:b.player},TOWER.range*TILE);
+   if(e){b.cd=TOWER.rate;Projectiles.fire(b,e,TOWER,TOWER.atk,TOWER.range*TILE);}}
  }
 }
 function queueTrain(b,t){
  const p=b.player,U=UNITTYPES[t];
- if(!b.done)return;
+ if(!b.done||!(TRAINS[b.type]||[]).includes(t))return;
+ if(U.age&&state.age[p]<U.age||U.tech&&!state.techs[p][U.tech])return;
  if(state.pop[p]>=state.popCap[p]){if(p===0){SFX.deny();toast('Build more houses','bad');}return;}
  if(!canAfford(p,U.cost)){if(p===0){SFX.deny();toast('Not enough resources','bad');}return;}
  pay(p,U.cost);b.queue.push(t);
@@ -1412,6 +1965,7 @@ function queueResearch(b,id){
  if(!b.done||b.type!==T.at)return;
  if(state.techs[p][id]||techQueued(p,id)){if(p===0){SFX.deny();toast('Already researched','bad');}return;}
  if(state.age[p]<T.age){if(p===0){SFX.deny();toast('Requires the '+AGENAMES[T.age],'bad');}return;}
+ if(T.req&&!state.techs[p][T.req]){if(p===0){SFX.deny();toast('Requires '+TECHS[T.req].name,'bad');}return;}
  if(!canAfford(p,T.cost)){if(p===0){SFX.deny();toast('Not enough resources','bad');}return;}
  pay(p,T.cost);b.queue.push('tech:'+id);
  if(b.qt<=0)b.qt=T.time;
@@ -1421,24 +1975,65 @@ function queueResearch(b,id){
 function completeTech(p,id){
  if(state.techs[p][id])return;
  state.techs[p][id]=true;
- for(const u of state.units)if(u.player===p&&UNITTYPES[u.type].mil){
-  if(id==='toolworking')u.atk+=TECH_BONUS.atk;
-  if(id==='leatherarmor'){u.maxhp+=TECH_BONUS.hp;u.hp+=TECH_BONUS.hp;}}
+ const e=TECHS[id].eff;
+ if(e)for(const u of state.units)if(u.player===p&&UNITTYPES[u.type].cls===e.cls){
+  if(e.atk)u.atk+=e.atk;
+  if(e.hp){u.maxhp+=e.hp;u.hp+=e.hp;}
+  if(e.spd)u.spd=speedOf(p,u.type);}           // range, reload and armour are read live from the upgrades
  if(id==='domestication')for(const b of state.blds)if(b.player===p&&b.type==='farm')b.amount+=TECH_BONUS.farmFood;
  if(p===0){
   state.stats.techs++;award(SCORE.tech);SFX.bell();toast(TECHS[id].name+' researched','good');
   unlock('scholar');requestSave('upgrade',true);refreshCmds(true);updInfo();}
 }
-function updProjs(dt){
- for(const pr of state.projs){
-  const t=ENT[pr.tid];
-  if(t&&t.hp>0&&t.kind==='u'){pr.tx=t.x;pr.ty=t.y-12;}
-  const dx=pr.tx-pr.x,dy=pr.ty-pr.y,d=Math.hypot(dx,dy);
-  if(d<10){pr.dead=true;if(t&&t.kind==='u'&&t.hp>0){sfxT('hit',()=>nz(.06,.06,500),.15);damage(t,pr.dmg);}continue;}
-  pr.x+=dx/d*pr.spd*dt;pr.y+=dy/d*pr.spd*dt;pr.ang=Math.atan2(dy,dx);
+/* ================= projectiles ================= */
+/**
+ * Projectile manager. Each arrow or javelin in flight is a record
+ * {type, sourceId, targetId, owner, x, y, vx, vy, damage, range, tx, ty, d0, miss}: position and velocity, the damage
+ * it deals on arrival (counters and armour already applied), how far it may still fly, its aim point and flight
+ * length. A true shot homes in on its target; a miss flies to a spot beside it and falls harmlessly.
+ */
+const Projectiles={
+ /** Loose a projectile at `t`. A = attacker definition (unit type or TOWER), R = its range in px. */
+ fire(src,t,A,atk,R){
+  const sx=src.kind==='b'?bldCenter(src).x:src.x,sy=src.kind==='b'?bldCenter(src).y-26:src.y-12;
+  const aim=aimPoint(t),d=Math.hypot(aim.x-sx,aim.y-sy);
+  const chance=clamp(.97-Math.max(0,d/R-.5)*.64-(t.kind==='u'&&t.path.length?.1:0),.45,.97);   // long shots and moving targets miss more
+  const miss=Math.random()>chance,type=A.proj||'arrow',P=PROJ_TYPES[type];
+  let tx=aim.x,ty=aim.y;
+  if(miss){const a=Math.random()*Math.PI*2,o=14+Math.random()*16;tx+=Math.cos(a)*o;ty+=Math.sin(a)*o*.6;}
+  const l=Math.hypot(tx-sx,ty-sy)||1;
+  state.projs.push({type,sourceId:src.id,targetId:t.id,owner:src.player,x:sx,y:sy,vx:(tx-sx)/l*P.spd,vy:(ty-sy)/l*P.spd,
+   damage:hitDamage(atk,A,src,t),range:R*1.6+64,tx,ty,d0:l,miss});
+  sfxT('bow',SFX.bow,.12);
+ },
+ update(dt){
+  for(const p of state.projs){
+   const t=ENT[p.targetId],P=PROJ_TYPES[p.type];
+   if(!p.miss&&t&&t.hp>0){const a=aimPoint(t);p.tx=a.x;p.ty=a.y;}       // target tracking
+   const dx=p.tx-p.x,dy=p.ty-p.y,d=Math.hypot(dx,dy),step=P.spd*dt;
+   if(d<=Math.max(step,6)){p.dead=true;
+    if(!p.miss&&t&&t.hp>0&&ENT[t.id]){sfxT('hit',()=>nz(.06,.06,500),.15);damage(t,p.damage);}
+    continue;}
+   p.vx=dx/d*P.spd;p.vy=dy/d*P.spd;p.x+=p.vx*dt;p.y+=p.vy*dt;p.range-=step;
+   if(p.range<=0)p.dead=true;
+  }
+  state.projs=state.projs.filter(p=>!p.dead);
+ },
+ /** Projectiles fly in an arc: drawn raised above their ground shadow and tilted along the curve. */
+ draw(){
+  for(const p of state.projs){
+   if(p.owner!==0&&!vis[clamp(p.y/TILE|0,0,MAP-1)*MAP+clamp(p.x/TILE|0,0,MAP-1)])continue;
+   const P=PROJ_TYPES[p.type],H=Math.min(48,p.d0*P.arc),k=clamp(1-Math.hypot(p.tx-p.x,p.ty-p.y)/p.d0,0,1);
+   const h=H*Math.sin(k*Math.PI),slope=H*Math.PI*Math.cos(k*Math.PI)/p.d0;
+   const sp=Math.hypot(p.vx,p.vy)||1,ux=p.vx/sp,uy=p.vy/sp,al=Math.hypot(ux,uy-slope)||1,ex=ux/al*P.len,ey=(uy-slope)/al*P.len;
+   ctx.lineWidth=P.w;
+   ctx.strokeStyle='rgba(0,0,0,.22)';ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x-ux*P.len,p.y-uy*P.len);ctx.stroke();
+   if(P.glow){ctx.fillStyle='rgba(255,150,40,.45)';ctx.beginPath();ctx.arc(p.x,p.y-h,3.5,0,7);ctx.fill();}
+   ctx.strokeStyle=P.col;ctx.beginPath();ctx.moveTo(p.x,p.y-h);ctx.lineTo(p.x-ex,p.y-h-ey);ctx.stroke();
+   ctx.fillStyle=P.tip;ctx.fillRect(Math.round(p.x)-1,Math.round(p.y-h)-1,2,2);
+  }
  }
- state.projs=state.projs.filter(p=>!p.dead);
-}
+};
 
 /* ================= age advancement ================= */
 function startAge(p){
@@ -1459,13 +2054,44 @@ function updAges(dt){
 }
 function showBanner(txt){const b=$('#ageBanner');b.textContent=txt;b.classList.remove('show');void b.offsetWidth;b.classList.add('show');}
 
+/* ================= formations ================= */
+/**
+ * Slots for a group order: the front rank stands on (x,y) facing (fx,fy). Line and Square put infantry in front and
+ * ranged units at the back; the Wedge puts riders at its tip.
+ */
+function formationSlots(units,x,y,fx,fy,kind){
+ let l=Math.hypot(fx,fy);if(l<1e-6){fx=1;fy=0;l=1;}fx/=l;fy/=l;
+ const rank=kind==='wedge'?{cavalry:0,infantry:1,villager:2,ranged:3}:{infantry:0,cavalry:1,villager:2,ranged:3};
+ const us=[...units].sort((a,b)=>rank[UNITTYPES[a.type].cls]-rank[UNITTYPES[b.type].cls]||a.id-b.id);
+ const n=us.length,gap=Math.max(...us.map(u=>UNITTYPES[u.type].size))*2+6,rows=[];
+ if(kind==='wedge')for(let i=0,k=1;i<n;i+=k,k++)rows.push(us.slice(i,i+k));
+ else{const per=kind==='box'?Math.ceil(Math.sqrt(n)):Math.min(n,Math.max(5,Math.ceil(n/2)));for(let i=0;i<n;i+=per)rows.push(us.slice(i,i+per));}
+ const out=[];
+ rows.forEach((row,r)=>row.forEach((u,j)=>{const lat=(j-(row.length-1)/2)*gap,back=r*gap;
+  out.push({u,x:clamp(x-fy*lat-fx*back,8,WPX-8),y:clamp(y+fx*lat-fy*back,8,WPX-8)});}));
+ return out;
+}
+/** Move a group into formation; everyone marches at the slowest member's pace. */
+function formationMove(units,x,y,fx,fy,kind){
+ const spd=Math.min(...units.map(u=>u.spd));
+ for(const s of formationSlots(units,x,y,fx,fy,kind))orderMove(s.u,s.x,s.y,units.length>1?spd:0);
+}
+const groupCenter=us=>({x:us.reduce((a,u)=>a+u.x,0)/us.length,y:us.reduce((a,u)=>a+u.y,0)/us.length});
+
 /* ================= AI ================= */
+/** AI building spot: a free footprint with a free one-tile margin, so its town never walls off paths or resources. */
+function aiSpot(t,tx,ty){
+ if(!canPlace(t,tx,ty))return false;
+ const B=BLDTYPES[t];
+ for(let y=ty-1;y<=ty+B.h;y++)for(let x=tx-1;x<=tx+B.w;x++)if(x>=0&&y>=0&&x<MAP&&y<MAP&&block[y*MAP+x])return false;
+ return!state.blds.some(b=>b.type==='farm'&&tx-1<b.tx+b.w&&tx+B.w+1>b.tx&&ty-1<b.ty+b.h&&ty+B.h+1>b.ty);
+}
 function aiPlace(t,cx,cy){
  const B=BLDTYPES[t];
  for(let r=2;r<13;r++)for(let i=0;i<14;i++){
   const a=Math.random()*7;const tx=Math.round(cx+Math.cos(a)*r-B.w/2),ty=Math.round(cy+Math.sin(a)*r-B.h/2);
-  if(canPlace(t,tx,ty)){pay(1,B.cost);const b=placeBld(1,t,tx,ty);
-   const vils=state.units.filter(u=>u.player===1&&u.type==='villager').slice(0,2);
+  if(aiSpot(t,tx,ty)){pay(1,B.cost);const b=placeBld(1,t,tx,ty);
+   const vils=state.units.filter(u=>u.player===1&&u.type==='villager'&&!(u.cmd&&u.cmd.type==='build')).slice(0,2);
    for(const v of vils)orderBuild(v,b);return b;}}
  return null;
 }
@@ -1497,26 +2123,88 @@ function aiTick(dt){
  const tc=myB.find(b=>b.type==='towncenter');if(!tc)return;
  const tcc=bldCenter(tc);
  if(tc.queue.length===0&&vils.length<D.aiVillagers&&canAfford(p,UNITTYPES.villager.cost)&&state.pop[p]<state.popCap[p])queueTrain(tc,'villager');
- if(state.popCap[p]-state.pop[p]<=1&&state.popCap[p]<POP_MAX&&canAfford(p,BLDTYPES.house.cost))aiPlace('house',tc.tx,tc.ty);
+ if(state.popCap[p]-state.pop[p]<=1&&state.popCap[p]<POP_MAX&&canAfford(p,BLDTYPES.house.cost)&&
+  !state.blds.some(b=>b.player===p&&b.type==='house'&&!b.done))aiPlace('house',tc.tx,tc.ty);   // one house at a time
  if(state.age[p]===0&&vils.length>=8&&canAfford(p,AGES[0].cost))startAge(p);
  if(state.age[p]===1&&vils.length>=10&&canAfford(p,AGES[1].cost))startAge(p);
- if(state.age[p]>=1&&!state.blds.some(b=>b.player===p&&b.type==='barracks')&&canAfford(p,BLDTYPES.barracks.cost))aiPlace('barracks',tc.tx,tc.ty);
+ const has=t=>state.blds.some(b=>b.player===p&&b.type===t);
+ if(state.age[p]>=1&&!has('barracks')){if(canAfford(p,BLDTYPES.barracks.cost))aiPlace('barracks',tc.tx,tc.ty);}
+ else if(state.age[p]>=1&&!has('archery')){if(canAfford(p,BLDTYPES.archery.cost))aiPlace('archery',tc.tx,tc.ty);}
+ else if(state.age[p]>=2&&!has('stable')&&canAfford(p,BLDTYPES.stable.cost))aiPlace('stable',tc.tx,tc.ty);
  if(state.age[p]>=1&&state.blds.filter(b=>b.player===1&&b.type==='tower').length<2&&canAfford(p,BLDTYPES.tower.cost))aiPlace('tower',tc.tx,tc.ty);
- const bar=myB.find(b=>b.type==='barracks');
- if(bar&&bar.queue.length<2&&myU.filter(u=>u.type!=='villager').length<14){
-  const t=state.age[p]>=1&&R.gold>=20?'axeman':'clubman';
-  if(canAfford(p,UNITTYPES[t].cost))queueTrain(bar,t);}
+ const army=myU.filter(u=>UNITTYPES[u.type].mil);
+ if(army.length<14)aiTrain(myB,army);
+ if(army.length>=6){aiResearch(myB,'fletching');aiResearch(myB,'horsebreeding');}
+ for(const b of[...state.blds])if(b.player===p&&!b.done&&b.unreach>=2){   // a site nobody can reach: cancel it, refund the cost
+  const C=BLDTYPES[b.type].cost;for(const k in C)R[k]+=C[k];killEnt(b,'depleted');}
+ const site=state.blds.find(b=>b.player===p&&!b.done&&!vils.some(v=>v.cmd&&v.cmd.type==='build'&&v.cmd.bid===b.id));
+ if(site){                                     // never leave a construction site abandoned: send the nearest gatherer
+  const c=bldCenter(site),free=vils.filter(v=>!v.cmd||v.cmd.type==='gather').sort((a,b)=>dist(a.x,a.y,c.x,c.y)-dist(b.x,b.y,c.x,c.y));
+  if(free.length)orderBuild(free[0],site);}
  for(const v of vils)if(!v.cmd)assignAI(v);
- const army=myU.filter(u=>u.type!=='villager');
  const threat=state.units.find(u=>u.player===0&&dist(u.x,u.y,tcc.x,tcc.y)<TILE*9);
- if(threat){for(const s of army)if(!s.cmd||s.cmd.type!=='attack')orderAttack(s,threat);return;}
+ if(threat){ai.wave=null;for(const s of army)if(!s.cmd||s.cmd.type!=='attack')orderAttack(s,threat);return;}
+ if(ai.wave){aiWave(army);return;}
  ai.attackT-=1.2;
- if(army.length>=D.armyToAttack&&ai.attackT<=0){
-  ai.attackT=D.attackEvery;
-  const targets=state.blds.filter(b=>b.player===0);
-  if(targets.length){const tgt=targets[Math.random()*targets.length|0];
-   for(const s of army)orderAttack(s,tgt);
-   toast('The enemy is attacking!','bad');SFX.bell();}}
+ if(army.length>=D.armyToAttack&&ai.attackT<=0){ai.attackT=D.attackEvery;aiMuster(army,tcc);}
+}
+const CLASS_HOME={infantry:'barracks',ranged:'archery',cavalry:'stable'};
+/** Both armies by class, and the class shares the AI wants: a base mix shifted to counter the player's army. */
+function aiArmyPlan(p){
+ const mine={infantry:0,ranged:0,cavalry:0},theirs={infantry:0,ranged:0,cavalry:0};
+ for(const u of state.units){const c=UNITTYPES[u.type].cls;if(c in mine)(u.player===p?mine:theirs)[c]++;}
+ const n=theirs.infantry+theirs.ranged+theirs.cavalry||1;
+ return{mine,theirs,n,want:{
+  infantry:.45+theirs.cavalry/n*.4,                              // infantry hold off light cavalry
+  ranged:state.age[p]>=1?.35+theirs.infantry/n*.3:0,             // archers shred infantry
+  cavalry:state.age[p]>=2?.25+theirs.ranged/n*.45:0}};           // riders run down archers
+}
+/** The affordable unit of a class that best answers the player's army. */
+function aiUnitFor(cls,plan){
+ const p=1,a=state.age[p],th=plan.theirs,n=plan.n;
+ const ok=t=>{const U=UNITTYPES[t];return(!U.age||a>=U.age)&&(!U.tech||state.techs[p][U.tech])&&canAfford(p,U.cost);};
+ const list=cls==='infantry'?['axeman','clubman']:
+  cls==='ranged'?(th.ranged/n>.3?['skirmisher','archer']:['composite','archer','skirmisher']):
+  th.infantry/n>.35?['heavycav','horseman','scout']:['horseman','scout'];
+ return list.find(ok)||null;
+}
+/** Queue one soldier from the class the army is furthest short of. */
+function aiTrain(myB,army){
+ const plan=aiArmyPlan(1),tot=army.length||1,W=plan.want,sum=W.infantry+W.ranged+W.cavalry;
+ const need=c=>W[c]/sum-plan.mine[c]/tot;
+ for(const cls of['infantry','ranged','cavalry'].filter(c=>W[c]>0).sort((a,b)=>need(b)-need(a))){
+  const b=myB.find(x=>x.type===CLASS_HOME[cls]&&!x.queue.length);if(!b)continue;
+  const t=aiUnitFor(cls,plan);if(t){queueTrain(b,t);return;}}
+}
+function aiResearch(myB,id){
+ const T=TECHS[id],p=1,b=myB.find(x=>x.type===T.at&&!x.queue.length);
+ if(b&&!state.techs[p][id]&&!techQueued(p,id)&&state.age[p]>=T.age&&(!T.req||state.techs[p][T.req])&&canAfford(p,T.cost))queueResearch(b,id);
+}
+/** Attack, step 1: march to a staging point short of a target in a square: infantry in front, ranged units behind. */
+function aiMuster(army,home){
+ const targets=state.blds.filter(b=>b.player===0);if(!targets.length)return;
+ const tgt=targets[Math.random()*targets.length|0],tc=bldCenter(tgt);
+ let dx=home.x-tc.x,dy=home.y-tc.y;const l=Math.hypot(dx,dy)||1;dx/=l;dy/=l;
+ const sx=clamp(tc.x+dx*TILE*9,TILE,WPX-TILE),sy=clamp(tc.y+dy*TILE*9,TILE,WPX-TILE);
+ formationMove(army,sx,sy,-dx,-dy,'box');
+ ai.wave={tid:tgt.id,sx,sy,t:25};
+ toast('The enemy army is on the march!','bad');SFX.bell();
+}
+/** Attack, step 2 (once gathered, or after 25 s): infantry storm the target, archers shoot from behind, riders flank. */
+function aiWave(army){
+ const w=ai.wave,tgt=ENT[w.tid];
+ w.t-=1.2;
+ if(!tgt){ai.wave=null;return;}
+ if(army.filter(u=>!u.cmd).length<army.length*.7&&w.t>0)return;
+ ai.wave=null;
+ const tc=bldCenter(tgt),fx=tc.x-w.sx,fy=tc.y-w.sy,l=Math.hypot(fx,fy)||1,side=Math.random()<.5?1:-1;
+ const soft=state.units.filter(u=>u.player===0&&(UNITTYPES[u.type].cls==='ranged'||u.type==='villager')&&dist(u.x,u.y,tc.x,tc.y)<TILE*10);
+ for(const s of army){
+  if(UNITTYPES[s.type].cls!=='cavalry'){orderAttack(s,tgt);continue;}
+  const prey=soft.length?soft[Math.random()*soft.length|0]:tgt;        // riders swing wide and hit archers and villagers
+  orderAttack(s,prey,{x:clamp(tc.x-fy/l*side*TILE*6-fx/l*TILE*2,TILE,WPX-TILE),y:clamp(tc.y+fx/l*side*TILE*6-fy/l*TILE*2,TILE,WPX-TILE)});
+ }
+ toast('The enemy is attacking!','bad');
 }
 
 /* ================= fog ================= */
@@ -1528,7 +2216,7 @@ function reveal(cx,cy,r){
 }
 function computeVis(){
  vis.fill(0);
- for(const u of state.units)if(u.player===0)reveal(u.x/TILE|0,u.y/TILE|0,6);
+ for(const u of state.units)if(u.player===0)reveal(u.x/TILE|0,u.y/TILE|0,UNITTYPES[u.type].los);
  for(const b of state.blds)if(b.player===0)reveal((b.tx+b.w/2)|0,(b.ty+b.h/2)|0,b.type==='tower'?9:7);
 }
 const fogDim=(()=>{const c=cv(8,8),g=c.getContext('2d');g.fillStyle='rgba(6,5,2,0.5)';
@@ -1545,17 +2233,22 @@ function resize(){
 }
 window.addEventListener('resize',resize);
 window.addEventListener('orientationchange',()=>setTimeout(resize,250));
+/** Draw a unit with its animation: attack pose, two-frame walk, or a slow idle breath. */
 function drawUnit(u){
- const spr=USPR[u.player][u.type];if(!spr)return;
- const bob=(u.cmd&&u.cmd.type!=='deposit'&&u.path.length)?Math.abs(Math.sin(u.anim*9))*2:0;
- ctx.fillStyle='rgba(0,0,0,.25)';ctx.beginPath();ctx.ellipse(u.x,u.y+1,8,3,0,0,7);ctx.fill();
+ const A=UANIM[u.player][u.type];if(!A)return;
+ const moving=u.path.length>0||u.kiting>0,S=UNITTYPES[u.type].size;
+ const spr=u.atkT>0?A.atk:moving?A.walk[(u.anim*7|0)%2]:A.idle[((state.time+u.id*.37)/.7|0)%2];
+ const bob=(moving&&u.cmd&&u.cmd.type!=='deposit')?Math.abs(Math.sin(u.anim*9))*2:0;
+ if(u.cmd&&u.cmd.ch&&moving){ctx.fillStyle='rgba(200,170,110,.45)';            // charge dust
+  for(let i=1;i<=3;i++){ctx.beginPath();ctx.arc(u.x-u.face*(S+i*5),u.y-1-(i%2)*2,2+i,0,7);ctx.fill();}}
+ ctx.fillStyle='rgba(0,0,0,.25)';ctx.beginPath();ctx.ellipse(u.x,u.y+1,S+1,3,0,0,7);ctx.fill();
  ctx.save();ctx.translate(Math.round(u.x),Math.round(u.y-bob));
  if(u.face<0)ctx.scale(-1,1);
  ctx.drawImage(spr,-spr.width/2,-spr.height+6);
  ctx.restore();
  if(u.flash>0){ctx.globalAlpha=.5;ctx.fillStyle='#ff4020';ctx.fillRect(u.x-8,u.y-spr.height-2,16,3);ctx.globalAlpha=1;}
  if(state.sel.includes(u)||u.hp<u.maxhp){
-  const w=24,p=clamp(u.hp/u.maxhp,0,1);
+  const w=S>9?32:24,p=clamp(u.hp/u.maxhp,0,1);
   ctx.fillStyle='#241a0c';ctx.fillRect(u.x-w/2,u.y-spr.height-2,w,4);
   ctx.fillStyle=p>.5?'#3fae3f':p>.25?'#e0a020':'#c03020';ctx.fillRect(u.x-w/2+1,u.y-spr.height-1,(w-2)*p,2);}
 }
@@ -1586,6 +2279,17 @@ function drawBld(b){
    ctx.fillStyle='#241a0c';ctx.fillRect(cx-18,bot+9,36,5);
    ctx.fillStyle=p>.5?'#3fae3f':'#c03020';ctx.fillRect(cx-17,bot+10,34*p,3);}}
 }
+/** Death animation: the unit topples (riders only lurch), lies there and fades out. */
+function drawCorpse(c){
+ ctx.globalAlpha=Math.min(1,c.life/2);ctx.fillStyle='#5a3020';
+ ctx.beginPath();ctx.ellipse(c.x,c.y,9,4,0,0,7);ctx.fill();
+ const spr=c.t&&USPR[c.p][c.t];
+ if(spr&&(c.p===0||vis[clamp(c.y/TILE|0,0,MAP-1)*MAP+clamp(c.x/TILE|0,0,MAP-1)])){
+  const rot=(UNITTYPES[c.t].cls==='cavalry'?.5:1.45)*Math.min(1,(6-c.life)/.35);
+  ctx.globalAlpha*=.9;ctx.save();ctx.translate(Math.round(c.x),Math.round(c.y+4));ctx.scale(c.f,1);ctx.rotate(-rot);
+  ctx.drawImage(spr,-spr.width/2,-spr.height+2);ctx.restore();}
+ ctx.globalAlpha=1;
+}
 /** Brief ring where an order was given (feedback for mouse and touch). */
 function addMark(x,y,bad){state.marks.push({x,y,life:.6,bad:!!bad});if(state.marks.length>12)state.marks.shift();}
 const mmCtx=$('#minimap').getContext('2d');
@@ -1596,10 +2300,9 @@ function render(){
  ctx.drawImage(terr,cx,cy,Math.min(vw,WPX-cx),Math.min(vh,WPX-cy),0,0,Math.min(vw,WPX-cx),Math.min(vh,WPX-cy));
  ctx.save();ctx.translate(-cx,-cy);
  for(const d of state.decals){const spr=RSPR[d.k]||RSPR.rubble;ctx.drawImage(spr,d.x-spr.width/2,d.y-spr.height);}
- for(const c of state.corpses){ctx.globalAlpha=Math.min(1,c.life/2);ctx.fillStyle='#5a3020';
-  ctx.beginPath();ctx.ellipse(c.x,c.y,9,4,0,0,7);ctx.fill();ctx.globalAlpha=1;}
+ for(const c of state.corpses)drawCorpse(c);
  for(const s of state.sel)if(s.kind==='u'&&ENT[s.id]){ctx.strokeStyle='#e8e2c8';ctx.lineWidth=1;
-  ctx.beginPath();ctx.ellipse(s.x,s.y+1,11,5,0,0,7);ctx.stroke();}
+  ctx.beginPath();ctx.ellipse(s.x,s.y+1,UNITTYPES[s.type].size+4,5,0,0,7);ctx.stroke();}
  const list=[];
  for(const r of state.ress)if(explored[r.ty*MAP+r.tx])list.push({y:(r.ty+1)*TILE,f:()=>{
   const spr=r.type==='tree'?RSPR.trees[(r.tx*7+r.ty*13)%6]:RSPR[r.type];
@@ -1610,9 +2313,7 @@ function render(){
  for(const u of state.units)if(u.player===0||vis[(u.y/TILE|0)*MAP+(u.x/TILE|0)])
   list.push({y:u.y,f:()=>drawUnit(u)});
  list.sort((a,b)=>a.y-b.y);for(const it of list)it.f();
- ctx.strokeStyle='#e8dcc0';ctx.lineWidth=2;
- for(const p of state.projs){ctx.beginPath();ctx.moveTo(p.x,p.y);
-  ctx.lineTo(p.x-Math.cos(p.ang||0)*8,p.y-Math.sin(p.ang||0)*8);ctx.stroke();}
+ Projectiles.draw();
  for(const m of state.marks){const k=m.life/.6;ctx.globalAlpha=k;ctx.strokeStyle=m.bad?'#ff6a4a':'#9fe08a';ctx.lineWidth=2;
   ctx.beginPath();ctx.ellipse(m.x,m.y,4+(1-k)*12,2+(1-k)*6,0,0,7);ctx.stroke();ctx.globalAlpha=1;}
  if(state.placing&&mouse.in){
@@ -1680,7 +2381,8 @@ function updInfo(){
   else{
    stats='HP '+Math.ceil(e.hp)+' / '+e.maxhp;
    if(e.kind==='u'&&e.type==='villager'&&e.carry.amt)stats+='<br>Carrying: '+e.carry.amt+' '+RESN[e.carry.type];
-   if(e.kind==='u'&&e.atk)stats+='<br>Attack: '+e.atk;
+   if(e.kind==='u'&&e.atk){const U=UNITTYPES[e.type],ar=armorOf(e);
+    stats+='<br>Attack '+e.atk+(U.range?' · Range '+Math.round(rangeOf(e)/TILE)+' tiles':'')+(ar?' · Armour '+ar:'');}
    if(e.kind==='b'&&!e.done)stats+='<br>Building: '+(e.progress*100|0)+'%';
    if(e.type==='farm'&&e.done)stats+='<br>Food left: '+e.amount;
    if(e.kind==='b'&&e.queue.length){const it=e.queue[0];
@@ -1713,11 +2415,11 @@ function cmdDefs(){
   if(isTouchUI)toast('Tap the map to place the '+BLDTYPES[t].name.toLowerCase());};
  const techBtns=b=>{for(const id in TECHS){const T=TECHS[id];
   if(T.at!==b.type||state.techs[0][id])continue;
-  const queued=techQueued(0,id),noAge=state.age[0]<T.age,poor=!canAfford(0,T.cost);
-  out.push(mk(id,'Research '+T.name,T.cost,T.desc,()=>queueResearch(b,id),queued||noAge||poor,
-   queued?'Researching…':noAge?'Requires '+AGENAMES[T.age]:poor?'Not enough resources':''));}};
+  const queued=techQueued(0,id),noAge=state.age[0]<T.age,noReq=T.req&&!state.techs[0][T.req],poor=!canAfford(0,T.cost);
+  out.push(mk(id,'Research '+T.name,T.cost,T.desc,()=>queueResearch(b,id),queued||noAge||noReq||poor,
+   queued?'Researching…':noAge?'Requires '+AGENAMES[T.age]:noReq?'Requires '+TECHS[T.req].name:poor?'Not enough resources':''));}};
  if(vils.length){
-  for(const t of['house','farm','storagepit','barracks','towncenter','tower']){
+  for(const t of['house','farm','storagepit','barracks','archery','stable','towncenter','tower']){
    const Bt=BLDTYPES[t];
    const noAge=Bt.age&&state.age[0]<Bt.age;
    const poor=!canAfford(0,Bt.cost);
@@ -1726,41 +2428,43 @@ function cmdDefs(){
   out.push(mk('stop','Stop','','Halt current orders.',()=>{for(const v of vils){v.cmd=null;v.path=[];}SFX.click();}));
  }
  for(const b of s)if(b.kind==='b'&&b.player===0&&b.done){
-  if(b.type==='towncenter'){
-   const pFull=state.pop[0]>=state.popCap[0];
-   const poor=!canAfford(0,UNITTYPES.villager.cost)||pFull;
-   out.push(mk('villager','Train Villager',UNITTYPES.villager.cost,UNITTYPES.villager.desc,
-    ()=>queueTrain(b,'villager'),poor,poor?(pFull?'Build more houses':'Not enough resources'):'',b.queue.length));
-   if(state.age[0]<2){
-    const A=AGES[state.age[0]];const busy=state.advancing[0]>0;const poor2=!canAfford(0,A.cost);
-    out.push(mk('age','Advance to '+AGENAMES[state.age[0]+1],A.cost,'Unlocks new units, buildings and upgrades.',
-     ()=>startAge(0),busy||poor2,busy?'Already advancing':poor2?'Not enough resources':''));}
-   techBtns(b);
-  }
-  if(b.type==='barracks'){
-   for(const t of['clubman','axeman']){
-    const U=UNITTYPES[t];const noAge=U.age&&state.age[0]<U.age;
-    const pFull=state.pop[0]>=state.popCap[0];
-    const poor=!canAfford(0,U.cost)||pFull;
-    out.push(mk(t,'Train '+U.name,U.cost,U.desc,()=>queueTrain(b,t),noAge||poor,
-     noAge?'Requires '+AGENAMES[U.age]:poor?(pFull?'Build more houses':'Not enough resources'):'',b.queue.length));}
-   techBtns(b);
-  }
-  if(b.type==='storagepit')techBtns(b);
+  for(const t of TRAINS[b.type]||[]){
+   const U=UNITTYPES[t],noAge=U.age&&state.age[0]<U.age,noTech=U.tech&&!state.techs[0][U.tech];
+   const pFull=state.pop[0]>=state.popCap[0],poor=!canAfford(0,U.cost);
+   out.push(mk(t,'Train '+U.name,U.cost,U.desc,()=>queueTrain(b,t),noAge||noTech||pFull||poor,
+    noAge?'Requires '+AGENAMES[U.age]:noTech?'Requires '+TECHS[U.tech].name:pFull?'Build more houses':poor?'Not enough resources':'',b.queue.length));}
+  if(b.type==='towncenter'&&state.age[0]<2){
+   const A=AGES[state.age[0]];const busy=state.advancing[0]>0;const poor2=!canAfford(0,A.cost);
+   out.push(mk('age','Advance to '+AGENAMES[state.age[0]+1],A.cost,'Unlocks new units, buildings and upgrades.',
+    ()=>startAge(0),busy||poor2,busy?'Already advancing':poor2?'Not enough resources':''));}
+  techBtns(b);
  }
  const mil=s.filter(e=>e.kind==='u'&&e.type!=='villager'&&e.player===0);
- if(mil.length&&!vils.length)out.push(mk('stop','Stop','','Halt current orders.',()=>{for(const m of mil){m.cmd=null;m.path=[];}SFX.click();}));
+ if(mil.length){
+  if(!vils.length)out.push(mk('stop','Stop','','Halt current orders.',()=>{for(const m of mil){m.cmd=null;m.path=[];}SFX.click();}));
+  for(const k in FORMATIONS){const F=FORMATIONS[k],on=state.formation[0]===k;
+   out.push({...mk(k,F.name,'',F.desc+(on?' Active: choose again to march loosely.':' Group moves keep this shape.'),()=>setFormation(k,mil)),on});}
+ }
  return out;
+}
+/** Pick the player's formation (picking it again breaks formation) and re-form the selected soldiers where they stand. */
+function setFormation(k,mil){
+ const f=state.formation[0]=state.formation[0]===k?'none':k;SFX.click();
+ if(f==='none'){toast('Formation broken: groups march loosely');return;}
+ toast(FORMATIONS[f].name+': group moves keep this shape');
+ if(mil.length>1){const c=groupCenter(mil),e=state.blds.find(b=>b.player===1&&b.type==='towncenter'),t=e?bldCenter(e):{x:WPX,y:WPX};
+  formationMove(mil,c.x,c.y,t.x-c.x,t.y-c.y,f);}
 }
 function refreshCmds(force){
  const defs=cmdDefs();
- const sig=defs.map(d=>(d.off?'0':'1')+d.icon+(d.q||0)).join('|');
+ const sig=defs.map(d=>(d.off?'0':'1')+(d.on?'*':'')+d.icon+(d.q||0)).join('|');
  if(!force&&sig===refreshCmds.sig)return;
  refreshCmds.sig=sig;
  cmdsEl.querySelectorAll('.cbtn').forEach(b=>b.remove());
  curDefs.length=0;defs.forEach(d=>curDefs.push(d));
  defs.forEach((d,i)=>{
-  const b=document.createElement('div');b.className='cbtn'+(d.off?' off':'');
+  const b=document.createElement('div');b.className='cbtn'+(d.off?' off':'')+(d.on?' on':'');
+  if(d.on!==undefined)b.setAttribute('aria-pressed',d.on);
   b.setAttribute('role','button');b.tabIndex=0;b.setAttribute('aria-label',d.tip.n+(d.tip.req?' — '+d.tip.req:''));
   const c=cv(34,34);drawIcon(c.getContext('2d'),d.icon);b.appendChild(c);
   if(d.q)b.insertAdjacentHTML('beforeend','<span class="q">'+d.q+'</span>');
@@ -1867,10 +2571,13 @@ function renderMissionList(){
   const p=!done&&m.goal>1?' ('+Math.min(m.goal,Math.floor(m.progress(state)))+'/'+m.goal+')':'';
   return'<li class="'+(done?'done':m===cur?'cur':'')+'">'+esc(m.text)+p+'</li>';}).join('');
 }
-/** Queue a save. Bursts of events are coalesced; `important` events save within a quarter second. */
+/**
+ * Queue an autosave. Bursts of events are coalesced; `important` events save within a quarter second, routine
+ * ones wait at least AUTOSAVE_MIN_GAP after the previous autosave so the three rotating copies stay spread out.
+ */
 function requestSave(reason,important){
  if(Game.phase!=='playing'||state.over)return;
- const t=important?.25:CONFIG.SAVE_DEBOUNCE;
+ const t=important?.25:Math.max(CONFIG.SAVE_DEBOUNCE,CONFIG.AUTOSAVE_MIN_GAP-(Date.now()-slots.lastAutoAt)/1000);
  if(!Game.pendingSave||Game.pendingSave.t>t)Game.pendingSave={reason,t};
 }
 
@@ -1884,9 +2591,10 @@ const CMD_RULES={
  build:c=>isInt(c.bid),
  attack:c=>isInt(c.tid)&&isNum(c.px)&&isNum(c.py)
 };
-const CMD_FIELDS=['type','x','y','tid','rtype','farm','resume','role','bid','px','py'];
+const CMD_FIELDS=['type','x','y','tid','rtype','farm','resume','role','bid','px','py','spd','ch','wx','wy'];
 const validCmd=c=>isObj(c)&&!!CMD_RULES[c.type]&&CMD_RULES[c.type](c)&&
- (c.resume===undefined||isInt(c.resume))&&(c.role===undefined||['wood','food','gold'].includes(c.role))&&(c.farm===undefined||typeof c.farm==='boolean');
+ (c.resume===undefined||isInt(c.resume))&&(c.role===undefined||['wood','food','gold'].includes(c.role))&&(c.farm===undefined||typeof c.farm==='boolean')&&
+ (c.spd===undefined||isNum(c.spd)&&c.spd>0)&&(c.ch===undefined||c.ch===0||c.ch===1)&&((c.wx===undefined&&c.wy===undefined)||isNum(c.wx)&&isNum(c.wy));
 const STAT_NUMS=['trainedVil','trainedMil','built','kills','lost','razed','bldLost','techs','peakPop'];
 const GameSerializer={
  /** Capture everything needed to resume the exact session. Transient visuals (animation, flashes) are skipped. */
@@ -1906,13 +2614,15 @@ const GameSerializer={
    blds:state.blds.map(b=>({id:b.id,type:b.type,player:b.player,tx:b.tx,ty:b.ty,hp:r2(b.hp),maxhp:b.maxhp,done:b.done,
     progress:r4(b.progress),queue:[...b.queue],qt:r2(b.qt),cd:r2(b.cd),amount:b.amount})),
    ress:state.ress.filter(r=>!r.dead&&r.amount>0).map(r=>({id:r.id,type:r.type,tx:r.tx,ty:r.ty,amount:r.amount})),
-   projs:state.projs.map(p=>({x:r2(p.x),y:r2(p.y),tid:p.tid,tx:r2(p.tx),ty:r2(p.ty),spd:p.spd,dmg:p.dmg})),
-   corpses:state.corpses.map(c=>({x:r2(c.x),y:r2(c.y),life:r2(c.life)})),
+   projs:state.projs.map(p=>({type:p.type,sourceId:p.sourceId,targetId:p.targetId,owner:p.owner,x:r2(p.x),y:r2(p.y),vx:r2(p.vx),vy:r2(p.vy),
+    damage:r2(p.damage),range:r2(p.range),tx:r2(p.tx),ty:r2(p.ty),d0:r2(p.d0),miss:p.miss})),
+   corpses:state.corpses.map(c=>({x:r2(c.x),y:r2(c.y),life:r2(c.life),...(c.t?{t:c.t,p:c.p,f:c.f}:{})})),
    decals:state.decals.map(d=>({x:r2(d.x),y:r2(d.y),k:d.k})),
    explored:packBits(explored),
    cam:{x:Math.round(cam.x),y:Math.round(cam.y)},
    sel:state.sel.filter(e=>ENT[e.id]).map(e=>e.id),
-   ai:{t:r2(ai.t),attackT:r2(ai.attackT)},
+   ai:{t:r2(ai.t),attackT:r2(ai.attackT),...(ai.wave?{wave:{tid:ai.wave.tid,sx:r2(ai.wave.sx),sy:r2(ai.wave.sy),t:r2(ai.wave.t)}}:{})},
+   formation:[...state.formation],
    stats:JSON.parse(JSON.stringify(state.stats)),
    missions:[...state.missions],nextMilestone:state.nextMilestone,achNew:[...state.achNew]
   };
@@ -1934,6 +2644,8 @@ const GameSerializer={
   for(const k of['units','blds','ress','projs','corpses','decals','sel','missions'])if(!Array.isArray(p[k]))err('missing '+k);
   if(!isObj(p.cam)||!isNum(p.cam.x)||!isNum(p.cam.y))err('bad camera');
   if(!isObj(p.ai)||!isNum(p.ai.t)||!isNum(p.ai.attackT))err('bad AI state');
+  else if(p.ai.wave!==undefined&&!(isObj(p.ai.wave)&&isInt(p.ai.wave.tid)&&isNum(p.ai.wave.sx)&&isNum(p.ai.wave.sy)&&isNum(p.ai.wave.t)))err('bad AI state');
+  if(p.formation!==undefined&&!(pair(p.formation)&&p.formation.every(f=>f==='none'||FORMATIONS[f])))err('bad formation');
   if(typeof p.explored!=='string')err('bad fog data');
   else{try{unpackBits(p.explored,MAP*MAP);}catch(e){err('bad fog data');}}
   if(!isNum(p.nextMilestone)||p.nextMilestone<=0)err('bad milestone');
@@ -1978,8 +2690,10 @@ const GameSerializer={
    if(!inMap(r.tx,r.ty,1,1))err('resource '+r.id+' is outside the map');else claim(r.tx,r.ty,1,1,'resource '+r.id);
    if(!isNum(r.amount)||r.amount<0||r.amount>10000)err('resource '+r.id+' has a bad amount');
   }
-  for(const pr of p.projs)if(!isObj(pr)||!inWorld(pr.x,pr.y)||!isNum(pr.tx)||!isNum(pr.ty)||!isNum(pr.spd)||pr.spd<=0||!isNum(pr.dmg)||!isInt(pr.tid))err('bad arrow');
-  for(const c of p.corpses)if(!isObj(c)||!isNum(c.x)||!isNum(c.y)||!isNum(c.life))err('bad corpse');
+  for(const pr of p.projs)if(!isObj(pr)||!PROJ_TYPES[pr.type]||!isInt(pr.sourceId)||!isInt(pr.targetId)||(pr.owner!==0&&pr.owner!==1)||
+   !['x','y','vx','vy','damage','range','tx','ty','d0'].every(k=>isNum(pr[k])&&Math.abs(pr[k])<1e5)||pr.damage<0||pr.d0<=0||typeof pr.miss!=='boolean')err('bad projectile');
+  for(const c of p.corpses)if(!isObj(c)||!isNum(c.x)||!isNum(c.y)||!isNum(c.life)||
+   (c.t!==undefined&&(!UNITTYPES[c.t]||(c.p!==0&&c.p!==1)||(c.f!==1&&c.f!==-1))))err('bad corpse');
   for(const d of p.decals)if(!isObj(d)||!isNum(d.x)||!isNum(d.y)||(d.k!=='stump'&&d.k!=='rubble'))err('bad decal');
   if(!p.sel.every(isInt))err('bad selection');
   if(!p.missions.every(id=>MISSIONS.some(m=>m.id===id)))err('unknown mission');
@@ -2000,7 +2714,7 @@ const GameSerializer={
     progress:b.done?1:b.progress,queue:[...b.queue],qt:b.qt,cd:b.cd,amount:b.amount};
    state.blds.push(o);ENT[o.id]=o;blockBld(o,true);}
   for(const u of p.units){
-   const o={id:u.id,kind:'u',type:u.type,player:u.player,x:u.x,y:u.y,maxhp:u.maxhp,hp:u.hp,atk:u.atk,spd:UNITTYPES[u.type].spd,
+   const o={id:u.id,kind:'u',type:u.type,player:u.player,x:u.x,y:u.y,maxhp:u.maxhp,hp:u.hp,atk:u.atk,spd:speedOf(u.player,u.type),
     cmd:u.cmd?{...u.cmd}:null,path:u.path.map(i=>({x:(i%MAP)*TILE+16,y:((i/MAP)|0)*TILE+16})),
     carry:u.carry?{type:u.carry.type,amt:u.carry.amt}:{type:null,amt:0},lastRes:u.lastRes,cd:u.cd,anim:0,face:u.face<0?-1:1,flash:0};
    state.units.push(o);ENT[o.id]=o;}
@@ -2009,12 +2723,13 @@ const GameSerializer={
    const ok=c.type==='move'||(!!t&&(c.type==='gather'?(c.farm?t.kind==='b':t.kind==='r'):c.type==='attack'?t.kind!=='r':t.kind==='b'));
    if(!ok){u.cmd=null;u.path=[];continue;}
    if(c.resume!==undefined&&!(ENT[c.resume]&&ENT[c.resume].kind==='r'))delete c.resume;}
-  state.projs=p.projs.map(x=>({x:x.x,y:x.y,tid:x.tid,tx:x.tx,ty:x.ty,spd:x.spd,dmg:x.dmg}));
-  state.corpses=p.corpses.map(c=>({x:c.x,y:c.y,life:c.life}));
+  state.projs=p.projs.map(x=>({...x}));
+  state.corpses=p.corpses.map(c=>({x:c.x,y:c.y,life:c.life,t:c.t,p:c.p,f:c.f}));
   state.decals=p.decals.map(d=>({x:d.x,y:d.y,k:d.k}));
   explored.set(unpackBits(p.explored,MAP*MAP));
   cam.x=p.cam.x;cam.y=p.cam.y;
-  ai.t=p.ai.t;ai.attackT=p.ai.attackT;
+  ai.t=p.ai.t;ai.attackT=p.ai.attackT;ai.wave=p.ai.wave?{...p.ai.wave}:null;
+  state.formation=p.formation?[...p.formation]:['none','none'];
   const st=newStats();Object.assign(st.gathered,p.stats.gathered);
   for(const k of STAT_NUMS)st[k]=p.stats[k];st.builtBy={...p.stats.builtBy};st.bossDown=p.stats.bossDown;
   state.stats=st;
@@ -2027,16 +2742,18 @@ const GameSerializer={
 
 /* ================= game controller ================= */
 const storage=new StorageManager(CONFIG.KEYS);
+const slots=new SaveSlotManager(storage);
 const Game={
  phase:'title',              // 'title' | 'playing' | 'over'
  paused:false,
- pendingSave:null,           // {reason, t} — debounced save request
+ pendingSave:null,           // {reason, t} — debounced autosave request
  autosaveT:CONFIG.AUTOSAVE_INTERVAL,
  canSave(){return this.phase==='playing'&&!state.over;},
  isInteractive(){return this.phase==='playing'&&!this.paused&&!state.over&&!UI.anyOpen();},
  enter(){this.phase='playing';this.paused=false;this.pendingSave=null;this.autosaveT=CONFIG.AUTOSAVE_INTERVAL;
   keysReset();drag.on=false;UI.closeAll();afterWorldChange();},
- newGame(diff){
+ /** Start a fresh map. With a slot, the game is bound to it and saved there at once; without, it lives in the autosaves. */
+ newGame(diff,slotId=null,name=''){
   Sound.unlock();
   resetWorld(diff);genMap();computeVis();updPop();
   state.startHigh=Profile.data.highScore;
@@ -2044,26 +2761,27 @@ const Game={
   Profile.data.lifetime.games++;
   this.enter();
   toast('Gather wood and food. Build houses. Grow your empire.');SFX.age();
-  storage.saveGame('new-game');
+  if(slotId)slots.createSlot(slotId,name);else{slots.detach(name);slots.autoSave('new-game');}
  },
- /** Resume the saved session exactly where it was left. */
- continueGame(){
-  const r=storage.loadGame();
+ /** Load a slot or autosave chosen on the save screen and resume it exactly where it was left. */
+ loadSlot(slotId){
+  const r=slots.loadFromSlot(slotId);
   if(!r.ok){
-   toast(r.corrupted?'Your save was damaged and could not be recovered — it has been removed.':'No saved game was found.','bad');
-   refreshTitle();return false;}
+   toast(r.missing?slots.label(slotId)+' is empty.':damagedText(slots.getSlotInfo(slotId))+' It cannot be loaded.','bad');
+   refreshSaveViews();return false;}
   try{GameSerializer.restore(r.data);}
-  catch(e){console.error('[Aethoria] restore failed',e);storage.clearGame();resetWorld(Settings.data.gameplay.difficulty);
-   toast('That save could not be restored and has been removed.','bad');refreshTitle();return false;}
+  catch(e){console.error('[Aethoria] restore failed',e);resetWorld(Settings.data.gameplay.difficulty);
+   this.quitToTitle(false);toast('That save could not be restored.','bad');return false;}
+  slots.activate(r);
   Sound.unlock();
   this.enter();
-  if(r.recovered){toast('Save recovered from the backup copy','good');setSaveInd('ok','Save recovered');}
-  else toast('Welcome back! Game restored.','good');
+  setSaveInd('','');
+  toast('Loaded '+slots.label(slotId)+' — '+r.info.slotName,'good');
   return true;
  },
  pause(showMenu=true,reason='pause'){
   if(this.phase!=='playing'||state.over)return;
-  if(!this.paused){this.paused=true;keysReset();drag.on=false;this.pendingSave=null;storage.autoSave(reason);}
+  if(!this.paused){this.paused=true;keysReset();drag.on=false;this.pendingSave=null;slots.autoSave(reason);}
   if(showMenu&&!UI.isOpen('menuOv'))openPauseMenu();
  },
  resume(){
@@ -2072,8 +2790,9 @@ const Game={
   if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
  },
  togglePause(){this.paused?this.resume():this.pause(true);},
+ /** Back to the title. With `save`, the game is written to its slot (or to the autosaves when it has none). */
  quitToTitle(save=true){
-  if(save&&this.canSave())storage.saveGame('quit');
+  if(save&&this.canSave()&&!(slots.active&&slots.saveToSlot(slots.active,{reason:'quit'}).ok))slots.autoSave('quit');
   this.phase='title';this.paused=false;cancelPlacing();state.sel=[];
   UI.closeAll();UI.open('title');refreshTitle();applyMissionVisibility();updFloatBtns();
  },
@@ -2081,9 +2800,9 @@ const Game={
  tick(realDt){
   if(this.pendingSave){this.pendingSave.t-=realDt;
    if(this.pendingSave.t<=0){const why=this.pendingSave.reason;this.pendingSave=null;
-    if(storage.autoSave(why))this.autosaveT=CONFIG.AUTOSAVE_INTERVAL;}}
+    if(slots.autoSave(why))this.autosaveT=CONFIG.AUTOSAVE_INTERVAL;}}
   this.autosaveT-=realDt;
-  if(this.autosaveT<=0){this.autosaveT=CONFIG.AUTOSAVE_INTERVAL;storage.autoSave('interval');}
+  if(this.autosaveT<=0){this.autosaveT=CONFIG.AUTOSAVE_INTERVAL;slots.autoSave('interval');}
  }
 };
 state.startHigh=0;
@@ -2118,8 +2837,7 @@ function endGame(won){
  P.xp+=xpGain;
  const newHigh=state.score>0&&state.score>(state.startHigh||0);
  if(state.score>P.highScore){P.highScore=state.score;P.highScoreAt=Date.now();}
- Profile.save();
- storage.clearGame();                          // a finished campaign cannot be continued
+ Profile.save();                               // save slots are kept: earlier saves of this campaign stay loadable
  $('#endTxt').textContent=won?'VICTORY':'DEFEAT';
  $('#endTxt').style.color=won?'var(--parchHead)':'var(--bad)';
  const lvAfter=Profile.level();
@@ -2142,28 +2860,45 @@ function endGame(won){
 const UI={
  stack:[],
  open(id){const el=$('#'+id);el.classList.remove('hidden');this.stack=this.stack.filter(x=>x!==id);this.stack.push(id);
-  const f=el.querySelector('button:not([disabled]):not(.hidden),select,input');if(f&&!isTouchUI)f.focus({preventScroll:true});},
+  el.style.zIndex=String(20+this.stack.length);          // the most recently opened screen is always on top
+  const f=el.querySelector('button:not([disabled]):not(.hidden),select,input:not(.hidden)');if(f&&!isTouchUI)f.focus({preventScroll:true});},
  close(id){$('#'+id).classList.add('hidden');this.stack=this.stack.filter(x=>x!==id);},
  isOpen(id){return this.stack.includes(id);},
  top(){return this.stack[this.stack.length-1]||null;},
  anyOpen(){return this.stack.length>0;},
  closeAll(){for(const id of[...this.stack])this.close(id);},
- /** Promise-based confirmation dialog. */
- confirm({title,text,ok='CONFIRM',danger=false}){
+ /**
+  * Promise-based dialog. Plain: resolves true/false. With `input` (initial text): resolves the text, or null.
+  * With `choices` [{value, label, note}]: resolves the picked value, or null.
+  */
+ ask({title,text='',ok='CONFIRM',danger=false,input=null,choices=null}){
   return new Promise(res=>{
+   const okBtn=$('#cfOk'),cancel=$('#cfCancel'),inp=$('#cfInput'),list=$('#cfChoices'),none=input!=null||choices?null:false;
    $('#cfTitle').textContent=title;$('#cfText').textContent=text;
-   const okBtn=$('#cfOk');okBtn.textContent=ok;okBtn.classList.toggle('danger',danger);
-   const done=v=>{this.close('confirmOv');okBtn.onclick=null;$('#cfCancel').onclick=null;this.confirmDone=null;res(v);};
-   okBtn.onclick=()=>done(true);$('#cfCancel').onclick=()=>done(false);this.confirmDone=done;
-   this.open('confirmOv');if(!isTouchUI)$('#cfCancel').focus();
+   okBtn.textContent=ok;okBtn.classList.toggle('danger',danger);okBtn.classList.toggle('hidden',!!choices);
+   inp.classList.toggle('hidden',input==null);inp.value=input??'';
+   list.classList.toggle('hidden',!choices);
+   list.innerHTML=(choices||[]).map((c,i)=>'<button class="choice" data-i="'+i+'"><b>'+esc(c.label)+'</b>'+(c.note?' — '+esc(c.note):'')+'</button>').join('');
+   const done=v=>{this.close('confirmOv');okBtn.onclick=cancel.onclick=list.onclick=inp.onkeydown=null;this.confirmDone=null;res(v);};
+   okBtn.onclick=()=>done(input!=null?inp.value:true);
+   cancel.onclick=()=>done(none);
+   list.onclick=e=>{const b=e.target.closest('.choice');if(b)done(choices[+b.dataset.i].value);};
+   inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();okBtn.click();}};
+   this.confirmDone=()=>done(none);
+   this.open('confirmOv');
+   if(input!=null){inp.focus();inp.select();}
+   else if(!isTouchUI)(choices&&list.firstElementChild||cancel).focus();
   });
- }
+ },
+ confirm(o){return this.ask(o);},
+ prompt(o){return this.ask({...o,input:o.value??''});},
+ choose(o){return this.ask(o);}
 };
 /** Esc walks back one level: dialog → sub-screen → pause menu → game. */
 function handleEscape(){
  const top=UI.top();
- if(top==='confirmOv'){UI.confirmDone&&UI.confirmDone(false);return;}
- if(top==='settingsOv'||top==='helpOv'||top==='achOv'||top==='newGameOv'){UI.close(top);return;}
+ if(top==='confirmOv'){UI.confirmDone&&UI.confirmDone();return;}
+ if(['settingsOv','helpOv','achOv','newGameOv','slotsOv'].includes(top)){UI.close(top);return;}
  if(top==='menuOv'){Game.resume();return;}
  if(top)return;                                // title / end screen: nothing to go back to
  if(state.placing)cancelPlacing();
@@ -2172,49 +2907,81 @@ function handleEscape(){
 }
 function setSaveInd(cls,text){const el=$('#saveInd');el.className=cls;el.textContent=text;}
 let lastFailToast=-1e9;
-function onSaveStatus(status,reason,detail){
- const manual=reason==='manual';
- if(status==='saving')setSaveInd('saving',manual?'Saving…':'Autosaving…');
- else if(status==='saved'){setSaveInd('ok','Saved ✓ '+fmtClock(Date.now()));if(manual){toast('Saved successfully','good');SFX.save();}}
+function onSaveStatus(status,reason,detail,slotId){
+ const auto=slots.isAuto(slotId);
+ if(status==='saving')setSaveInd('saving',auto?'Autosaving…':'Saving…');
+ else if(status==='saved'){
+  setSaveInd('ok',(auto?'Autosaved ✓ ':'Saved ✓ ')+fmtClock(Date.now()));
+  if(reason==='manual'){toast('Game saved to '+slots.label(slotId)+' — '+slots.activeName,'good');SFX.save();}
+  else if(reason==='new-game')toast('“'+slots.activeName+'” is saved in '+slots.label(slotId));}
  else{setSaveInd('err','Save failed');
-  if(manual||performance.now()-lastFailToast>20000){lastFailToast=performance.now();toast('Save failed: '+(detail||'unknown error'),'bad');}}
+  if(!auto||performance.now()-lastFailToast>20000){lastFailToast=performance.now();toast('Save failed: '+(detail||'unknown error'),'bad');}}
  updMenuSaveInfo();
 }
-function manualSave(){
+/** Ctrl+S / Quick Save: straight into the current slot. A game without a slot opens the save screen instead. */
+function quickSave(){
  if(!Game.canSave()){toast('There is no game in progress to save','bad');return;}
- setSaveInd('saving','Saving…');toast('Saving…');$('#menuSaveInfo').textContent='Saving…';
- setTimeout(()=>storage.saveGame('manual'),80);        // let "Saving…" paint before the synchronous write
+ if(!slots.active){Game.pause(true);openSlots('save');toast('Choose a slot for this game');return;}
+ setSaveInd('saving','Saving…');
+ setTimeout(()=>{slots.saveToSlot(slots.active,{reason:'manual'});refreshSaveViews();},80);   // let "Saving…" paint first
 }
 function updMenuSaveInfo(){
  const el=$('#menuSaveInfo');if(!el)return;
- el.textContent=!storage.persistent?'Saving is unavailable in this browser mode — progress is lost when the tab closes.':
-  storage.lastSavedAt?'Last saved at '+fmtClock(storage.lastSavedAt)+' · autosaves every '+CONFIG.AUTOSAVE_INTERVAL+' s':'Not saved yet · autosaves every '+CONFIG.AUTOSAVE_INTERVAL+' s';
+ if(!storage.persistent){el.textContent='Saving is unavailable in this browser mode — progress is lost when the tab closes.';return;}
+ el.textContent=(slots.active?'Playing in '+slots.label(slots.active)+' — '+slots.activeName:'This game has no save slot yet — use Save Game')+
+  (slots.lastSavedAt?' · saved '+fmtSaved(slots.lastSavedAt):'')+(slots.lastAutoAt?' · autosaved '+fmtClock(slots.lastAutoAt):'')+
+  ' · autosaves every '+CONFIG.AUTOSAVE_INTERVAL+' s';
 }
-function openPauseMenu(){renderMissionList();updMenuSaveInfo();$('#loadBtn').disabled=!storage.hasSaveData();UI.open('menuOv');}
-function summaryText(s){
- return AGENAMES[s.data.age[0]]+' · '+DIFFICULTY[s.data.diff].name+' · '+fmtTime(s.data.time)+' played · score '+fmtInt(s.data.score)+
-  (s.savedAt?' — saved '+fmtDate(s.savedAt):'')+(s.fromBackup?' (backup)':'');
+function openPauseMenu(){
+ renderMissionList();updMenuSaveInfo();
+ $('#quitBtn').textContent=slots.active?'SAVE & QUIT TO TITLE':'QUIT TO TITLE';
+ UI.open('menuOv');
 }
+const damagedText=s=>(s.auto?'':'Save ')+s.label+' appears corrupted.';
+/** Redraw everything that shows save slots after a slot changed. */
+function refreshSaveViews(){if(UI.isOpen('slotsOv'))renderSlots();refreshTitle();}
 function refreshTitle(){
- const s=storage.peekSave();
- $('#continueBtn').classList.toggle('hidden',!s);
- $('#saveSummary').textContent=s?summaryText(s):storage.persistent?'':'Saving is unavailable in this browser mode.';
+ const L=slots.listSlots(),all=[...L.manual,...L.auto];
+ const latest=all.filter(s=>s.status==='ok').sort((a,b)=>b.savedAt-a.savedAt)[0],bad=all.filter(s=>s.status==='corrupted');
+ $('#continueBtn').classList.toggle('hidden',!latest&&!bad.length);
+ $('#saveSummary').innerHTML=(latest?esc('Latest: '+latest.label+' · '+latest.slotName+' — '+AGENAMES[latest.age]+' · '+fmtPlay(latest.playtime)+' played · '+fmtSaved(latest.savedAt)):
+  storage.persistent?'':'Saving is unavailable in this browser mode.')+
+  (bad.length?'<br><span class="warnT">⚠ '+esc(bad.map(damagedText).join(' '))+'</span>':'');
  const P=Profile.data,lv=Profile.level(),cur=Profile.xpFor(lv),nxt=Profile.xpFor(lv+1),maxed=lv>=RANKS.length-1;
  const frac=maxed?1:clamp((P.xp-cur)/(nxt-cur),0,1);
  $('#profileCard').innerHTML='Rank <b>'+esc(RANKS[lv])+'</b> · Level '+(lv+1)+' · '+fmtInt(P.xp)+' XP'+
   (P.highScore?' · High score <b>'+fmtInt(P.highScore)+'</b>':'')+'<div class="xpbar" title="Progress to next rank"><i style="width:'+(frac*100).toFixed(1)+'%"></i></div>';
 }
+/** Ask before replacing a slot that holds a save; resolves true at once for an empty slot. */
+function confirmOverwrite(t,by){
+ return t.status==='empty'||UI.confirm({title:'OVERWRITE '+t.label.toUpperCase()+'?',danger:true,ok:'OVERWRITE',
+  text:(t.status==='ok'?'“'+t.slotName+'” ('+AGENAMES[t.age]+', '+fmtPlay(t.playtime)+' played)':'The damaged save')+' in '+t.label+' will be replaced by '+by+'. This cannot be undone.'});
+}
 let ngDiff='normal';
-function openNewGame(){
- ngDiff=Settings.data.gameplay.difficulty;
+const ngDefaultName=()=>DIFFICULTY[ngDiff].name+' Campaign';
+/** New Game: difficulty, save slot (default: the first empty one) and name. `slot` / `diff` preselect. */
+function openNewGame({slot=null,diff=null}={}){
+ ngDiff=DIFFICULTY[diff]?diff:Settings.data.gameplay.difficulty;
  const grid=$('#diffGrid');
  grid.innerHTML=Object.entries(DIFFICULTY).map(([k,d])=>'<button data-d="'+k+'" class="'+(k===ngDiff?'on':'')+'" aria-pressed="'+(k===ngDiff)+'"><b>'+d.name+'</b>'+esc(d.desc)+'<br>Score ×'+d.score+'</button>').join('');
- const s=storage.peekSave();
- $('#ngWarn').textContent=s?'Starting a new game replaces your saved game ('+AGENAMES[s.data.age[0]]+', '+fmtTime(s.data.time)+' played).':'';
+ const L=slots.listSlots().manual;
+ const pick=slots.isManual(slot)?slot:(L.find(s=>s.status==='empty')||L.find(s=>s.status==='corrupted')||[...L].sort((a,b)=>a.savedAt-b.savedAt)[0]).slotId;
+ $('#ngSlot').innerHTML=L.map(s=>'<option value="'+s.slotId+'"'+(s.slotId===pick?' selected':'')+'>'+
+  esc(s.label+' — '+(s.status==='ok'?s.slotName:s.status==='empty'?'Empty':'Damaged'))+'</option>').join('');
+ const inp=$('#ngName');inp.value='';inp.placeholder=ngDefaultName();
+ updNgWarn();
  UI.open('newGameOv');
 }
+function updNgWarn(){
+ const s=slots.getSlotInfo(+$('#ngSlot').value);
+ $('#ngWarn').textContent=(s.status==='ok'?'This replaces “'+s.slotName+'” in '+s.label+' ('+AGENAMES[s.age]+', '+fmtPlay(s.playtime)+' played). ':
+  s.status==='corrupted'?'This replaces the damaged save in '+s.label+'. ':'')+
+  (Game.canSave()?'Your current game ends; progress since its last save is lost.':'');
+}
+$('#ngSlot').addEventListener('change',updNgWarn);
 $('#diffGrid').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;ngDiff=b.dataset.d;
- for(const x of $('#diffGrid').children){x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',x===b);}SFX.click();});
+ for(const x of $('#diffGrid').children){x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',x===b);}
+ $('#ngName').placeholder=ngDefaultName();SFX.click();});
 function renderSettings(){
  let html='',section='';
  SETTINGS_FIELDS.forEach((f,i)=>{
@@ -2233,8 +3000,9 @@ function renderSettings(){
    Settings.set(f.path,v);
    if(f.type==='range')el.nextElementSibling.textContent=f.fmt(Settings.get(f.path));
    if(f.path.startsWith('audio.'))SFX.click();});});
- $('#storageInfo').textContent=(storage.persistent?'Progress is stored in this browser (localStorage), about '+Math.max(1,Math.round(storage.usage()/1024))+' KB used. ':
-  'This browser is blocking storage, so progress lasts only until the tab closes. ')+'Export a save to back it up or move it to another device.';
+ $('#storageInfo').textContent=storage.persistent?'Progress is stored in this browser (localStorage): '+CONFIG.SLOT_COUNT+' save slots and '+CONFIG.AUTOSAVE_COUNT+
+  ' autosaves, about '+Math.max(1,Math.round(storage.usage()/1024))+' KB used. Export a save from Saved Games to back it up or move it to another device.':
+  'This browser is blocking storage, so progress lasts only until the tab closes. Export a save from Saved Games to keep it.';
 }
 function openSettings(){renderSettings();UI.open('settingsOv');}
 function renderRecords(){
@@ -2250,30 +3018,130 @@ function renderRecords(){
 function openRecords(){renderRecords();UI.open('achOv');}
 async function confirmReset(){
  const ok=await UI.confirm({title:'RESET PROGRESS?',danger:true,ok:'RESET EVERYTHING',
-  text:'This permanently deletes your saved game, its backup, your high score, rank, achievements and lifetime statistics. Your settings are kept. This cannot be undone.'});
+  text:'This permanently deletes all '+CONFIG.SLOT_COUNT+' save slots, the autosaves and backups, your high score, rank, achievements and lifetime statistics. Your settings are kept. This cannot be undone.'});
  if(!ok)return;
- storage.resetSave();Profile.data=Profile.defaults();
+ storage.resetProgress();slots.reset();Profile.data=Profile.defaults();
  if(Game.phase!=='title'){Game.phase='title';Game.paused=false;}
  resetWorld(Settings.data.gameplay.difficulty);
  UI.closeAll();UI.open('title');refreshTitle();applyMissionVisibility();updFloatBtns();
  setSaveInd('','');toast('Progress reset — a fresh start awaits.','good');
 }
-let importIntent=null;
-async function startImport(){
- if(Game.phase==='playing'){
-  const ok=await UI.confirm({title:'IMPORT A SAVE?',text:'Importing replaces your current game with the one in the file. Export first if you want to keep it.',ok:'CHOOSE FILE'});
-  if(!ok)return;}
- importIntent=Game.phase;$('#importFile').value='';$('#importFile').click();
+
+/* ================= UI: save / load slot screen ================= */
+let slotsMode='load';
+const SLOT_TITLES={load:'LOAD GAME',save:'SAVE GAME',manage:'SAVED GAMES'};
+/** Open the save screen in 'load' (Continue, Load Game), 'save' (Save Game) or 'manage' (Saved Games) mode. */
+function openSlots(mode){slotsMode=mode;renderSlots();UI.open('slotsOv');}
+function renderSlots(){
+ const L=slots.listSlots(),playing=Game.canSave();
+ const latest=[...L.manual,...L.auto].filter(s=>s.status==='ok').sort((a,b)=>b.savedAt-a.savedAt)[0];
+ $('#slotsTitle').textContent=SLOT_TITLES[slotsMode];
+ $('#slotsHint').textContent=slotsMode==='save'?'Choose a slot for your current game. Each slot is independent; autosaves are kept separately and never overwrite them.':
+  slotsMode==='load'?'Choose the save to load.'+(playing?' Progress since your last save will be lost.':''):
+  'Load, rename, copy, export or import saves. Each slot is independent.';
+ $('#slotList').innerHTML=L.manual.map(s=>slotCard(s,playing,s===latest)).join('');
+ $('#autoList').innerHTML=L.auto.map(s=>slotCard(s,playing,s===latest)).join('');
+ $('#slotsInfo').textContent=storage.persistent?'Autosaves rotate through three copies, every '+CONFIG.AUTOSAVE_INTERVAL+' s of play and at key moments. About '+
+  Math.max(1,Math.round(storage.usage()/1024))+' KB of browser storage used.':'This browser is blocking storage, so saves last only until the tab closes. Export a slot to keep it.';
 }
-$('#importFile').addEventListener('change',async e=>{
- const file=e.target.files&&e.target.files[0];if(!file)return;
- const r=await storage.importSave(file);
- if(!r.ok){toast('Import failed: '+r.error,'bad');SFX.deny();return;}
- SFX.save();
- if(importIntent==='playing'){Game.phase='title';Game.continueGame();toast('Save imported and loaded','good');}
- else{refreshTitle();toast('Save imported — choose Continue Game to play it','good');}
+const slotBtn=(act,text,cls='')=>'<button class="btn sm'+(cls?' '+cls:'')+'" data-act="'+act+'">'+text+'</button>';
+const slotLnk=(act,text)=>'<button class="lnk" data-act="'+act+'">'+text+'</button>';
+/** One card on the save screen. Text from a save is escaped; thumbnails were checked against THUMB_RE. */
+function slotCard(s,playing,isLatest){
+ const cur=playing&&!s.auto&&s.slotId===slots.active,canSave=playing&&!s.auto;
+ const head='<div class="sh">'+esc(s.label.toUpperCase())+(cur?'<span class="badge">CURRENT</span>':'')+(isLatest?'<span class="badge">LATEST</span>':'')+'</div>';
+ let thumb,body,acts;
+ if(s.status==='ok'){
+  const R=s.resources,load=slotBtn('load','LOAD'),over=canSave?slotBtn('save','OVERWRITE'):'';
+  thumb=s.thumbnail?'<img class="thumb" alt="" src="'+s.thumbnail+'">':'<div class="thumb none">?</div>';
+  body=head+'<div class="sn">'+esc(s.slotName)+(s.auto&&s.linkedSlot?' <small>(Slot '+s.linkedSlot+')</small>':'')+'</div>'+
+   '<div class="sm">'+(s.level?'Level '+s.level+' · ':'')+s.progress+'% Complete · '+DIFFICULTY[s.difficulty].name+' · '+AGENAMES[s.age]+'<br>'+
+   fmtPlay(s.playtime)+' Play Time · Last Saved: '+esc(fmtSaved(s.savedAt))+'<br>'+
+   'Wood '+fmtInt(R.wood)+' · Food '+fmtInt(R.food)+' · Gold '+fmtInt(R.gold)+' · Stone '+fmtInt(R.stone)+' · '+esc(s.location)+'</div>';
+  acts=(slotsMode==='save'?over+load:load+over)+(s.auto?slotLnk('copy','Copy to slot')+slotLnk('export','Export')+slotLnk('delete','Delete'):
+   slotBtn('delete','DELETE','danger')+slotLnk('rename','Rename')+slotLnk('copy','Copy')+slotLnk('export','Export')+slotLnk('import','Import'));
+ }else if(s.status==='empty'){
+  thumb='<div class="thumb none">—</div>';
+  body=head+'<div class="sn dim">'+(s.auto?'Empty':'Empty Slot')+'</div>';
+  acts=s.auto?'':(canSave?slotBtn('save','SAVE HERE'):'')+slotBtn('new','NEW GAME')+slotLnk('import','Import');
+ }else{
+  thumb='<div class="thumb none warn">!</div>';
+  body=head+'<div class="sn warn">Damaged save</div><div class="sm"><b class="warn">'+esc(damagedText(s))+(s.hasBackup?' Restore from backup?':'')+'</b>'+
+   (s.auto||s.hasBackup?'':' No backup copy is available.')+'<br><span class="note">'+esc(s.error)+'</span></div>';
+  acts=(s.hasBackup?slotBtn('restore','RESTORE BACKUP'):'')+(canSave?slotBtn('save','SAVE HERE'):'')+slotBtn('delete','DELETE','danger')+(s.auto?'':slotLnk('import','Import'));
+ }
+ return'<div class="slot'+(cur?' cur':'')+(s.status==='corrupted'?' bad':'')+'" data-slot="'+s.slotId+'" role="group" aria-label="'+esc(s.label)+'">'+
+  thumb+'<div class="sbody">'+body+'</div>'+(acts?'<div class="acts">'+acts+'</div>':'')+'</div>';
+}
+$('#slotsOv').addEventListener('click',e=>{
+ const b=e.target.closest('[data-act]'),card=b&&b.closest('[data-slot]');if(!card)return;
+ const id=/^\d+$/.test(card.dataset.slot)?+card.dataset.slot:card.dataset.slot;
+ SFX.click();slotAction(b.dataset.act,id);
 });
-function doExport(){const r=storage.exportSave();toast(r.ok?'Save exported':r.error,r.ok?'good':'bad');}
+/** Run one save-screen action. Every destructive step asks first; results appear as toasts. */
+async function slotAction(act,id){
+ const s=slots.getSlotInfo(id),L=s.label,what=s.status==='ok'?'“'+s.slotName+'”':'the damaged save';
+ if(act==='load'){
+  if(Game.canSave()&&!await UI.confirm({title:'LOAD '+L.toUpperCase()+'?',ok:'LOAD',text:'Load '+what+'? Progress in your current game since its last save will be lost.'}))return;
+  Game.loadSlot(id);return;}
+ if(act==='new'){openNewGame({slot:id});return;}
+ if(act==='import'){importTarget=id;$('#importFile').value='';$('#importFile').click();return;}
+ if(act==='export'){const r=slots.exportSlot(id);toast(r.ok?L+' exported':r.error,r.ok?'good':'bad');return;}
+ if(act==='save'){
+  if(!await confirmOverwrite(s,'your current game'))return;
+  slots.saveToSlot(id,{reason:'manual'});             // onSaveStatus shows the confirmation or the error
+ }else if(act==='delete'){
+  if(!await UI.confirm({title:'DELETE '+L.toUpperCase()+'?',danger:true,ok:'DELETE',text:'Permanently delete '+what+' from '+L+'? This cannot be undone.'}))return;
+  const r=slots.deleteSlot(id);toast(r.ok?L+' deleted':'Could not delete '+L,r.ok?'':'bad');
+ }else if(act==='rename'){
+  const name=await UI.prompt({title:'RENAME '+L.toUpperCase(),text:'Enter a new name for this save.',value:s.slotName,ok:'RENAME'});
+  if(name==null)return;
+  const r=slots.renameSlot(id,name);toast(r.ok?L+' renamed to “'+cleanName(name)+'”':'Rename failed: '+r.error,r.ok?'good':'bad');
+ }else if(act==='copy'){
+  const dst=await UI.choose({title:'COPY '+L.toUpperCase()+' TO…',text:'Choose the slot that receives a copy of '+what+'.',
+   choices:slots.listSlots().manual.filter(t=>t.slotId!==id).map(t=>({value:t.slotId,label:t.label,
+    note:t.status==='ok'?t.slotName+' (overwrite)':t.status==='empty'?'Empty':'Damaged (replace)'}))});
+  if(dst==null)return;
+  const t=slots.getSlotInfo(dst);
+  if(!await confirmOverwrite(t,'a copy of '+what))return;
+  const r=slots.copySlot(id,dst);toast(r.ok?'Copied to '+t.label:'Copy failed: '+r.error,r.ok?'good':'bad');
+ }else if(act==='restore'){
+  const r=slots.restoreFromBackup(id);toast(r.ok?L+' restored from its backup':'Restore failed: '+r.error,r.ok?'good':'bad');
+ }
+ refreshSaveViews();
+}
+/** Boot-time offer for a damaged slot whose backup survived. */
+async function offerRestore(s){
+ if(!await UI.confirm({title:'DAMAGED SAVE',text:damagedText(s)+' Restore from backup?',ok:'RESTORE'}))return;
+ const r=slots.restoreFromBackup(s.slotId);
+ toast(r.ok?s.label+' restored from its backup':'Restore failed: '+r.error,r.ok?'good':'bad');
+ refreshSaveViews();
+}
+let importTarget=null;
+$('#importFile').addEventListener('change',async e=>{
+ const file=e.target.files&&e.target.files[0],id=importTarget;importTarget=null;
+ if(!file||!slots.isManual(id))return;
+ const fail=msg=>{toast('Import failed: '+msg,'bad');SFX.deny();};
+ if(file.size>CONFIG.MAX_SAVE_BYTES)return fail('that file is too large to be an Aethoria save.');
+ let text;try{text=(await file.text()).trim();}catch(err){return fail('the file could not be read.');}
+ const v=slots.parse(text);
+ if(!v.ok)return fail(v.code==='missing'?'the file is empty.':v.error);
+ const t=slots.getSlotInfo(id);
+ if(!await confirmOverwrite(t,'“'+v.info.slotName+'” from '+file.name))return;
+ const r=slots.importSlot(id,text);
+ if(!r.ok)return fail(r.error);
+ SFX.save();toast('Imported “'+v.info.slotName+'” into '+t.label,'good');
+ refreshSaveViews();
+});
+/** A small JPEG of the current view, kept with each save as its preview (a few KB). */
+function captureThumb(){
+ try{
+  const W=160,H=90,c=cv(W,H),g=c.getContext('2d'),sw=Math.min(gameCv.width,gameCv.height*W/H),sh=sw*H/W;
+  g.imageSmoothingQuality='high';
+  g.drawImage(gameCv,(gameCv.width-sw)/2,(gameCv.height-sh)/2,sw,sh,0,0,W,H);
+  return c.toDataURL('image/jpeg',.7);
+ }catch(e){return null;}
+}
 function updFloatBtns(){
  const playing=Game.phase==='playing'&&!state.over;
  $('#cancelPlaceBtn').classList.toggle('hidden',!(playing&&state.placing));
@@ -2285,29 +3153,32 @@ function cancelPlacing(){if(!state.placing)return;state.placing=null;gameCv.clas
 
 /* button wiring */
 const bind=(id,fn)=>{$('#'+id).addEventListener('click',e=>{Sound.unlock();fn(e);if(e.currentTarget.blur&&e.currentTarget.closest('#topbar,#floatBtns'))e.currentTarget.blur();});};
-bind('continueBtn',()=>Game.continueGame());
-bind('newGameBtn',openNewGame);
-bind('ngStart',()=>{Settings.set('gameplay.difficulty',ngDiff);Game.newGame(ngDiff);});
+bind('continueBtn',()=>openSlots('load'));
+bind('newGameBtn',()=>openNewGame());
+bind('ngStart',async()=>{
+ const s=slots.getSlotInfo(+$('#ngSlot').value);
+ if(!await confirmOverwrite(s,'your new game'))return;
+ Settings.set('gameplay.difficulty',ngDiff);
+ Game.newGame(ngDiff,s.slotId,cleanName($('#ngName').value)||ngDefaultName());
+});
 bind('ngCancel',()=>UI.close('newGameOv'));
 bind('helpBtnT',()=>UI.open('helpOv'));bind('helpBtnM',()=>UI.open('helpOv'));bind('helpClose',()=>UI.close('helpOv'));
 bind('settingsBtnT',openSettings);bind('settingsBtnM',openSettings);bind('settingsClose',()=>UI.close('settingsOv'));
 bind('settingsDefaults',()=>{Settings.reset();renderSettings();toast('Settings restored to defaults');});
 bind('achBtnT',openRecords);bind('achClose',()=>UI.close('achOv'));
 bind('resetBtnT',confirmReset);bind('resetBtnS',confirmReset);
-bind('importBtnT',startImport);bind('importBtnS',startImport);
-bind('exportBtnM',doExport);bind('exportBtnS',doExport);
+bind('slotsBtnT',()=>openSlots('manage'));bind('slotsBtnS',()=>openSlots('manage'));bind('slotsClose',()=>UI.close('slotsOv'));
 bind('menuBtn',()=>Game.pause(true));
 bind('resumeBtn',()=>Game.resume());
-bind('saveBtn',manualSave);
-bind('loadBtn',async()=>{
- if(!storage.hasSaveData()){toast('No saved game to load','bad');return;}
- const ok=await UI.confirm({title:'LOAD LAST SAVE?',text:'Any progress since '+(storage.lastSavedAt?fmtClock(storage.lastSavedAt):'the last save')+' will be lost.',ok:'LOAD'});
- if(ok)Game.continueGame();});
+bind('saveBtn',()=>openSlots('save'));
+bind('loadBtn',()=>openSlots('load'));
+bind('quickSaveBtn',quickSave);
 bind('restartBtn',async()=>{
- const ok=await UI.confirm({title:'RESTART?',text:'Start this map again on '+DIFFICULTY[state.diff].name+'? Your current progress and its save will be replaced.',ok:'RESTART',danger:true});
- if(ok)Game.newGame(state.diff);});
+ const ok=await UI.confirm({title:'RESTART?',ok:'RESTART',danger:true,text:'Start this map again on '+DIFFICULTY[state.diff].name+'? '+
+  (slots.active?'The new game replaces the save in '+slots.label(slots.active)+'.':'Your current progress will be lost.')});
+ if(ok)Game.newGame(state.diff,slots.active,slots.activeName);});
 bind('quitBtn',()=>Game.quitToTitle(true));
-bind('endNewBtn',()=>Game.newGame(state.diff));
+bind('endNewBtn',()=>openNewGame({slot:slots.active,diff:state.diff}));
 bind('endTitleBtn',()=>Game.quitToTitle(false));
 bind('idleBtn',()=>{if(Game.isInteractive())findIdle();});
 bind('homeBtn',()=>{if(Game.isInteractive())centerOnHome();});
@@ -2323,7 +3194,7 @@ function unitAt(wx,wy){
  for(const u of state.units){
   if(u.player!==0&&!vis[(u.y/TILE|0)*MAP+(u.x/TILE|0)])continue;      // hidden enemies cannot be picked
   const spr=USPR[u.player][u.type];
-  if(Math.abs(wx-u.x)<14&&wy>u.y-spr.height-2&&wy<u.y+6){
+  if(Math.abs(wx-u.x)<Math.max(14,spr.width/2-4)&&wy>u.y-spr.height-2&&wy<u.y+6){
    const d=dist(wx,wy,u.x,u.y-10);if(d<bd){bd=d;best=u;}}}
  return best;
 }
@@ -2373,7 +3244,9 @@ function rightCmd(wx,wy){
     if(prev&&ENT[prev]&&ENT[prev].kind==='r')s.cmd.resume=prev;
     any=true;}});
   if(any){SFX.click();addMark(wx,wy);return;}}
- sel.forEach((s,i)=>{
+ const form=state.formation[0];
+ if(form!=='none'&&sel.length>1){const c=groupCenter(sel);formationMove(sel,wx,wy,wx-c.x,wy-c.y,form);}
+ else sel.forEach((s,i)=>{
   const a=i*2.4,rr=sel.length>1?8+sel.length*1.6:0;
   orderMove(s,clamp(wx+Math.cos(a)*rr,10,WPX-10),clamp(wy+Math.sin(a)*rr,10,WPX-10));});
  SFX.click();addMark(wx,wy);
@@ -2524,7 +3397,7 @@ mm.addEventListener('touchmove',e=>{e.preventDefault();if(!Game.isInteractive())
 /* ================= input: keyboard ================= */
 window.addEventListener('keydown',e=>{
  const k=e.key;
- if((e.ctrlKey||e.metaKey)&&k.toLowerCase()==='s'){e.preventDefault();manualSave();return;}
+ if((e.ctrlKey||e.metaKey)&&k.toLowerCase()==='s'){e.preventDefault();quickSave();return;}
  if(UI.anyOpen()){
   if(k==='Escape'){e.preventDefault();handleEscape();}
   else if((k==='p'||k==='P')&&UI.top()==='menuOv')Game.resume();
@@ -2543,7 +3416,7 @@ window.addEventListener('keyup',e=>{keys[e.key]=false;keys[e.key.toLowerCase()]=
 /* ================= lifecycle: autosave + autopause hooks ================= */
 document.addEventListener('visibilitychange',()=>{
  if(document.hidden){
-  if(Game.canSave()){if(Settings.data.gameplay.autoPause&&!Game.paused)Game.pause(true,'hidden');else storage.autoSave('hidden');}
+  if(Game.canSave()){if(Settings.data.gameplay.autoPause&&!Game.paused)Game.pause(true,'hidden');else slots.autoSave('hidden');}
   Sound.suspend();
  }else Sound.resume();
 });
@@ -2551,10 +3424,10 @@ window.addEventListener('blur',()=>{
  keysReset();drag.on=false;
  if(!Game.canSave())return;
  if(Settings.data.gameplay.autoPause&&!Game.paused)Game.pause(true,'blur');
- else storage.autoSave('blur');
+ else slots.autoSave('blur');
 });
-window.addEventListener('pagehide',()=>storage.autoSave('unload'));
-window.addEventListener('beforeunload',()=>storage.autoSave('unload'));
+window.addEventListener('pagehide',()=>slots.autoSave('unload'));        // unchanged games are not written twice
+window.addEventListener('beforeunload',()=>slots.autoSave('unload'));
 document.addEventListener('pointerdown',()=>Sound.unlock(),{capture:true});
 
 /* ================= main loop ================= */
@@ -2573,7 +3446,8 @@ function update(dt){
  if(mouse.in){mouse.wx=mouse.x+cam.x;mouse.wy=mouse.y+cam.y;}
  for(const u of[...state.units])if(ENT[u.id])updUnit(u,dt);
  for(const b of[...state.blds])if(ENT[b.id])updBld(b,dt);
- updProjs(dt);
+ Projectiles.update(dt);
+ separate(dt);
  for(const c of state.corpses)c.life-=dt;
  state.corpses=state.corpses.filter(c=>c.life>0);
  for(const m of state.marks)m.life-=dt;
@@ -2624,6 +3498,7 @@ function drawPano(){
  g.drawImage(RSPR.gold,250,c.height-18);
  const v=USPR[0].villager,m=USPR[0].clubman;
  g.drawImage(v,340,c.height-24);g.drawImage(m,390,c.height-24);g.drawImage(v,430,c.height-26);
+ g.drawImage(USPR[0].archer,455,c.height-24);g.drawImage(USPR[0].horseman,482,c.height-32);
 }
 
 /* ================= boot ================= */
@@ -2638,22 +3513,29 @@ window.addEventListener('resize',checkRotateHint);
  const settingsLoad=Settings.load();            // also builds the team-coloured sprites and the title art
  drawTopIcons();genTerrain();
  const profileLoad=Profile.load();
- storage.bind({snapshot:()=>GameSerializer.serialize(),canSave:()=>Game.canSave(),profile:()=>Profile.data});
- storage.onStatus=onSaveStatus;
+ slots.bind({snapshot:()=>GameSerializer.serialize(),canSave:()=>Game.canSave(),profile:()=>Profile.data,
+  meta:()=>({level:Profile.level()+1,location:regionName(cam.x+vw/2,cam.y+vh/2),thumbnail:captureThumb()})});
+ slots.onStatus=onSaveStatus;
  resetWorld(Settings.data.gameplay.difficulty);
  cmdsReady=true;
  resize();updHUD();updInfo();refreshCmds(true);
  UI.open('title');
- // Validate storage before offering Continue: damaged saves are recovered from backup or cleaned up.
- const check=storage.loadGame();
- if(check.recovered)toast('Save recovered: the latest save was damaged, so the backup copy was restored.','good');
- else if(check.corrupted)toast('Your saved game was damaged and has been removed. Please start a new game.','bad');
+ // Check every save before offering Continue (nothing is loaded automatically): a 1.1 save moves into a slot,
+ // damaged slots are reported, and one with a surviving backup is offered for restore.
+ const boot=slots.init(),fixable=boot.damaged.find(s=>s.hasBackup);
+ if(boot.migrated&&boot.migrated.ok)toast('Your saved game is now in '+slots.label(boot.migrated.slotId)+'.','good');
+ else if(boot.migrated&&boot.migrated.corrupted)toast('Your previous saved game was damaged and could not be recovered.','bad');
+ for(const s of boot.damaged)if(s!==fixable)toast(damagedText(s)+(s.auto?'':' Open Continue to manage it.'),'bad');
  if(settingsLoad.repaired)toast('Some settings were invalid and have been reset to defaults.','bad');
  if(profileLoad.repaired)toast('Your profile data was damaged and has been reset.','bad');
  if(!storage.persistent)toast('Saving is unavailable in this browser mode — progress lasts until the tab closes.','bad');
  refreshTitle();checkRotateHint();
+ if(fixable)offerRestore(fixable);
  if(new URLSearchParams(location.search).has('debug'))
-  window.__aethoria={state,Game,storage,Settings,Profile,GameSerializer,ENT,UI,update,render,endGame,cam,MISSIONS,ACHIEVEMENTS,CONFIG};
+  window.__aethoria={state,Game,storage,slots,Settings,Profile,GameSerializer,ENT,UI,update,render,endGame,cam,MISSIONS,ACHIEVEMENTS,CONFIG,
+   UNITTYPES,BLDTYPES,TECHS,TRAINS,PROJ_TYPES,FORMATIONS,USPR,UANIM,BSPR,block,vis,Projectiles,ai,aiTick,aiArmyPlan,aiUnitFor,aiMuster,aiWave,
+   makeUnit,placeBld,killEnt,queueTrain,queueResearch,completeTech,orderAttack,orderMove,formationSlots,formationMove,setFormation,
+   hitDamage,hasLOS,findPath,smoothPath,separate,rangeOf,rateOf,armorOf,cmdDefs,computeVis};
  requestAnimationFrame(loop);
 })();
 </script>
