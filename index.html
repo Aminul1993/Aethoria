@@ -102,7 +102,7 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
 .hpbarI{height:100%;background:var(--hp)}
 #multiGrid{display:flex;flex-wrap:wrap;gap:3px;align-content:flex-start;max-height:104px;overflow:hidden}
 #multiGrid canvas{width:34px;height:34px;cursor:pointer}
-#cmds{flex:none;width:320px;position:relative;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;padding:8px}
+#cmds{flex:none;width:320px;position:relative;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;padding:8px;overflow-y:auto}
 .cbtn{width:50px;height:50px;background:var(--btn);border:2px solid;border-color:var(--btnHi) var(--btnLo) var(--btnLo) var(--btnHi);cursor:pointer;padding:2px;position:relative}
 .cbtn:hover{background:var(--btnHover)}
 .cbtn:active{border-color:var(--btnLo) var(--btnHi) var(--btnHi) var(--btnLo)}
@@ -403,7 +403,8 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
       <li><span class="k">Command</span> — right click ground to move, trees / berries / gold / stone to gather, an enemy to attack, your construction site to help build.</li>
       <li><span class="k">Camera</span> — WASD / arrows / screen edges / middle-button drag. Minimap: left drag to look, double click to zoom in there, right click to send orders.</li>
       <li><span class="k">Zoom</span> — the mouse wheel zooms on the cursor; <span class="k">Ctrl</span> + wheel zooms in fine steps. <span class="k">+</span> / <span class="k">−</span> zoom, <span class="k">Home</span> resets to 1×, <span class="k">Z</span> toggles the strategic overview.</li>
-      <li><span class="k">Keys</span> — <span class="k">.</span> idle villager · <span class="k">Space</span> Town Center · <span class="k">Esc</span> cancel / menu · <span class="k">P</span> pause · <span class="k">Ctrl+S</span> quick save · <span class="k">M</span> mute.</li>
+      <li><span class="k">Keys</span> — <span class="k">.</span> idle villager · <span class="k">Space</span> Town Center · <span class="k">Esc</span> cancel / menu · <span class="k">P</span> pause (nothing selected) · <span class="k">Ctrl+S</span> quick save · <span class="k">M</span> mute.</li>
+      <li><span class="k">Orders</span> — with units selected: <span class="k">A</span> attack-move, <span class="k">P</span> patrol, <span class="k">G</span> guard, then left click the map (right click or Esc cancels). The command panel has these and <span class="k">Move</span> and <span class="k">Attack</span> too. With units selected, scroll left with the arrow key.</li>
     </ul>
     <h3>Touch</h3>
     <ul>
@@ -418,7 +419,7 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
     </ul>
     <h3>Economy &amp; progress</h3>
     <ul>
-      <li><span class="k">Build</span> with villagers: houses raise population, farms give steady food, storage pits accept wood / gold / stone, barracks train soldiers. Towers, walls, gates and the Castle are on the <span class="k">Defences</span> page of the build menu.</li>
+      <li><span class="k">Build</span> with villagers: houses raise population, farms give steady food, storage pits accept wood / gold / stone, barracks train soldiers. Walls, gates, towers, castles, moats and traps are on the three <span class="k">Defences</span> pages of the build menu (Walls &amp; Gates, Towers &amp; Castles, Moats &amp; Traps).</li>
       <li><span class="k">Advance</span> at the Town Center to the Tool and Bronze Ages. <span class="k">Research</span> upgrades at the Storage Pit, Town Center, Barracks, Archery Range, Stable and Siege Workshop.</li>
       <li><span class="k">Repair</span> — villagers right-click (or tap) your damaged building to mend it for part of its cost.</li>
     </ul>
@@ -427,17 +428,20 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
       <li><span class="k">New Game</span> lets you pick a <span class="k">seed</span> (any word or number), a map type, a size and how rich the land is, with a preview. The same settings always make the same map. <span class="k">Copy code</span> gives a code such as <i>FOREST-WAR/mountain/large/high</i>: paste it into the seed box to play that map. Star maps to keep them as favourites.</li>
       <li><span class="k">Terrain</span> — mountains, deep water, lava and ruins can't be crossed. Rivers have shallow fords every few tiles. Hills slow walking, but archers and siege engines on a hill shoot 1 tile further and units there see 1 tile further. Snow, forest floor, shallows and marsh slow units too; nothing can be built on shallows or marsh. Point at the ground (or long-press it on a touch screen) to see what it is.</li>
       <li><span class="k">Water</span> — build a <span class="k">Dock</span> on deep water beside the shore for fishing boats (right-click a shoal of fish) and transport ships. Send units anywhere, even to another island: they walk to the shore and board a transport by themselves, cross, land and carry on. A transport holds 10 slots (riders 2, a siege engine its population: 3 to 5). Right-click your transport with units selected to board it; right-click land with a loaded transport to put them ashore, or press <span class="k">Unload</span>.</li>
-      <li><span class="k">Warships</span> — the Dock also builds galleys (Tool Age), war galleys, fire ships, ballista ships and cannon ships (Bronze Age; the cannon ship needs Engineering II). Each attacks only what its list names, never land units: galleys and war galleys take on warships, transports, fishing boats and docks; fire ships set the water alight among packed ships; ballista ships hunt war galleys and cannon ships; cannon ships shell docks, castles and towers. Idle warships take on enemies that come into sight. Right-click an enemy ship or Dock to attack, one of your ships to escort it, or press <span class="k">Patrol</span> and pick a point. Ships turn at their own pace; your Dock mends ships beside it and researches seven naval upgrades, among them Elite War Galley.</li>
+      <li><span class="k">Warships</span> — the Dock also builds galleys (Tool Age), war galleys, fire ships, ballista ships and cannon ships (Bronze Age; the cannon ship needs Engineering II). Each attacks only what its list names, never land units: galleys and war galleys take on warships, transports, fishing boats and docks; fire ships set the water alight among packed ships; ballista ships hunt war galleys and cannon ships; cannon ships shell docks, castles and towers. Idle warships take on enemies that come into sight. Right-click an enemy ship or Dock to attack, or one of your ships to escort it; attack-move, patrol and guard work at sea as on land. Ships turn at their own pace; your Dock mends ships beside it and researches seven naval upgrades, among them Elite War Galley.</li>
       <li><span class="k">Hunt deer</span> for quick food. <span class="k">Landmarks</span> (ruins, stone circles, sacred forests, gold valleys, lost castles, mountain fortresses, oases) hold extra resources and are announced when you find them.</li>
     </ul>
     <h3>Defences</h3>
     <ul>
-      <li><span class="k">Walls</span> — drag across the map (or click / tap where a wall starts, then where it ends) to lay a line of segments; they join up by themselves. Wooden walls (Tool Age) are cheap but burn; stone walls need the Bronze Age and <span class="k">Masonry</span>. Walls stop every unit but not arrows: your archers shoot over them.</li>
-      <li><span class="k">Gates</span> open for your units and stay shut to the enemy; place one on your own wall to replace that segment. Lock a gate to shut out your own units too. Walls and gates can be demolished.</li>
-      <li><span class="k">Moats</span> (Bronze Age, 5 stone a segment) — drag a line, drag corner to corner with <span class="k">Moat ring</span>, or select walls and press <span class="k">Moat around</span>. A moat cannot be damaged; foot units wade it at half speed, riders and siege cannot cross. A <span class="k">Drawbridge</span> on your moat lowers for your units and rises for the enemy or when it is hit; lock it to keep it up.</li>
-      <li><span class="k">Keeps</span> (Bronze Age and Masonry) — 2×2 strongholds: volleys 11 tiles, room for 10, territory 7 tiles. A Fortified Tower with room round it can grow into a Keep, and a Keep into a Castle.</li>
+      <li><span class="k">Walls</span> — drag across the map (or click / tap where a wall starts, then where it ends) to lay a line of segments; they join up by themselves. A <span class="k">Palisade</span> (3 wood, from the start) is the cheapest and weakest; timber walls (Tool Age) are cheap but burn; stone and <span class="k">curtain walls</span> (1400 HP) need the Bronze Age and <span class="k">Masonry</span>. Lay a heavier wall over a lighter one to rebuild it in place. Walls stop every unit but not arrows: your archers shoot over them.</li>
+      <li><span class="k">Gates</span> open for your units and stay shut to the enemy; place one on your own wall to replace that segment. Lock a gate to shut out your own units too. A <span class="k">Gatehouse</span> (Masonry) is a gate between two towers: 2500 HP, arrows 8 tiles, room for 5. Walls and gates can be demolished.</li>
+      <li><span class="k">Boiling Oil</span> (Masonry) goes on a timber, stone or curtain wall segment. When enemies attack within 2 tiles it pours: 30 damage to each, burning ground and half speed for 3 s, then 8 s to heat up again. Destroyed, the wall stays.</li>
+      <li><span class="k">Moats</span> (Bronze Age, 5 stone a segment) — drag a line, drag corner to corner with <span class="k">Moat ring</span>, or select walls and press <span class="k">Moat around</span>. A moat cannot be damaged; foot units wade it at half speed, riders and siege cannot cross. A <span class="k">Drawbridge</span> on your moat lowers for your units and rises for the enemy or when it is hit; lock it to keep it up. A <span class="k">Reinforced Moat</span> (Masonry), dug anywhere or over a moat, is waded at a quarter speed.</li>
+      <li><span class="k">Traps</span> — a Spike Trap (50 damage), a Fire Trap (30 and the ground burns 5 s) and a Pit Trap (20, and the victim is stuck 5 s). The enemy cannot see them; the first enemy to step on one springs it, and it is spent.</li>
+      <li><span class="k">Keeps</span> (Bronze Age and Masonry) — 2×2 strongholds: volleys 12 tiles, room for 10, territory 7 tiles. A Fortified Tower with room round it can grow into a Keep, and a Keep into a Castle or an <span class="k">Imperial Keep</span> (5000 HP, 3-arrow volleys 14 tiles, room for 15), which grows on into a Citadel.</li>
+      <li><span class="k">Bastions</span> (Masonry) — 2×2 platforms your walls join: boulders that splash, 13 tiles, room for 8, 4000 HP, armour 12.</li>
       <li><span class="k">Guard Towers</span> (Tool Age) shoot 8 tiles and see 10. Select one to upgrade it to a Watch and a Fortified Tower, then either a Ballista Tower, whose bolts wreck siege engines, or a Keep. Right-click a tower with soldiers or villagers to <span class="k">garrison</span> up to 3: each archer inside adds an arrow, and anyone inside makes it hit harder and tougher. <span class="k">Ungarrison</span> brings them out; a falling tower lets them out alive.</li>
-      <li><span class="k">Castle</span> (Bronze Age, Masonry) fires 4-arrow volleys 12 tiles, sees 15, holds 20 units and trains the Royal Guard, Elite Archer and Champion Cavalry. Its <span class="k">territory</span> (dashed border, 11 tiles) heals your units, makes them hit harder and take less damage, and speeds production; where two territories overlap, neither side gains.</li>
+      <li><span class="k">Castle</span> (Bronze Age, Masonry) fires 4-arrow volleys 15 tiles, sees 15, holds 20 units and trains the Royal Guard, Elite Archer and Champion Cavalry. Its <span class="k">territory</span> (dashed border, 11 tiles) heals your units, makes them hit harder and take less damage, and speeds production; where two territories overlap, neither side gains. A Castle grows into a <span class="k">Citadel</span> (or build one once you have a Castle): 4×4, 9000 HP, armour 18, 6-arrow volleys 18 tiles, sees 20, holds 30, territory 15, and siege engines do it only 60% damage.</li>
       <li>A town the enemy cannot walk into (walls and gates all round) takes 10% less damage. Enemy soldiers blocked by walls attack the wall or gate in the way, then carry on. Enemies near your town sound a horn.</li>
     </ul>
     <h3>Armies</h3>
@@ -450,6 +454,8 @@ button:focus-visible,.cbtn:focus-visible,select:focus-visible,input:focus-visibl
       <li><span class="k">Stone throwers</span> lob boulders 12 tiles over buildings at walls, towers and castles, then the most packed group of foot soldiers; they hurt everyone near where they land. <span class="k">Trebuchets</span> hurl bigger boulders 18 tiles, out of reach of every tower, at gates, walls, towers, castles and then any building. A boulder falls where its target stood, so moving targets dodge it.</li>
       <li><span class="k">Ballistas</span> shoot bolts 13 tiles straight at siege engines, riders, ships and towers, never at foot soldiers. <span class="k">Cannons</span> fire cannonballs 12 tiles at gates, walls, towers, castles and siege engines; both shoot flat, so they need a clear line past buildings.</li>
       <li><span class="k">Counters</span> — archers beat villagers and infantry · skirmishers beat archers · cavalry run down archers and siege engines · infantry hold off light cavalry and hack rams apart · ballistas pick off engines and riders · heavy cavalry crush infantry · towers punish archers and light cavalry · siege engines wreck walls and buildings and shrug off arrows.</li>
+      <li><span class="k">Attack-Move</span> marches on a point and fights every enemy met on the way (riders first for archers, engines first for foot soldiers, its own list for siege and warships), then carries on — across the water by ship if it must. A plain move walks past them.</li>
+      <li><span class="k">Patrol</span> works for every unit: back and forth for ever. Soldiers, engines and warships take on what comes into sight and return to the round; villagers and unarmed boats turn away from danger. <span class="k">Guard</span> a spot, a building or one of your units (escort): stay by it and fight off whatever comes for it.</li>
       <li><span class="k">Formations</span> — with soldiers selected, pick Line (archers), Square (infantry) or Wedge (cavalry). Group moves then keep that shape, with ranged units behind the front rank.</li>
     </ul>
     <h3>Saving</h3>
@@ -1343,35 +1349,69 @@ const UNITTYPES={
  *   tiers: its stats come from TOWER_TIERS;  fire: {atk, range, rate, arrows, proj, perArcher, reload, boost, military}
  *   — it shoots volleys (perArcher: arrows added per archer inside; reload, boost: per archer, faster reload and harder
  *   hits; military: soldiers first);  garrison: how many fit inside (riders: cavalry too);  territory: radius in tiles of
- *   the ground it claims (TERRITORY effects);  fireVuln: burning damage multiplier.
+ *   the ground it claims (TERRITORY effects);  fireVuln: burning damage multiplier;  resist: damage multipliers by
+ *   attacker class (on top of its armour class);  spriteSet: the SPRITES set it draws from (walls, gates and moats join
+ *   their neighbours by it);  wade: how fast foot units cross it (a moat);  walkable: units walk over it (a farm, a trap);
+ *   town: false — not part of the town (it keeps no side alive and armies do not march on it);  hidden: the enemy never
+ *   sees it;  restoresUnder: destroyed, it leaves the structure it was placed over (a drawbridge its moat, boiling oil
+ *   its wall);  trigger: {when ('step': an enemy steps on it; 'attack': an enemy attacks within radius), radius (tiles),
+ *   damage, burn {r, life, dps}, slow {mul, time}, hold (seconds stuck), cooldown, consume (gone once sprung)} — see
+ *   triggers();  menu: the Defences page it is on ('walls', 'forts', 'moats');  art: the building type whose picture
+ *   it borrows when it has none of its own (else its role's art).
  * Every entry also gets id (its key), armorClass (from its role unless given) and upgrades (the TOWER_TIERS ids its line
- * can still reach) when the game starts (see fortifyData).
+ * can still reach) when the game starts (see fortifyData). A new defence is one entry: its role, `lay: 'line'` when it
+ * is wall-like (a spriteSet for its own look, else its role's), `art` to look like another building, a menu page; a
+ * TOWER_TIERS row when it grows out of a tower; a step in AI_FORT_PLAN for the AI to build it.
  */
 const BLDTYPES={
  house:{name:'House',desc:'Supports 4 population.',cost:{wood:30},hp:75,w:1,h:1,time:12},
- farm:{name:'Farm',desc:'Renewable food. A villager works it after building.',cost:{wood:60},hp:40,w:2,h:2,time:10},
+ farm:{name:'Farm',desc:'Renewable food. A villager works it after building.',cost:{wood:60},hp:40,w:2,h:2,time:10,walkable:true},
  storagepit:{name:'Storage Pit',desc:'Drop-off point for wood, gold and stone. Researches economy upgrades.',cost:{wood:120},hp:200,w:2,h:2,time:25},
  barracks:{name:'Barracks',desc:'Trains infantry and researches military upgrades.',cost:{wood:125},hp:350,w:2,h:2,time:30,role:'production'},
- tower:{name:'Guard Tower',desc:'Shoots at enemies within 8 tiles and sees 10. Strong against archers and light cavalry. Garrison 3: archers inside add arrows. Upgrades to a Watch Tower, then a Fortified Tower, which becomes a Ballista Tower or grows into a Keep and on into a Castle.',
-  cost:{wood:125,stone:50},hp:500,w:1,h:1,time:30,age:1,role:'fort',armor:1,tiers:true,garrison:3},
- keep:{name:'Keep',desc:'A heavy stone stronghold: arrow volleys 11 tiles, sees 13, holds 10 (archers inside add arrows, villagers shelter there), and claims the ground 7 tiles round. Grows into a Castle.',
+ tower:{name:'Guard Tower',desc:'Shoots at enemies within 8 tiles and sees 10. Strong against archers and light cavalry. Garrison 3: archers inside add arrows. Upgrades to a Watch Tower, then a Fortified Tower, which becomes a Ballista Tower or grows into a Keep, and on into an Imperial Keep, a Castle and a Citadel.',
+  cost:{wood:125,stone:50},hp:500,w:1,h:1,time:30,age:1,role:'fort',armor:1,tiers:true,garrison:3,menu:'forts'},
+ keep:{name:'Keep',desc:'A heavy stone stronghold: arrow volleys 12 tiles, sees 13, holds 10 (archers inside add arrows, villagers shelter there), and claims the ground 7 tiles round. Rises into an Imperial Keep or grows into a Castle.',
   cost:{stone:300,wood:150,gold:75},hp:3000,w:2,h:2,time:70,age:2,tech:'masonry',role:'fort',armor:6,los:13,garrison:10,territory:7,
-  fire:{atk:12,range:11,rate:2.2,arrows:2,proj:'arrow',perArcher:1}},
- wall:{name:'Wooden Wall',desc:'Palisade: drag to lay a line of segments. Blocks every unit and joins up by itself. Cheap and quick; burns, and falls to siege engines.',
-  cost:{wood:5},hp:200,w:1,h:1,time:4,age:1,role:'wall',armor:1,los:0,wall:true,lay:'line',fireVuln:2},
- stonewall:{name:'Stone Wall',desc:'Drag to lay a line of segments. Shrugs off arrows and blades; siege engines still break it.',
-  cost:{stone:10},hp:750,w:1,h:1,time:8,age:2,tech:'masonry',role:'wall',armor:4,los:0,wall:true,lay:'line'},
+  fire:{atk:12,range:12,rate:2.2,arrows:2,proj:'arrow',perArcher:1},menu:'forts'},
+ bastion:{name:'Bastion',desc:'An angled artillery platform that joins your walls: hurls boulders 13 tiles that splash, holds 8, claims the ground 6 tiles round. 4000 hit points, armour 12: siege engines labour at it.',
+  cost:{stone:300,wood:150,gold:100},hp:4000,w:2,h:2,time:80,age:2,tech:'masonry',role:'fort',armor:12,los:14,garrison:8,territory:6,
+  fire:{atk:40,range:13,rate:5,arrows:1,proj:'BOULDER',military:true,perArcher:0},menu:'forts'},
+ palisade:{name:'Palisade',desc:'Sharpened stakes: the cheapest, quickest wall, from the Stone Age. Drag to lay a line. Weak, and it burns, but it keeps raiders out while a town grows.',
+  cost:{wood:3},hp:150,w:1,h:1,time:2,age:0,role:'wall',armor:1,los:0,wall:true,lay:'line',spriteSet:'palisade',fireVuln:2.5,menu:'walls'},
+ wall:{name:'Wooden Wall',desc:'Timber rampart: drag to lay a line of segments, or lay it over a palisade to rebuild it. Blocks every unit and joins up by itself. Cheap and quick; burns, and falls to siege engines.',
+  cost:{wood:5},hp:200,w:1,h:1,time:4,age:1,role:'wall',armor:1,los:0,wall:true,lay:'line',spriteSet:'wall',over:['palisade'],fireVuln:2,menu:'walls'},
+ stonewall:{name:'Stone Wall',desc:'Drag to lay a line of segments, or lay it over lighter walls to rebuild them in stone. Shrugs off arrows and blades; siege engines still break it.',
+  cost:{stone:10},hp:750,w:1,h:1,time:8,age:2,tech:'masonry',role:'wall',armor:4,los:0,wall:true,lay:'line',spriteSet:'stonewall',over:['palisade','wall'],menu:'walls'},
+ curtainwall:{name:'Curtain Wall',desc:'A tall, buttressed city wall: 1400 hit points, armour 8. Drag to lay a line, or lay it over lighter walls to rebuild them. The late-game perimeter of a castle town.',
+  cost:{stone:20},hp:1400,w:1,h:1,time:14,age:2,tech:'masonry',role:'wall',armor:8,los:0,wall:true,lay:'line',spriteSet:'curtain_wall',over:['palisade','wall','stonewall'],menu:'walls'},
  gate:{name:'Wooden Gate',desc:'Opens for your units and blocks the enemy. Place it on a wall to replace that segment.',
-  cost:{wood:50},hp:300,w:1,h:1,time:10,age:1,role:'gate',armor:1,los:2,gate:true,over:['wall','stonewall'],fireVuln:2},
- stonegate:{name:'Stone Gate',desc:'Opens for your units and blocks the enemy. Place it on a wall to replace that segment.',
-  cost:{stone:50},hp:900,w:1,h:1,time:15,age:2,tech:'masonry',role:'gate',armor:4,los:2,gate:true,over:['wall','stonewall']},
+  cost:{wood:50},hp:300,w:1,h:1,time:10,age:1,role:'gate',armor:1,los:2,gate:true,over:['palisade','wall','stonewall','curtainwall'],spriteSet:'gate',fireVuln:2,menu:'walls'},
+ stonegate:{name:'Stone Gate',desc:'Opens for your units and blocks the enemy. Place it on a wall (or a wooden gate) to replace it.',
+  cost:{stone:50},hp:900,w:1,h:1,time:15,age:2,tech:'masonry',role:'gate',armor:4,los:2,gate:true,over:['palisade','wall','stonewall','curtainwall','gate'],spriteSet:'stonegate',menu:'walls'},
+ gatehouse:{name:'Gatehouse',desc:'A fortified gate between two towers: opens for your units, shoots arrows 8 tiles, holds 5 (archers inside add arrows). 2500 hit points, armour 10. Place it on a wall or over a gate.',
+  cost:{stone:200,wood:100},hp:2500,w:1,h:1,time:40,age:2,tech:'masonry',role:'gate',armor:10,los:8,gate:true,over:['palisade','wall','stonewall','curtainwall','gate','stonegate'],spriteSet:'gatehouse',garrison:5,
+  fire:{atk:9,range:8,rate:2,arrows:2,proj:'arrow',perArcher:1},menu:'walls'},
+ boilingoil:{name:'Boiling Oil',desc:'A cauldron on a stone wall: when enemies attack within 2 tiles it pours, 30 damage to everyone there, the ground alight 4 s and half speed 3 s; again after 8 s. Place it on a wall segment; destroyed, the wall stays.',
+  cost:{stone:50,gold:50},hp:500,w:1,h:1,time:15,age:2,tech:'masonry',role:'fort',armor:4,los:3,wall:true,over:['wall','stonewall','curtainwall'],overOnly:true,spriteSet:'boiling_oil',restoresUnder:true,town:false,
+  trigger:{when:'attack',radius:2,cooldown:8,damage:30,burn:{r:40,life:4,dps:5},slow:{mul:.5,time:3}},menu:'walls'},
  moat:{name:'Moat',desc:'A ditch of water, dug in lines (drag) or as a ring. It cannot be damaged. Foot soldiers and villagers wade it at half speed; riders and siege engines cannot cross it at all, but engines and archers shoot over it. Put a Drawbridge on it for a crossing.',
-  cost:{stone:5},hp:1,w:1,h:1,time:3,age:2,role:'wall',join:'moat',lay:'line',moat:true,indestructible:true,layer:'ground',los:0,mm:'#3a6db8'},
+  cost:{stone:5},hp:1,w:1,h:1,time:3,age:2,role:'wall',join:'moat',lay:'line',moat:true,indestructible:true,wade:.5,layer:'ground',los:0,mm:'#3a6db8',spriteSet:'moat',menu:'moats'},
+ reinforcedmoat:{name:'Reinforced Moat',desc:'A wider, deeper, stone-lined moat: foot soldiers wade it at a quarter of their speed; riders and siege engines cannot cross. Dig it, or lay it over your moat to deepen it.',
+  cost:{stone:5},hp:999999,armor:999,w:1,h:1,time:5,age:2,tech:'masonry',role:'wall',join:'moat',lay:'line',moat:true,indestructible:true,wade:.25,over:['moat'],layer:'ground',los:0,mm:'#24508e',spriteSet:'reinforced_moat',menu:'moats'},
  drawbridge:{name:'Drawbridge',desc:'A crossing over your moat (place it on a moat segment). Lowered when your units come near, raised when the enemy does or when it is hit; anyone can cross it while it is down. Lock it to keep it raised. Destroyed, the moat stays.',
-  cost:{wood:120,stone:30},hp:1200,w:1,h:1,time:20,age:2,role:'gate',join:'moat',gate:true,drawbridge:true,over:['moat'],overOnly:true,needs:['moat'],armor:3,los:2,layer:'ground',fireVuln:1.5},
- castle:{name:'Castle',desc:'Fortress: fires volleys of arrows 12 tiles, sees 15, trains elite units and holds 20 (riders too). Its territory, 11 tiles round, heals your units and speeds production.',
-  cost:{stone:500,wood:250,gold:150},hp:5000,w:3,h:3,time:90,age:2,tech:'masonry',role:'castle',armor:6,los:15,garrison:20,riders:true,territory:11,
-  fire:{atk:8,range:12,rate:2.5,arrows:4,proj:'arrow',military:true,perArcher:.5,reload:.05,boost:.03}},
+  cost:{wood:120,stone:30},hp:1200,w:1,h:1,time:20,age:2,role:'gate',join:'moat',gate:true,drawbridge:true,over:['moat','reinforcedmoat'],overOnly:true,needs:['moat'],restoresUnder:true,armor:3,los:2,layer:'ground',fireVuln:1.5,spriteSet:'drawbridge',menu:'moats'},
+ spiketrap:{name:'Spike Trap',desc:'Hidden sharpened stakes in the ground: the first enemy to step on it takes 50 damage, and the trap is spent. Your enemy cannot see it.',
+  cost:{wood:20},hp:50,w:1,h:1,time:6,age:1,role:'fort',hidden:true,walkable:true,town:false,layer:'ground',los:0,trigger:{when:'step',radius:.6,damage:50,consume:true},menu:'moats'},
+ firetrap:{name:'Fire Trap',desc:'A hidden pot of pitch: the enemy that steps on it takes 30 damage and the ground burns for 5 s. Your enemy cannot see it.',
+  cost:{wood:30,gold:20},hp:50,w:1,h:1,time:8,age:2,role:'fort',hidden:true,walkable:true,town:false,layer:'ground',los:0,trigger:{when:'step',radius:.6,damage:30,burn:{r:30,life:5,dps:6},consume:true},menu:'moats'},
+ pittrap:{name:'Pit Trap',desc:'A hidden, covered pit: the enemy that falls in takes 20 damage and cannot move for 5 s. Your enemy cannot see it.',
+  cost:{wood:40},hp:50,w:1,h:1,time:10,age:1,role:'fort',hidden:true,walkable:true,town:false,layer:'ground',los:0,trigger:{when:'step',radius:.6,damage:20,hold:5,consume:true},menu:'moats'},
+ castle:{name:'Castle',desc:'Fortress: fires volleys of arrows 15 tiles, sees 15, trains elite units and holds 20 (riders too). Its territory, 11 tiles round, heals your units and speeds production. Grows into a Citadel.',
+  cost:{stone:500,wood:250,gold:150},hp:6000,w:3,h:3,time:90,age:2,tech:'masonry',role:'castle',armor:6,los:15,garrison:20,riders:true,territory:11,
+  fire:{atk:8,range:15,rate:2.5,arrows:4,proj:'arrow',military:true,perArcher:.5,reload:.05,boost:.03},menu:'forts'},
+ citadel:{name:'Citadel',desc:'The end-game fortress: 9000 hit points, armour 18, six-arrow volleys 18 tiles, sees 20, trains elite units, holds 30 (riders too) and claims the ground 15 tiles round. Siege engines deal it only 60%. Needs a Castle.',
+  cost:{stone:1000,wood:500,gold:500},hp:9000,w:4,h:4,time:150,age:2,tech:'masonry',needs:['castle'],role:'castle',armor:18,los:20,garrison:30,riders:true,territory:15,resist:{siege:.6},
+  fire:{atk:12,range:18,rate:2,arrows:6,proj:'arrow',military:true,perArcher:.5,reload:.05,boost:.03},menu:'forts'},
  archery:{name:'Archery Range',desc:'Trains archers, skirmishers and composite archers. Researches archery upgrades.',cost:{wood:175},hp:400,w:2,h:2,time:35,age:1,role:'production'},
  stable:{name:'Stable',desc:'Trains scout cavalry, horsemen and heavy cavalry. Researches cavalry upgrades.',cost:{wood:200,food:100},hp:500,w:2,h:2,time:40,age:2,role:'production'},
  siegeworkshop:{name:'Siege Workshop',desc:'Builds battering rams, stone throwers and ballistas, trebuchets (Counterweight Systems) and cannons (Engineering II), and researches siege upgrades. Medium armour.',cost:{wood:250,stone:150},hp:800,w:2,h:2,time:45,age:2,
@@ -1382,7 +1422,7 @@ const BLDTYPES={
 };
 /** Which building trains which units (drives the command panel, training checks and the AI). */
 const TRAINS={towncenter:['villager'],barracks:['clubman','axeman'],archery:['archer','skirmisher','composite'],stable:['scout','horseman','heavycav'],
- castle:['royalguard','elitearcher','championcav'],dock:['fishingboat','transport']};   // siege engines (Siege Workshop) and warships (Dock) are added by unitData
+ castle:['royalguard','elitearcher','championcav'],citadel:['royalguard','elitearcher','championcav'],dock:['fishingboat','transport']};   // siege engines (Siege Workshop) and warships (Dock) are added by unitData
 /**
  * Upgrades researched at buildings. `at` is the building that offers it, `req` an upgrade needed first. `eff` boosts
  * one unit class (`cls`), one unit type (`type`) or several (`types`), one role (`role`) or every ship (`naval`): atk, hp and range add;
@@ -1450,17 +1490,37 @@ const COUNTERS={
  * of the Guard Tower itself: name, attack, range and sight (tiles), reload, hit points, armour, projectile, and
  * optionally bonus, arrows, perArcher, garrison and territory. A row with `becomes` turns the building into that
  * BLDTYPES type — growing into free ground round it if that type is bigger — and its stats then come from there.
- * cost, time, age and tech are what the upgrade takes. Adding a tier is one more row.
+ * cost, time, age and tech are what the upgrade takes. Adding a tier is one more row. `after` may list several rows (a
+ * Citadel grows out of an Imperial Keep or a Castle). Any building on the line takes plain rows as tiers: a Keep
+ * rises into an Imperial Keep, its stats laid over the Keep's. A plain row with `becomes` as well is a tier whose next
+ * step turns the building into that type: tierData adds that step right after it (at TIER_GROW of the type's cost
+ * and time), and gives every row without `after` the row written before it. New rows go at the end (saves keep a
+ * building's tier by row index, so the rows already there never move).
  */
-const TOWER_TIERS=Object.freeze([
+const TIER_GROW=Object.freeze({cost:.5,time:.6});
+const TOWER_TIERS=tierData([
  {id:'guard',name:'Guard Tower',atk:9,range:8,los:10,rate:2,hp:500,armor:1,proj:'arrow'},
- {id:'watch',name:'Watch Tower',atk:11,range:10,los:12,rate:2,hp:825,armor:2,proj:'arrow',cost:{stone:100,wood:50},time:30,age:1,desc:'+2 attack, +2 range, +325 hit points.'},
+ {id:'watch',name:'Watch Tower',atk:11,range:10,los:12,rate:2,hp:850,armor:2,proj:'arrow',cost:{stone:100,wood:50},time:30,age:1,desc:'+2 attack, +2 range, +350 hit points.'},
  {id:'fortified',name:'Fortified Tower',atk:14,range:11,los:13,rate:1.8,hp:1500,armor:3,proj:'arrow',cost:{stone:150,gold:100},time:40,age:2,desc:'+3 attack, +1 range, faster reload, +675 hit points, +1 armour.'},
  {id:'ballista',after:'fortified',name:'Ballista Tower',atk:22,range:11,los:13,rate:2.6,hp:1500,armor:3,proj:'spear',bonus:{siege:1.5,cavalry:1.3},cost:{stone:200,gold:150,wood:100},time:45,age:2,
   desc:'Fires heavy bolts 11 tiles: +8 attack, deadly to siege engines and cavalry.'},
- {id:'keep',after:'fortified',becomes:'keep',cost:{stone:150,wood:75,gold:40},time:60,age:2,tech:'masonry',desc:'Grows into a 2×2 Keep: 3000 hit points, 2-arrow volleys 11 tiles, holds 10, claims the ground 7 tiles round.'},
- {id:'castle',becomes:'castle',cost:{stone:200,wood:100,gold:75},time:80,age:2,tech:'masonry',desc:'Grows into a 3×3 Castle: 5000 hit points, 4-arrow volleys 12 tiles, trains elite units, holds 20.'}
-].map(Object.freeze));
+ {id:'keep',after:'fortified',becomes:'keep',cost:{stone:150,wood:75,gold:40},time:60,age:2,tech:'masonry',desc:'Grows into a 2×2 Keep: 3000 hit points, 2-arrow volleys 12 tiles, holds 10, claims the ground 7 tiles round.'},
+ {id:'castle',becomes:'castle',cost:{stone:200,wood:100,gold:75},time:80,age:2,tech:'masonry',desc:'Grows into a 3×3 Castle: 6000 hit points, 4-arrow volleys 15 tiles, trains elite units, holds 20.'},
+ {id:'imperialkeep',after:'keep',name:'Imperial Keep',hp:5000,range:14,becomes:'citadel',atk:15,los:15,rate:2,arrows:3,armor:9,proj:'arrow',perArcher:1,garrison:15,territory:9,
+  cost:{stone:300,wood:150,gold:100},time:70,age:2,tech:'masonry',desc:'The Keep rises into an Imperial Keep: 5000 hit points, 3-arrow volleys 14 tiles, armour 9, holds 15, claims the ground 9 tiles round. Grows on into a Citadel.'},
+ {id:'citadel',after:'castle',becomes:'citadel',cost:{stone:500,wood:250,gold:250},time:100,age:2,tech:'masonry',desc:'Grows into a 4×4 Citadel: 9000 hit points, 6-arrow volleys 18 tiles, sees 20, holds 30, trains elite units, shrugs off siege.'}
+]);
+/**
+ * Read the tower line's rows in: a row with stats and `becomes` is a tier (its stats) and the step out of it (into that
+ * type), so the step is added as a row of its own; then every row is frozen.
+ */
+function tierData(rows){
+ const out=[];
+ rows.forEach((r0,i)=>{const r={...r0};if(i>0&&r.after===undefined)r.after=rows[i-1].id;out.push(r);   // the row written before it, not a step added in between
+  if(r.becomes&&(r.hp||r.atk||r.range)){const B=BLDTYPES[r.becomes];r.then=r.becomes;delete r.becomes;
+   out.push({id:r.id+'>'+r.then,after:r.id,becomes:r.then,cost:Object.fromEntries(Object.entries(B.cost).map(([k,v])=>[k,Math.round(v*TIER_GROW.cost)])),
+    time:Math.round(B.time*TIER_GROW.time),age:B.age,tech:B.tech,desc:'Grows into a '+B.w+'×'+B.h+' '+B.name+'. '+B.desc});}});
+ return Object.freeze(out.map(Object.freeze));}
 /** The castle's volley (its BLDTYPES fire, kept under this name for the debug hook). */
 const CASTLE=BLDTYPES.castle.fire;
 /** Garrison bonuses: a tower or castle with anyone inside hits harder and gains armour; every ranged unit inside adds arrows. */
@@ -1477,19 +1537,25 @@ const REPAIR=Object.freeze({rate:.5,cost:.5});           // repairing: half the 
 const BLK=Object.freeze({bld:5,wall:6,gate:7,terrain:9,moat:10,bridge:11});   // terrain: water, mountains, lava, ruins
 /** A moat: foot units cross at this fraction of their speed. A drawbridge: enemies this many tiles away raise it; hit, it stays up `shut` seconds. */
 const MOAT=Object.freeze({slow:.5});
+/** How fast a foot unit crosses tile i: on a moat, that moat's `wade` (else MOAT.slow); 1 anywhere else. */
+const wadeAt=i=>{if(block[i]!==BLK.moat)return 1;const b=ENT[occ[i]];return b&&BLDTYPES[b.type].wade||MOAT.slow;};
 const DRAWBRIDGE=Object.freeze({enemy:3,friend:1.6,shut:8});
 /**
- * Fortification roles. A structure's role decides: its armour class (ROLE_ARMOR), its place in siege priority (siege:
- * rams batter the lowest first), the group it joins its neighbours in (walls, gates, towers, keeps and castles join as
- * one rampart; a moat and its drawbridges as another), repairs (rate × the building speed, cost × its price for a full
- * repair), how the AI plans it, whether it counts as a town building (line: walls and gates do not), and its draw layer.
- * Garrisons, defensive fire and territory come from each structure's own data (garrison, fire, territory).
+ * Fortification roles. A structure's role decides: its armour class (ROLE_ARMOR); its siege priority (siegePriority:
+ * siege engines batter the lowest first); whether villagers may repair it (repairable; repair: rate × the building
+ * speed, cost × its price for a full repair); whether it draws joined pieces (joins: a wall-like line picks its piece —
+ * straight, corner, tee, crossroads, end — from its neighbours) and the group it joins its neighbours in (join: walls,
+ * gates, towers, keeps and castles as one rampart; a moat and its drawbridges as another); how the AI plans it (plan:
+ * 'ring' — the perimeter and its access points, 'corner' — chokepoints at the ring's corners, 'front' — the strategic
+ * centre facing the enemy); whether it counts as a town building (line: walls and gates do not); and the picture a
+ * structure of the role borrows until it has its own (art: a sprite set for walls and gates, a building otherwise).
+ * Garrisons, defensive fire, territory, triggers and the rest come from each structure's own data.
  */
 const ROLES=Object.freeze({
- wall:  {armorClass:'wall',  siege:2,join:'rampart',repair:{rate:.5,cost:.5},line:true,plan:'ring'},
- gate:  {armorClass:'gate',  siege:1,join:'rampart',repair:{rate:.5,cost:.5},line:true,plan:'ring'},
- fort:  {armorClass:'fort',  siege:3,join:'rampart',repair:{rate:.5,cost:.5},plan:'corner'},
- castle:{armorClass:'castle',siege:4,join:'rampart',repair:{rate:.35,cost:.5},plan:'front'}
+ wall:  {armorClass:'wall',  siegePriority:2,repairable:true,joins:true, join:'rampart',repair:{rate:.5,cost:.5},line:true,plan:'ring',art:'stonewall'},
+ gate:  {armorClass:'gate',  siegePriority:1,repairable:true,joins:false,join:'rampart',repair:{rate:.5,cost:.5},line:true,plan:'ring',art:'stonegate'},
+ fort:  {armorClass:'fort',  siegePriority:3,repairable:true,joins:false,join:'rampart',repair:{rate:.5,cost:.5},plan:'corner',art:'tower'},
+ castle:{armorClass:'castle',siegePriority:4,repairable:true,joins:false,join:'rampart',repair:{rate:.35,cost:.5},plan:'front',art:'castle'}
 });
 /**
  * How each fortification armour class stands up to each attacker class: multipliers on its damage, on top of COUNTERS.
@@ -1501,30 +1567,42 @@ const ROLE_ARMOR=Object.freeze({
  fort:  {ranged:.6,infantry:.85,cavalry:.85},
  castle:{villager:.6,infantry:.7,cavalry:.7,ranged:.6}
 });
-/** Roles in the order rams batter them (ROLES[*].siege): gate, wall, fort, castle. A siege engine's 'defences' target means these. */
-const SIEGE_ORDER=Object.keys(ROLES).sort((a,b)=>ROLES[a].siege-ROLES[b].siege);
+/** Roles in the order siege engines batter them (ROLES[*].siegePriority): gate, wall, fort, castle. A siege engine's 'defences' target means these. */
+const SIEGE_ORDER=Object.keys(ROLES).sort((a,b)=>ROLES[a].siegePriority-ROLES[b].siegePriority);
 const FORT_ROLES=new Set(Object.keys(ROLES));
 const roleOf=b=>ROLES[BLDTYPES[b.type].role]||null;
 const isLine=b=>b.kind==='b'&&!!(roleOf(b)&&roleOf(b).line);   // walls, gates, moats and drawbridges: not counted as town buildings
+/** A building that counts as part of the town: not a line structure, nor one marked town: false (traps, boiling oil). Only these keep a side alive, and armies march on them. */
+const townBld=b=>b.kind==='b'&&!isLine(b)&&BLDTYPES[b.type].town!==false;
+/** Whether villagers may repair it: its role says (repairable), anything without a role may be. */
+const repairable=b=>{const R=roleOf(b);return!R||R.repairable!==false;};
 const isFort=b=>b.kind==='b'&&!!roleOf(b);
 const unbreakable=b=>b.kind==='b'&&!!BLDTYPES[b.type].indestructible;
-/** The row of TOWER_TIERS a row grows out of (its `after`, or the row before it). */
+/** The row of TOWER_TIERS a row grows out of (its `after` — one id or a list — or the row before it). */
 const tierFrom=i=>TOWER_TIERS[i].after??(i>0?TOWER_TIERS[i-1].id:null);
+const tierFromList=i=>[].concat(tierFrom(i)??[]);
 const tierIndex=id=>TOWER_TIERS.findIndex(r=>r.id===id);
 const tierName=r=>r.name||BLDTYPES[r.becomes].name;
-/** Where a building stands in the tower line: its tier's id (a tower), the id of the row that becomes its type (a Keep, a Castle), or null. */
-const lineIdOf=(type,tier)=>BLDTYPES[type].tiers?TOWER_TIERS[tier||0].id:(TOWER_TIERS.find(r=>r.becomes===type)||{}).id??null;
+/**
+ * Where a building stands in the tower line: the row it has risen to (its tier), else the row that becomes its type (a
+ * Keep, a Castle), else the first row for the Guard Tower; null for a building off the line.
+ */
+const lineIdOf=(type,tier)=>tier!==undefined&&tier!==null?TOWER_TIERS[tier].id:BLDTYPES[type].tiers?TOWER_TIERS[0].id:(TOWER_TIERS.find(r=>r.becomes===type)||{}).id??null;
 /** The upgrades open to a building of this type and tier: indices of the TOWER_TIERS rows that grow out of where it stands. */
-const tierOptions=(type,tier)=>{const id=lineIdOf(type,tier);return id===null?[]:TOWER_TIERS.map((r,i)=>i).filter(i=>i>0&&tierFrom(i)===id);};
+const tierOptions=(type,tier)=>{const id=lineIdOf(type,tier);return id===null?[]:TOWER_TIERS.map((r,i)=>i).filter(i=>i>0&&tierFromList(i).includes(id));};
+/** The building type a row is a tier of: the type the nearest `becomes` row behind it turns into, else the Guard Tower (the type with tiers). */
+const lineTypeOf=i=>{for(let k=i,n=0;k>=0&&n<TOWER_TIERS.length;n++){const r=TOWER_TIERS[k];if(r.becomes)return r.becomes;const f=tierFromList(k)[0];if(f===undefined)break;k=tierIndex(f);}
+ return Object.keys(BLDTYPES).find(t=>BLDTYPES[t].tiers)||null;};
 /**
  * Fill in each building type's data-driven fields: id, armorClass (from its role) and upgrades (every TOWER_TIERS id its
  * line can still reach). Run once, when the script starts.
  */
 function fortifyData(){
- const reach=id=>{const out=[];for(const i of TOWER_TIERS.keys())if(i>0&&tierFrom(i)===id)out.push(TOWER_TIERS[i].id,...reach(TOWER_TIERS[i].id));return out;};
+ const reach=(id,seen=new Set())=>{const out=[];for(const i of TOWER_TIERS.keys())if(i>0&&tierFromList(i).includes(id)&&!seen.has(i)){seen.add(i);out.push(TOWER_TIERS[i].id,...reach(TOWER_TIERS[i].id,seen));}return out;};
  for(const[id,B]of Object.entries(BLDTYPES)){B.id=id;const R=ROLES[B.role];
   if(R&&!B.armorClass)B.armorClass=R.armorClass;
-  const at=lineIdOf(id,0);B.upgrades=at===null?[]:reach(at);}
+  if(R&&!B.spriteSet&&(R.joins&&B.lay==='line'||B.gate))B.spriteSet=B.moat?'moat':B.drawbridge?'drawbridge':R.art;   // automatic joins: a wall-like line or a gate with no set of its own draws from its role's
+  const at=lineIdOf(id);B.upgrades=at===null?[]:reach(at);}
 }
 fortifyData();
 /**
@@ -1652,7 +1730,7 @@ const MISSIONS=[
  {id:'raze',text:'Destroy an enemy building',goal:1,progress:s=>s.stats.razed},
  {id:'bronze',text:'Advance to the Bronze Age',goal:1,progress:s=>s.age[0]>=2?1:0},
  {id:'boss',text:'Destroy the enemy Town Center',goal:1,progress:s=>s.stats.bossDown?1:0},
- {id:'win',text:'Destroy every enemy building',goal:1,progress:s=>s.blds.some(b=>b.player===1&&!isLine(b))?0:1}   // walls and gates do not count
+ {id:'win',text:'Destroy every enemy building',goal:1,progress:s=>s.blds.some(b=>b.player===1&&townBld(b))?0:1}   // walls, gates and traps do not count
 ];
 
 /* ================= pixel sprites ================= */
@@ -2067,46 +2145,83 @@ function makeWorkshop(main,dark){const c=cv(56,44),g=c.getContext('2d'),px=(col,
 /** Wall material: palisade logs or dressed stone. */
 const WALL_LOOK={wood:{H:17,face:['#7a4e28','#8f5e30'],edge:'#4a2e12',top:'#a8783e',cap:'#6e4424'},stone:{H:15,face:['#8f8f85','#9a9a90'],edge:'#6d6d63',top:'#b4b4a8',cap:'#a5a599'}};
 /**
- * Wall segment sprites for one material and team, indexed by neighbour mask (N 1, E 2, S 4, W 8): a post with a run of
- * wall towards each joined neighbour, so ends, straights, corners, T-junctions and crossings all draw themselves.
- * 32×54 px: the tile's ground is y 22–54, centre (16, 38); runs are 6 px thick.
+ * Wall segment sprites for one look and team, indexed by neighbour mask (N 1, E 2, S 4, W 8): a post with a run of wall
+ * towards each joined neighbour, so ends, straights, corners, T-junctions and crossings all draw themselves. A look
+ * (SPRITES[set].look): style 'stakes' (sharpened logs), 'timber' or 'stone'; H its height; thick its run's thickness;
+ * face, edge, top, cap its colours; buttress (stone pilasters); overlay 'cauldron' (boiling oil on the post).
+ * 32×54 px: the tile's ground is y 22–54, centre (16, 38).
  */
-function makeWallSet(stone,main,dark){
- const L=stone?WALL_LOOK.stone:WALL_LOOK.wood,H=L.H,G=38,out=[];
+function makeWallSet(L,main,dark){
+ const stone=L.style==='stone',stakes=L.style==='stakes',H=L.H,G=38,T=L.thick||6,x0c=16-T/2,out=[];
  for(let m=0;m<16;m++){const c=cv(32,54),g=c.getContext('2d'),px=(col,x,y,w,h)=>{g.fillStyle=col;g.fillRect(x,y,w,h);};
-  const run=(x0,x1)=>{                          // east–west: a 6 px top, then the front face down to the ground
-   px(L.cap,x0,G-3-H,x1-x0,6);px(L.edge,x0,G+3,x1-x0,1);
+  const run=(x0,x1)=>{                          // east–west: a top, then the front face down to the ground
+   if(stakes){for(let x=x0;x<x1;x+=3){const w=Math.min(3,x1-x);px(L.face[(x/3|0)%2],x,G+3-H,w,H);px(L.edge,x,G+3-H,1,H);
+     px(L.top,x+1,G+1-H,1,2);px(L.edge,x+1,G-H,1,1);}               // sharpened log tips
+    px(L.cap,x0,G-1,x1-x0,2);return;}                               // the binding rope
+   px(L.cap,x0,G+3-H-T,x1-x0,T);px(L.edge,x0,G+3,x1-x0,1);
    for(let x=x0;x<x1;x+=stone?8:3){const w=Math.min(stone?8:3,x1-x);
     if(stone){px(L.face[(x>>3)&1],x,G+3-H,w,H);px(L.edge,x,G+3-H,1,H);for(let y=G+7-H;y<G+3;y+=5)px(L.edge,x,y,w,1);}
-    else{px(L.face[(x/3|0)%2],x,G+3-H,w,H);px(L.edge,x,G+3-H,1,H);px(L.top,x+1,G-4-H,1,2);}}
-   if(stone)for(let x=x0;x<x1;x+=4)px(L.top,x,G-6-H,2,3);};   // crenellations
+    else{px(L.face[(x/3|0)%2],x,G+3-H,w,H);px(L.edge,x,G+3-H,1,H);px(L.top,x+1,G+2-H-T,1,2);}}
+   if(L.buttress)for(let x=x0+3;x<x1;x+=10){px(L.edge,x,G+3-H,3,H);px(L.cap,x,G+1,3,3);}   // pilasters
+   if(stone)for(let x=x0;x<x1;x+=4)px(L.top,x,G-H-T,2,3);};          // crenellations
   const side=(y0,y1,front)=>{                   // north–south: the top seen from above, and the end face if it is in front
-   px(L.cap,13,y0-H,6,y1-y0);px(L.edge,13,y0-H,1,y1-y0);px(L.edge,18,y0-H,1,y1-y0);
-   for(let y=y0-H+(stone?4:2);y<y1-H;y+=stone?6:3)px(L.top,14,y,4,1);
-   if(front){px(L.face[0],13,y1-H,6,H);px(L.edge,13,y1-H,6,1);px(L.edge,13,y1-1,6,1);}};
+   if(stakes){for(let y=y0-H;y<y1-H;y+=3)px(L.face[(y/3|0)%2],13,y,6,3),px(L.top,15,y,2,1);if(front)px(L.face[0],13,y1-H,6,H),px(L.edge,13,y1-1,6,1);return;}
+   px(L.cap,x0c,y0-H,T,y1-y0);px(L.edge,x0c,y0-H,1,y1-y0);px(L.edge,x0c+T-1,y0-H,1,y1-y0);
+   for(let y=y0-H+(stone?4:2);y<y1-H;y+=stone?6:3)px(L.top,x0c+1,y,T-2,1);
+   if(front){px(L.face[0],x0c,y1-H,T,H);px(L.edge,x0c,y1-H,T,1);px(L.edge,x0c,y1-1,T,1);}};
   if(m&1)side(22,G,false);
   if(m&8)run(0,16);if(m&2)run(16,32);
-  px(L.edge,11,G-H-5,10,H+9);px(L.face[1],12,G-H-4,8,H+7);px(L.top,12,G-H-6,8,2);   // the post, a little taller
-  px(main,12,G-H+1,8,3);px(dark,12,G-H+4,8,1);
-  if(stone)px(L.top,12,G-H-8,3,2),px(L.top,17,G-H-8,3,2);
+  const pw=Math.max(10,T+4),pxl=16-pw/2;
+  if(stakes){px(L.edge,pxl+1,G-H-6,pw-2,H+9);px(L.face[1],pxl+2,G-H-5,pw-4,H+7);px(L.top,pxl+3,G-H-7,pw-6,2);}   // a thick post log
+  else{px(L.edge,pxl,G-H-5,pw,H+9);px(L.face[1],pxl+1,G-H-4,pw-2,H+7);px(L.top,pxl+1,G-H-6,pw-2,2);}   // the post, a little taller
+  px(main,pxl+1,G-H+1,pw-2,3);px(dark,pxl+1,G-H+4,pw-2,1);
+  if(stone)px(L.top,pxl+1,G-H-8,3,2),px(L.top,pxl+pw-4,G-H-8,3,2);
+  if(L.overlay==='cauldron'){                   // boiling oil: an iron cauldron on the post, its oil glowing, steam rising
+   px('#3a2a14',pxl-1,G-H-9,2,6);px('#3a2a14',pxl+pw-1,G-H-9,2,6);px('#2a2a28',pxl,G-H-14,pw,6);px('#1c1c1a',pxl+1,G-H-9,pw-2,2);
+   px('#ff8a20',pxl+1,G-H-15,pw-2,2);px('#ffd060',pxl+3,G-H-15,3,1);
+   g.fillStyle='rgba(230,230,224,.55)';for(const[x,y]of[[pxl+2,G-H-20],[pxl+6,G-H-23],[pxl+4,G-H-27]])g.fillRect(x,y,3,3);}
   if(m&4)side(G,54,true);
   out.push(c);}
  return out;}
+/** The five pieces of a line set, by name: straight, corner, tee, crossroads and the end of a line (endcap). */
+const linePieces=S=>({straight:S[10],corner:S[6],tee:S[14],crossroads:S[15],endcap:S[2]});
 /** Gate sprites [horizontal | vertical][closed | open]: taller posts and a lintel framing doors that swing open for its owner. */
-function makeGateSet(stone,main,dark){
- const L=stone?WALL_LOOK.stone:WALL_LOOK.wood,H=L.H+5,G=38,out=[[],[]];
+function makeGateSet(L,main,dark){
+ const stone=L.style==='stone',H=L.H+5,G=38,door=L.door||(stone?'#6e4c2a':'#8a5a2c'),out=[[],[]];
  for(const open of[0,1]){
   {const c=cv(32,54),g=c.getContext('2d'),px=(col,x,y,w,h)=>{g.fillStyle=col;g.fillRect(x,y,w,h);};   // horizontal: doors face south
    px(open?'#2a1a0c':L.edge,7,G+3-H+4,18,H-4);
-   if(!open){for(let x=8;x<24;x+=4)px(stone?'#6e4c2a':'#8a5a2c',x,G+4-H+4,3,H-5);px('#3e3e38',8,G-H+9,16,2);px('#3e3e38',8,G-2,16,2);}
+   if(!open){for(let x=8;x<24;x+=4)px(door,x,G+4-H+4,3,H-5);px('#3e3e38',8,G-H+9,16,2);px('#3e3e38',8,G-2,16,2);}
    else{px('#7a5230',8,G+4-H+4,2,H-5);px('#7a5230',22,G+4-H+4,2,H-5);}
    for(const x of[2,24]){px(L.edge,x,G+3-H-2,6,H+3);px(L.face[1],x+1,G+3-H-1,4,H+1);px(L.top,x+1,G+1-H-4,4,3);}
    px(L.edge,2,G+3-H-3,28,4);px(L.cap,3,G+3-H-2,26,2);px(main,12,G+3-H-2,8,3);px(dark,12,G+4-H,8,1);
    out[0][open]=c;}
   {const c=cv(32,54),g=c.getContext('2d'),px=(col,x,y,w,h)=>{g.fillStyle=col;g.fillRect(x,y,w,h);};   // vertical: doors face east and west
-   if(!open){px(stone?'#6e4c2a':'#7a5230',13,22-H+4,6,32);px('#3e3e38',13,28-H+4,6,1);px('#3e3e38',13,44-H+4,6,1);}
+   if(!open){px(door,13,22-H+4,6,32);px('#3e3e38',13,28-H+4,6,1);px('#3e3e38',13,44-H+4,6,1);}
    for(const y of[22,54]){px(L.edge,11,y-H-4,10,H+4);px(L.face[1],12,y-H-3,8,H+2);px(L.top,12,y-H-5,8,2);}
    px(main,12,54-H-1,8,3);px(dark,12,54-H+2,8,1);
+   out[1][open]=c;}}
+ return out;}
+/**
+ * Gatehouse sprites [horizontal | vertical][closed | open]: an arched gate between two crenellated towers with arrow
+ * slits and the owner's banner; a portcullis when shut, a dark archway when open. 32×64, the tile at the bottom.
+ */
+function makeGatehouseSet(L,main,dark){
+ const out=[[],[]],G=48,H=L.H;
+ for(const open of[0,1]){
+  {const c=cv(32,64),g=c.getContext('2d'),px=(col,x,y,w,h)=>{g.fillStyle=col;g.fillRect(x,y,w,h);};   // horizontal
+   px(L.face[0],6,G+3-H+4,20,H-4);for(let y=G+7-H;y<G+3;y+=5)px(L.edge,6,y,20,1);      // the curtain over the arch
+   px('#1c1206',10,G-9,12,12);g.fillStyle='#1c1206';g.beginPath();g.arc(16,G-9,6,Math.PI,0);g.fill();   // the archway
+   if(!open){for(let x=11;x<22;x+=3)px('#3e3e38',x,G-15,1,18);for(let y=G-12;y<G+3;y+=4)px('#3e3e38',10,y,12,1);}   // portcullis
+   for(const x of[0,22]){px(L.edge,x,G+3-H-8,10,H+11);px(L.face[1],x+1,G+3-H-7,8,H+9);for(let y=G+1-H;y<G+3;y+=5)px(L.edge,x+1,y,8,1);
+    for(let k=0;k<3;k++)px(L.top,x+1+k*3,G-H-9,2,3);px('#1c1206',x+4,G-H+2,2,5);}       // towers, battlements, arrow slits
+   px(L.cap,6,G+1-H-2,20,3);px(main,12,G+1-H-2,8,4);px(dark,12,G+5-H-2,8,1);px('#4a3418',15,G-H-14,2,10);px(main,17,G-H-14,6,4);px(dark,17,G-H-10,6,1);
+   out[0][open]=c;}
+  {const c=cv(32,64),g=c.getContext('2d'),px=(col,x,y,w,h)=>{g.fillStyle=col;g.fillRect(x,y,w,h);};   // vertical: the passage runs east–west through it
+   px(L.cap,10,32-H,12,32);for(let y=34-H;y<64-H;y+=5)px(L.edge,10,y,12,1);
+   if(!open){px('#3e3e38',10,46-H,12,2);}else px('#1c1206',12,40-H,8,16);
+   for(const y of[32,64]){px(L.edge,8,y-H-10,16,H+10);px(L.face[1],9,y-H-9,14,H+8);for(let k=0;k<4;k++)px(L.top,9+k*4,y-H-12,2,3);px('#1c1206',15,y-H-4,2,5);}
+   px(main,12,64-H-8,8,4);px(dark,12,64-H-4,8,1);
    out[1][open]=c;}}
  return out;}
 /** The tower line: Guard (timber on a stone footing), Watch (stone, see makeTower), Fortified (broad, battlemented), Ballista. */
@@ -2169,15 +2284,17 @@ function makeFish(){const c=cv(28,16),g=c.getContext('2d'),px=(col,x,y,w,h)=>{g.
   px('#5a7894',f>0?x+8:x-2,y-1,2,1);px('#5a7894',f>0?x+8:x-2,y+2,2,1);px('#1c2a3a',f>0?x+1:x+6,y,1,1);}   // backs, bellies, tails, eyes
  return c;}
 /**
- * Moat segments by neighbour mask (N 1, E 2, S 4, W 8): a channel of water between earth banks, running on to each
- * joined neighbour, so straights, corners, crossings and ends draw themselves. 32×32, the tile itself.
+ * Moat segments by neighbour mask (N 1, E 2, S 4, W 8): a channel of water between banks, running on to each joined
+ * neighbour, so straights, corners, crossings and ends draw themselves. A look: bank, edge, water and ripple colours,
+ * inset (the bank's width: a smaller inset is a wider moat), stone (a lined bank). 32×32, the tile itself.
  */
-function makeMoatSet(){const out=[];
+function makeMoatSet(L){const out=[],n=L.inset??6,w=32-2*n;
  for(let m=0;m<16;m++){const c=cv(32,32),g=c.getContext('2d'),px=(col,x,y,w,h)=>{g.fillStyle=col;g.fillRect(x,y,w,h);};
-  const shape=(e,col)=>{px(col,6-e,6-e,20+2*e,20+2*e);if(m&1)px(col,6-e,0,20+2*e,6);if(m&2)px(col,26,6-e,6,20+2*e);if(m&4)px(col,6-e,26,20+2*e,6);if(m&8)px(col,0,6-e,6,20+2*e);};
-  shape(3,'#5e4a2c');shape(1,'#3e3020');shape(0,'#2f5fa8');                          // banks, a dark edge, the water
-  for(const[x,y]of[[9,10],[19,15],[13,21],[22,8]])px('#6f9bd8',x,y,3,1);               // ripples
-  if(m&1)px('#6f9bd8',15,2,3,1);if(m&4)px('#6f9bd8',12,28,3,1);if(m&2)px('#6f9bd8',28,14,2,1);if(m&8)px('#6f9bd8',1,18,2,1);
+  const shape=(e,col)=>{px(col,n-e,n-e,w+2*e,w+2*e);if(m&1)px(col,n-e,0,w+2*e,n);if(m&2)px(col,32-n,n-e,n,w+2*e);if(m&4)px(col,n-e,32-n,w+2*e,n);if(m&8)px(col,0,n-e,n,w+2*e);};
+  shape(3,L.bank);shape(1,L.edge);shape(0,L.water);                               // banks, a dark edge, the water
+  if(L.stone){g.fillStyle='rgba(40,40,36,.5)';for(let k=2;k<32;k+=5){g.fillRect(k,n-3,1,2);g.fillRect(n-3,k,2,1);g.fillRect(k,32-n+1,1,2);g.fillRect(32-n+1,k,2,1);}}   // the stones of a lined bank
+  for(const[x,y]of[[9,10],[19,15],[13,21],[22,8]])px(L.ripple,x,y,3,1);               // ripples
+  if(m&1)px(L.ripple,15,2,3,1);if(m&4)px(L.ripple,12,28,3,1);if(m&2)px(L.ripple,28,14,2,1);if(m&8)px(L.ripple,1,18,2,1);
   out.push(c);}
  return out;}
 /**
@@ -2206,18 +2323,92 @@ function makeKeep(main,dark){const c=cv(66,98),g=c.getContext('2d'),px=(col,x,y,
  px('#5c4326',26,90,14,4);px('#4a3418',32,0,2,12);px(main,34,1,10,6);px(dark,34,7,10,1);px('#e8c35a',37,3,2,2);   // gate, flagpole and banner
  for(const x of[17,45]){px(main,x,64,5,12);px(dark,x,76,5,2);}
  return c;}
-const MSPR=makeMoatSet(),DSPR=[];
-const BSPR=[],WSPR=[],GSPR=[],TSPR=[];
-/** Building sprites per team. BSPR holds one picture per type (icons, placement ghosts); walls, gates and towers draw from their sets. */
+/** The bastion: an angled stone platform on a sloped base, embrasures in its face, a catapult and boulders on top, the owner's pennant. 2×2 tiles. */
+function makeBastion(main,dark){const c=cv(66,86),g=c.getContext('2d'),px=(col,x,y,w,h)=>{g.fillStyle=col;g.fillRect(x,y,w,h);};
+ const poly=(col,pts)=>{g.fillStyle=col;g.beginPath();pts.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));g.closePath();g.fill();};
+ g.fillStyle='rgba(0,0,0,.25)';g.beginPath();g.ellipse(33,81,32,5,0,0,7);g.fill();
+ poly('#76766c',[[1,82],[65,82],[61,58],[33,50],[5,58]]);                                    // the sloped base (talus)
+ for(let y=62;y<82;y+=5)px('#68685e',4,y,58,1);
+ poly('#8f8f85',[[5,58],[33,50],[61,58],[61,40],[33,32],[5,40]]);                            // the face, coming to a point
+ for(let y=44;y<58;y+=5){g.fillStyle='#7d7d72';g.fillRect(6,y,55,1);}
+ for(const x of[14,30,46])px('#1c1206',x,46,4,3);                                           // embrasures
+ poly('#a5a599',[[5,40],[33,32],[61,40],[57,32],[33,24],[9,32]]);                            // the platform
+ for(let k=0;k<7;k++){px('#b4b4a8',7+k*8,37-(k<4?k*2:(6-k)*2),4,3);}                          // the parapet
+ px('#6b4423',25,18,16,4);px('#5c3a18',27,12,2,8);px('#5c3a18',37,12,2,8);g.strokeStyle='#6b4423';g.lineWidth=2;g.beginPath();g.moveTo(32,22);g.lineTo(46,8);g.stroke();   // a catapult
+ for(const[x,y]of[[14,30],[18,32],[50,30]]){g.fillStyle='#8f8f85';g.beginPath();g.arc(x,y,2.5,0,7);g.fill();}
+ px('#4a3418',9,10,2,22);px(main,11,10,9,5);px(dark,11,15,9,1);px('#e8c35a',13,12,2,2);
+ return c;}
+/** The imperial keep: the keep grown taller, four turrets with team-coloured spires trimmed in gold, a great banner. 2×2 tiles. */
+function makeImperialKeep(main,dark){const c=cv(66,118),g=c.getContext('2d'),px=(col,x,y,w,h)=>{g.fillStyle=col;g.fillRect(x,y,w,h);};
+ g.fillStyle='rgba(0,0,0,.25)';g.beginPath();g.ellipse(33,113,31,5,0,0,7);g.fill();
+ px('#8a8a80',3,80,60,34);for(let y=85;y<114;y+=6)px('#76766c',3,y,60,1);for(let x=3;x<63;x+=6)px('#a5a599',x,76,4,4);
+ px('#9a9a90',10,26,46,56);for(let y=32;y<82;y+=6)px('#7d7d72',10,y,46,1);px('#6d6d63',10,26,1,56);px('#6d6d63',55,26,1,56);
+ for(let x=10;x<56;x+=6)px('#c8c8bc',x,20,4,6);px('#e8c35a',10,25,46,2);                     // gold-trimmed battlements
+ for(const tx of[3,51]){px('#8f8f85',tx,18,12,62);for(let y=24;y<80;y+=6)px('#76766c',tx,y,12,1);
+  g.fillStyle=main;g.beginPath();g.moveTo(tx-1,18);g.lineTo(tx+6,4);g.lineTo(tx+13,18);g.closePath();g.fill();px('#e8c35a',tx-1,17,14,2);px('#2a1a0c',tx+5,34,2,7);px('#2a1a0c',tx+5,54,2,7);}
+ for(const x of[20,30,40])px('#2a1a0c',x,40,2,8);px('#2a1a0c',25,90,16,24);g.fillStyle='#2a1a0c';g.beginPath();g.arc(33,90,8,Math.PI,0);g.fill();
+ px('#4a3418',32,0,2,22);px(main,34,1,14,8);px(dark,34,9,14,1);px('#e8c35a',38,3,4,4);
+ for(const x of[16,46]){px(main,x,82,6,14);px(dark,x,96,6,2);px('#e8c35a',x+2,86,2,2);}
+ return c;}
+/** The citadel: a great gilded keep behind a curtain wall with four round corner towers, team spires and banners, a gatehouse. 4×4 tiles. */
+function makeCitadel(main,dark){const c=cv(130,164),g=c.getContext('2d'),px=(col,x,y,w,h)=>{g.fillStyle=col;g.fillRect(x,y,w,h);};
+ g.fillStyle='rgba(0,0,0,.25)';g.beginPath();g.ellipse(65,158,64,7,0,0,7);g.fill();
+ px('#8a8a80',8,58,114,70);for(let y=62;y<128;y+=6)px('#7d7d72',8,y,114,1);                  // the inner ward behind the wall
+ px('#9a9a90',34,22,62,96);for(let y=28;y<118;y+=6)px('#7d7d72',34,y,62,1);px('#6d6d63',34,22,1,96);px('#6d6d63',95,22,1,96);   // the great keep
+ for(let x=34;x<96;x+=6)px('#d0c8a0',x,16,4,6);px('#e8c35a',34,21,62,2);
+ for(const x of[44,58,72,84])px('#2a1a0c',x,40,3,10);for(const x of[50,66,80])px('#2a1a0c',x,70,3,10);
+ px('#4a3418',64,0,2,18);px(main,66,1,18,9);px(dark,66,10,18,1);px('#e8c35a',71,3,5,5);
+ px('#8f8f85',4,118,122,40);for(let y=122;y<158;y+=6)px('#76766c',4,y,122,1);for(let x=4;x<126;x+=7)px('#a5a599',x,113,4,5);   // the curtain wall
+ px('#1c1206',55,128,20,30);g.fillStyle='#1c1206';g.beginPath();g.arc(65,128,10,Math.PI,0);g.fill();for(let x=57;x<75;x+=4)px('#3e3e38',x,120,1,30);   // the gate
+ for(const[tx,ty]of[[0,48],[110,48],[0,104],[110,104]]){px('#8f8f85',tx,ty,20,56);for(let y=ty+6;y<ty+56;y+=6)px('#76766c',tx,y,20,1);
+  g.fillStyle=main;g.beginPath();g.moveTo(tx-2,ty);g.lineTo(tx+10,ty-16);g.lineTo(tx+22,ty);g.closePath();g.fill();px('#e8c35a',tx-2,ty-1,24,2);px('#2a1a0c',tx+9,ty+14,2,8);}
+ for(const x of[40,86]){px(main,x,124,8,18);px(dark,x,142,8,2);px('#e8c35a',x+3,128,2,2);}
+ return c;}
+/** A trap as its owner sees it, one tile of ground: 'spike' sharpened stakes, 'fire' a sunken pot of pitch, 'pit' a covering of sticks over a hole. */
+function makeTrap(kind){const c=cv(32,32),g=c.getContext('2d'),px=(col,x,y,w,h)=>{g.fillStyle=col;g.fillRect(x,y,w,h);};
+ g.fillStyle='rgba(110,90,58,.55)';g.beginPath();g.ellipse(16,18,13,9,0,0,7);g.fill();
+ if(kind==='spike')for(const[x,y]of[[8,12],[14,9],[20,12],[11,18],[17,16],[23,18],[14,23],[20,23]]){px('#8a6a44',x,y,2,5);px('#d8c8a0',x,y-2,2,2);}
+ else if(kind==='fire'){g.fillStyle='#2a2a28';g.beginPath();g.ellipse(16,17,8,5,0,0,7);g.fill();g.fillStyle='#c8501a';g.beginPath();g.ellipse(16,16,6,3.5,0,0,7);g.fill();
+  px('#ffd060',13,15,2,1);px('#ff8a20',18,16,2,1);px('#5c3a18',4,22,8,2);px('#5c3a18',21,9,7,2);}
+ else{g.fillStyle='#1c1206';g.beginPath();g.ellipse(16,18,10,6,0,0,7);g.fill();g.strokeStyle='#8a6a44';g.lineWidth=1;g.beginPath();
+  for(let k=-10;k<=10;k+=4){g.moveTo(16+k,12);g.lineTo(16+k+6,24);g.moveTo(16+k+6,12);g.lineTo(16+k,24);}g.stroke();px('#5a7a2a',9,14,3,2);px('#5a7a2a',20,20,4,2);}
+ return c;}
+const DSPR=[];let MSPR=[];
+const BSPR=[],WSPR=[],GSPR=[],TSPR=[],SSPR=[];
+/**
+ * Sprite sets for structures that join their neighbours, as data (each type names one: its spriteSet). kind 'line' (a
+ * wall-like line: makeWallSet, by the look), 'gate' (makeGateSet; a look with `house`, makeGatehouseSet), 'moat'
+ * (makeMoatSet), 'bridge' (the drawbridge). A new wall, gate or moat is a look here.
+ */
+Object.assign(SPRITES,{
+ palisade:{kind:'line',look:{style:'stakes',H:15,face:['#8a5a2c','#9a6a36'],edge:'#4a2e12',top:'#d0a068',cap:'#6e4424'}},
+ wall:{kind:'line',look:{style:'timber',...WALL_LOOK.wood}},
+ stonewall:{kind:'line',look:{style:'stone',...WALL_LOOK.stone}},
+ curtain_wall:{kind:'line',look:{style:'stone',H:21,thick:8,face:['#7d7d72','#88887c'],edge:'#55554c',top:'#a9a99d',cap:'#96968a',buttress:true}},
+ boiling_oil:{kind:'line',look:{style:'stone',...WALL_LOOK.stone,overlay:'cauldron'}},
+ gate:{kind:'gate',look:{style:'timber',...WALL_LOOK.wood}},
+ stonegate:{kind:'gate',look:{style:'stone',...WALL_LOOK.stone}},
+ gatehouse:{kind:'gate',look:{style:'stone',...WALL_LOOK.stone,H:22,house:true}},
+ moat:{kind:'moat',look:{bank:'#5e4a2c',edge:'#3e3020',water:'#2f5fa8',ripple:'#6f9bd8',inset:6}},
+ reinforced_moat:{kind:'moat',look:{bank:'#8f8f85',edge:'#5e5e56',water:'#22508f',ripple:'#5a86c8',inset:4,stone:true}},
+ drawbridge:{kind:'bridge'}
+});
+/** Building sprites per team. BSPR holds one picture per type (icons, placement ghosts); walls, gates, moats and towers draw from their sets. */
 function buildBldSprites(){for(let p=0;p<2;p++){const[main,dark]=PCOL[p];
- DSPR[p]=makeBridgeSet(main,dark);
- WSPR[p]={wall:makeWallSet(false,main,dark),stonewall:makeWallSet(true,main,dark)};
- GSPR[p]={gate:makeGateSet(false,main,dark),stonegate:makeGateSet(true,main,dark)};
- TSPR[p]=makeTowerTiers(main,dark);
+ SSPR[p]={};
+ for(const[k,S]of Object.entries(SPRITES))
+  if(S.kind==='line')SSPR[p][k]=makeWallSet(S.look,main,dark);
+  else if(S.kind==='gate')SSPR[p][k]=S.look.house?makeGatehouseSet(S.look,main,dark):makeGateSet(S.look,main,dark);
+  else if(S.kind==='moat')SSPR[p][k]=makeMoatSet(S.look);
+  else if(S.kind==='bridge')SSPR[p][k]=makeBridgeSet(main,dark);
+ if(p===0)for(const[k,S]of Object.entries(SPRITES))if(S.kind==='line')S.pieces=linePieces(SSPR[0][k]);   // SPRITES.palisade.pieces.straight, .corner, .tee, .crossroads, .endcap
+ WSPR[p]=GSPR[p]=SSPR[p];DSPR[p]=SSPR[p].drawbridge;if(p===0)MSPR=SSPR[0].moat;   // the older names for the sets
+ TSPR[p]=makeTowerTiers(main,dark);TSPR[p][tierIndex('imperialkeep')]=makeImperialKeep(main,dark);
  BSPR[p]={house:makeHouse(),farm:makeFarm(),storagepit:makePit(main,dark),barracks:makeBarracks(main,dark),archery:makeArchery(main,dark),stable:makeStable(main,dark),
   siegeworkshop:makeWorkshop(main,dark),tower:TSPR[p][0],towncenter:makeTC(main,dark),castle:makeCastle(main,dark),dock:makeDock(main,dark),
-  wall:WSPR[p].wall[10],stonewall:WSPR[p].stonewall[10],gate:GSPR[p].gate[0][0],stonegate:GSPR[p].stonegate[0][0],
-  keep:makeKeep(main,dark),moat:MSPR[10],drawbridge:DSPR[p][0][1]};}}
+  keep:makeKeep(main,dark),bastion:makeBastion(main,dark),citadel:makeCitadel(main,dark),spiketrap:makeTrap('spike'),firetrap:makeTrap('fire'),pittrap:makeTrap('pit')};
+ for(const[t,B]of Object.entries(BLDTYPES))if(B.spriteSet&&SSPR[p][B.spriteSet]&&!BSPR[p][t])BSPR[p][t]=setPiece(p,B.spriteSet,10,false,SPRITES[B.spriteSet].kind==='bridge');   // a set's icon: a straight piece, a shut gate, a lowered drawbridge
+ for(const[t,B]of Object.entries(BLDTYPES))if(!BSPR[p][t])BSPR[p][t]=BSPR[p][B.art]||BSPR[p][(ROLES[B.role]||{}).art]||BSPR[p].house;}}   // no picture of its own: the one it borrows (art), else its role's
 const RSPR={};
 function buildResSprites(){RSPR.trees=[0,1,2,3,4,5].map(i=>makeTree(i*7919+3));RSPR.pines=[0,1,2,3].map(i=>makePine(i*104729+7));RSPR.palms=[0,1,2,3].map(i=>makePalm(i*15485863+11));
  RSPR.gold=makeMine(true);RSPR.stone=makeMine(false);RSPR.berry=makeBerry();RSPR.deer=makeDeer();RSPR.fish=makeFish();RSPR.stump=makeStump();RSPR.rubble=makeRubble();}
@@ -2324,12 +2515,14 @@ function drawIcon(g,key){
    fit(UANIM[0].stonethrower.packed);px('#e8c35a',[16,0,2,1],[15,1,4,1],[14,2,6,1],[13,3,8,1],[15,4,4,3]);break;
   case 'defences':                            // a stretch of wall with a gate: opens the Defences page
    fit(WSPR[0].stonewall[10]);px('#e8c35a',[25,25,6,6]);px('#1c1206',[26,27,4,2]);px('#1c1206',[27,26,2,4]);break;
+  case 'page_walls':fit(SSPR[0].stonewall[10]);px('#e8c35a',[25,25,6,6]);break;   // the Defences pages
+  case 'page_forts':fit(TSPR[0][2]);px('#e8c35a',[25,25,6,6]);break;
+  case 'page_moats':px('#5e4a2c',[3,3,28,28]);px('#2f5fa8',[5,5,24,24]);px('#5e4a2c',[11,11,12,12]);px('#7a9a4a',[12,12,10,10]);fit(BSPR[0].spiketrap);px('#e8c35a',[25,25,6,6]);break;
   case 'back':                                // an arrow back to the main build page
    g.fillStyle='#e8c35a';g.beginPath();g.moveTo(6,17);g.lineTo(16,7);g.lineTo(16,13);g.lineTo(28,13);g.lineTo(28,21);g.lineTo(16,21);g.lineTo(16,27);g.closePath();g.fill();break;
   case 'masonry':                             // a trowel over stone blocks
    px('#9a9a90',[4,18,12,7],[17,18,13,7],[10,25,13,6]);px('#6d6d63',[4,24,12,1],[17,24,13,1],[10,30,13,1]);
    g.fillStyle='#c9ced4';g.beginPath();g.moveTo(10,15);g.lineTo(24,4);g.lineTo(27,8);g.closePath();g.fill();px('#6b4423',[24,3,6,3]);break;
-  case 'tier1':case 'tier2':case 'tier3':case 'tier4':case 'tier5':case 'tier6':case 'tier7':case 'tier8':case 'tier9':fit(tierSprite(0,+key.slice(4)));break;
   case 'moatring':                            // a square ring of moat
    px('#5e4a2c',[3,3,28,28]);px('#2f5fa8',[5,5,24,24]);px('#5e4a2c',[11,11,12,12]);px('#7a9a4a',[12,12,10,10]);px('#6f9bd8',[7,8,3,1],[24,22,3,1]);break;
   case 'ungarrison':                          // figures leaving a doorway
@@ -2346,6 +2539,16 @@ function drawIcon(g,key){
     key==='box'?[[7,6],[15,6],[23,6],[7,14],[15,14],[23,14],[7,22],[15,22],[23,22]]:[[15,4],[10,12],[20,12],[5,20],[15,20],[25,20]];
    for(const[x,y]of dots)px('#1c1206',[x-1,y-1,6,6]),px('#e8e2c8',[x,y,4,4]);
    px('#e8c35a',[15,29,4,3],[13,31,8,1]);break;}
+  case 'move':                                // an arrow to a marked spot
+   g.strokeStyle='#9fe08a';g.lineWidth=2;g.beginPath();g.ellipse(24,25,6,3,0,0,7);g.stroke();
+   g.fillStyle='#e8c35a';g.beginPath();g.moveTo(5,8);g.lineTo(22,21);g.lineTo(15,21);g.lineTo(19,27);g.lineTo(15,29);g.lineTo(11,23);g.lineTo(6,27);g.closePath();g.fill();break;
+  case 'attack':case 'attackmove':{           // crossed swords; attack-move adds the arrow it marches on
+   for(const sgn of[1,-1]){g.save();g.translate(17,16);g.scale(sgn,1);g.rotate(-.785);px('#c9ced4',[-1.5,-13,3,18]);px('#8f959b',[.5,-13,1,18]);px('#e8c35a',[-5,5,10,2]);px('#6b4423',[-1.5,7,3,5]);g.restore();}
+   if(key==='attackmove'){g.fillStyle='#9fe08a';g.beginPath();g.moveTo(20,27);g.lineTo(32,27);g.lineTo(32,23);g.lineTo(34,29);g.lineTo(32,34);g.lineTo(32,31);g.lineTo(20,31);g.closePath();g.fill();}
+   break;}
+  case 'guard':                               // a shield with a watchful eye
+   g.fillStyle='#4a6a9a';g.beginPath();g.moveTo(7,5);g.lineTo(27,5);g.lineTo(27,16);g.lineTo(17,29);g.lineTo(7,16);g.closePath();g.fill();
+   g.strokeStyle='#e8c35a';g.lineWidth=2;g.stroke();g.fillStyle='#efe6cc';g.beginPath();g.ellipse(17,14,6,3.5,0,0,7);g.fill();px('#1c1206',[15,12,4,4]);break;
   case 'patrol':                              // two arrows chasing each other round: back and forth
    g.strokeStyle='#e8c35a';g.lineWidth=3;g.beginPath();g.arc(17,17,10,Math.PI*1.1,Math.PI*1.9);g.stroke();g.beginPath();g.arc(17,17,10,Math.PI*.1,Math.PI*.9);g.stroke();
    g.fillStyle='#e8c35a';g.beginPath();g.moveTo(27,9);g.lineTo(29,17);g.lineTo(22,13);g.closePath();g.fill();g.beginPath();g.moveTo(7,25);g.lineTo(5,17);g.lineTo(12,21);g.closePath();g.fill();
@@ -2375,7 +2578,8 @@ function drawIcon(g,key){
   case 'gold':case 'stone':case 'berry':case 'deer':case 'fish':fit(RSPR[key]);break;
   case 'unload':                              // figures stepping off a hull onto the shore
    fit(UANIM[0].transport.idle[0]);px('#e8c35a',[2,22,8,2],[2,20,2,6],[4,18,2,2],[4,26,2,2]);break;
-  default:if(BSPR[0][key])fit(BSPR[0][key]);else if(USPR[0][key])fit(USPR[0][key]);
+  default:if(/^tier\d+$/.test(key)&&TOWER_TIERS[+key.slice(4)])fit(tierSprite(0,+key.slice(4)));   // an upgrade along the tower line, any row
+   else if(BSPR[0][key])fit(BSPR[0][key]);else if(USPR[0][key])fit(USPR[0][key]);
  }
 }
 function drawTopIcons(){
@@ -2973,7 +3177,10 @@ const rateOf=u=>UNITTYPES[u.type].rate*techBonus(u.player,u.type,'rate');
 const losOf=u=>UNITTYPES[u.type].los*techBonus(u.player,u.type,'losMul');
 const armorOf=t=>t.kind==='u'?(UNITTYPES[t.type].armor||0)+techBonus(t.player,t.type,'armor'):bldArmor(t);
 /** A tower's tier row (its stats), or null for any other building: every stat below reads the tier first, then the type. */
-const tierOf=b=>BLDTYPES[b.type].tiers?TOWER_TIERS[b.tier||0]:null;
+/** The row a building stands at on the tower line (index), or null. */
+const tierRow=b=>{const id=lineIdOf(b.type,b.tier);return id===null?null:tierIndex(id);};
+/** A building's tier row when it stands at a plain row (its stats, laid over its type's): a tower's tier, a Keep risen to an Imperial Keep; else null. */
+const tierOf=b=>{const i=tierRow(b);return i===null||i<0||TOWER_TIERS[i].becomes?null:TOWER_TIERS[i];};
 /** A building's armour, plus GARRISON.armor while anyone is inside. */
 const bldArmor=b=>((tierOf(b)||BLDTYPES[b.type]).armor||0)+(b.garrison&&b.garrison.length?GARRISON.armor:0);
 const bldLos=b=>(tierOf(b)||BLDTYPES[b.type]).los??7;
@@ -3008,7 +3215,7 @@ const bldCode=b=>{const B=BLDTYPES[b.type];
  if(B.drawbridge)return!b.done?BLK.moat:b.locked||b.shutT>0?BLK.wall:b.open?BLK.bridge:BLK.gate+b.player;
  return B.wall||B.gate&&b.locked?BLK.wall:B.gate?BLK.gate+b.player:BLK.bld;};
 /** Mark (or clear) a building's footprint: its tile code in `block` (farms block nothing) and its id in `occ`. Cleared, a tile blocks again if its ground does (a dock's water). */
-function blockBld(b,on){const code=b.type==='farm'?0:bldCode(b);
+function blockBld(b,on){const code=BLDTYPES[b.type].walkable?0:bldCode(b);
  for(let y=b.ty;y<b.ty+b.h;y++)for(let x=b.tx;x<b.tx+b.w;x++){const i=y*MAP+x;if(code)block[i]=on?code:groundCode(i);occ[i]=on?b.id:0;}}
 const groundCode=i=>TERRAIN[ttype[i]].blocks?BLK.terrain:0;
 /**
@@ -3031,9 +3238,11 @@ const ownAt=(p,x,y,types)=>{const b=x>=0&&y>=0&&x<MAP&&y<MAP?ENT[occ[y*MAP+x]]:n
 const ownWallAt=(p,x,y)=>{const b=x>=0&&y>=0&&x<MAP&&y<MAP?ENT[occ[y*MAP+x]]:null;return b&&b.player===p&&BLDTYPES[b.type].wall?b:null;};
 function placeBld(p,t,tx,ty){
  const B=BLDTYPES[t];
- if(B.over){const o=ownAt(p,tx,ty,B.over);if(o)removeBld(o);}   // a gate set into a wall, a drawbridge into a moat, takes that segment's place
+ let under=null;
+ if(B.over){const o=ownAt(p,tx,ty,B.over);if(o){under=o;removeBld(o);}}   // a gate set into a wall, a drawbridge into a moat, a stone wall over a palisade: it takes that segment's place
  const b={id:nextId++,kind:'b',type:t,player:p,tx,ty,w:B.w,h:B.h,maxhp:B.hp,hp:1,done:false,
   progress:0.01,queue:[],qt:0,cd:0,amount:t==='farm'?FARM_FOOD+(state.techs[p].domestication?TECH_BONUS.farmFood:0):0};
+ if(under){b.under=under.type;b.underHp=under.hp;}
  state.blds.push(b);ENT[b.id]=b;blockBld(b,true);
  if(!B.moat)clearFootprint(b);                     // anyone in the way steps aside (a ship, onto open water); a moat is dug round them
  return b;
@@ -3098,7 +3307,7 @@ function findPath(sx,sy,tx,ty,budget=pathBudget(),player=-1,naval=false,heavy=fa
     if(bk===BLK.moat){if(heavy)continue;}                  // riders and siege engines cannot enter a moat
     else if(bk&&bk!==BLK.bridge&&bk!==own&&!(nx===tx&&ny===ty))continue;
     if(d>=4&&(block[cy*MAP+nx]||block[ny*MAP+cx]))continue;}   // no corner cutting, not even past a gate
-   const ng=g[cur]+(d>=4?1.41:1)*(!naval&&block[ni]===BLK.moat?1/MOAT.slow:1);
+   const ng=g[cur]+(d>=4?1.41:1)*(!naval&&block[ni]===BLK.moat?1/wadeAt(ni):1);
    if(ng<g[ni]){g[ni]=ng;from[ni]=cur;push(ng+H(nx,ny),ni);}
   }}
  const path=[];let cur=best;
@@ -3148,7 +3357,8 @@ function followPath(u,dt,mul=1){
  if(!u.path.length)return true;
  const wp=u.path[0],dx=wp.x-u.x,dy=wp.y-u.y,d=Math.hypot(dx,dy);
  if(d<4){u.path.shift();return u.path.length===0;}
- const ground=UNITTYPES[u.type].naval?1:block[tileOf(u)]===BLK.moat?MOAT.slow:TERRAIN[terrainAt(u.x,u.y)].spd??1;   // a moat, hills, snow, shallows and marsh slow the walk (not a ship)
+ if(u.holdT>0)return false;                       // stuck fast (a pit)
+ const ground=(UNITTYPES[u.type].naval?1:block[tileOf(u)]===BLK.moat?wadeAt(tileOf(u)):TERRAIN[terrainAt(u.x,u.y)].spd??1)*(u.slowT>0?u.slowMul||1:1);   // a moat, hills, snow, shallows and marsh slow the walk (not a ship); so does burning oil
  let sp=Math.min(d,u.spd*mul*ground*dt);
  const tr=UNITTYPES[u.type].turnRate;
  if(tr){const want=Math.atan2(dy,dx),mx=tr*TURN_FPS*dt;u.hd=wrapA((u.hd||0)+clamp(wrapA(want-(u.hd||0)),-mx,mx));   // a ship comes about at its turn rate,
@@ -3255,7 +3465,7 @@ function canGarrison(u,b){const B=BLDTYPES[b.type],cls=UNITTYPES[u.type].cls;
 const garrisonRoom=b=>garrisonCap(b)-(b.garrison?b.garrison.length:0);
 function orderGarrison(u,b){if(!canGarrison(u,b))return false;const c=bldCenter(b);
  if(!Ferry.request(u,c.x,c.y,{type:'garrison',bid:b.id})){u.cmd={type:'garrison',bid:b.id};pathTo(u,c.x,c.y);}return true;}
-function orderRepair(u,b){if(u.type!=='villager'||unbreakable(b))return;const c=bldCenter(b);
+function orderRepair(u,b){if(u.type!=='villager'||unbreakable(b)||!repairable(b))return;const c=bldCenter(b);
  if(Ferry.request(u,c.x,c.y,{type:'repair',bid:b.id}))return;
  u.cmd={type:'repair',bid:b.id};u.path=[];
  if(!atWork(u,b))pathTo(u,c.x,c.y);}
@@ -3466,7 +3676,9 @@ function resumeOrder(u,fc){const n=fc.next;if(!n)return;
   case 'build':if(t)orderBuild(u,t);break;
   case 'repair':if(t)orderRepair(u,t);break;
   case 'garrison':if(t)orderGarrison(u,t);break;
-  case 'deposit':if(t)orderDeposit(u,t);break;}
+  case 'deposit':if(t)orderDeposit(u,t);break;
+  case 'attackmove':orderAttackMove(u,n.x,n.y,n.spd);break;
+  case 'patrol':case 'guard':if(n.tid===undefined||t&&t.hp>0){u.cmd={...n,px:-1,py:-1};u.path=[];}break;}
  if(u.cmd)for(const k of['role','resume'])if(fc[k]!==undefined)u.cmd[k]=fc[k];}
 /** Units told to board a transport: it comes to the beach nearest it on their island; they walk there and step aboard. */
 function orderBoard(units,s){
@@ -3536,17 +3748,23 @@ function killEnt(t,cause){
  }else{
   ejectGarrison(t);
   delete ENT[t.id];state.blds=state.blds.filter(o=>o!==t);blockBld(t,false);
-  if(BLDTYPES[t.type].drawbridge){const m=placeBld(t.player,'moat',t.tx,t.ty);m.done=true;m.progress=1;m.hp=m.maxhp;}   // the crossing is gone; the moat stays
-  const c=bldCenter(t),line=isLine(t);state.decals.push({x:c.x,y:(t.ty+t.h)*TILE,k:'rubble'});
+  const BT=BLDTYPES[t.type],left=BT.restoresUnder&&(t.under||BT.over&&BT.over[0]);
+  if(left&&BLDTYPES[left]){const m=placeBld(t.player,left,t.tx,t.ty);m.done=true;m.progress=1;m.hp=Math.min(m.maxhp,t.underHp||m.maxhp);blockBld(m,true);}   // the crossing is gone, the moat stays; the cauldron is gone, the wall stays
+  const c=bldCenter(t),line=isLine(t);
+  if(cause==='sprung'){                         // a trap goes off: no rubble, no ruin — news for both sides
+   if(t.player===0)toast('Your '+bldName(t).toLowerCase()+' caught an enemy','good');else toast('Your soldiers sprang a hidden '+bldName(t).toLowerCase()+'!','bad');
+   state.sel=state.sel.filter(e=>e!==t);updPop();return;}
+  state.decals.push({x:c.x,y:(t.ty+t.h)*TILE,k:'rubble'});
   if(cause!=='depleted')sfxT(line?'wallfall':'collapse',line?SFX.wallfall:SFX.collapse,.3);
   if(cause==='demolished'){}
   else if(t.player===0){
    if(cause==='depleted')toast('A farm has gone fallow','bad');
    else if(line)sfxT('breach',()=>toast('Your wall has been breached!','bad'),12);
+   else if(!townBld(t))sfxT('lostdef',()=>toast('Your '+bldName(t).toLowerCase()+' has been destroyed','bad'),6);
    else{toast('A building has been destroyed!','bad');state.stats.bldLost++;}
-   if(!line)requestSave('building-lost');
+   if(townBld(t))requestSave('building-lost');
   }else if(cause!=='depleted'){
-   if(line)award(SCORE.wall);
+   if(line||!townBld(t))award(SCORE.wall);
    else{
     state.stats.razed++;award(SCORE.raze);
     if(t.type==='towncenter'&&!state.blds.some(b=>b.player===1&&b.type==='towncenter')){
@@ -3592,6 +3810,7 @@ function dmgMult(A,t){
  let m=(B?(ac?look(ac)??look('fort'):look(t.type))??look('building')
   :look(t.type)??look(T.role)??look(T.cls)??(T.cls!=='siege'&&T.cls!=='ship'?look('unit'):undefined))??1;   // 'unit': any land unit not named
  if(ac)m*=(ROLE_ARMOR[ac]||{})[A.cls]??1;
+ if(B&&B.resist&&B.resist[A.cls]!==undefined)m*=B.resist[A.cls];   // its own resistance (a Citadel against siege)
  if(t.kind==='u'&&UNITTYPES[t.type].light&&row.light)m*=row.light;
  return m;
 }
@@ -3617,7 +3836,7 @@ const crowd=(e,r)=>{let n=0;for(const o of state.units)if(o.player===e.player&&M
  */
 function pickTarget(u,r,from=u,only=null){
  const U=UNITTYPES[u.type];
- if(!U.targets)return nearestEnemy(from,r??(U.range?rangeOf(u)+TILE:TILE*3.5));
+ if(!U.targets)return pickByClass(u,r??(U.range?rangeOf(u)+TILE:TILE*3.5),from,only);
  r=r??(U.naval?losOf(u)*TILE:U.range?rangeOf(u):SIEGE_SEEK*TILE);
  const min=from===u?(U.minRange||0)*TILE:0,ok=d=>d<=r&&d>=min,P=U.proj&&PROJ_TYPES[U.proj];
  const W=U.naval&&NAV?NAV.water[tileOf(u)]:-1,reach=Math.ceil((U.range?rangeOf(u):TILE)/TILE);
@@ -3639,12 +3858,30 @@ function pickTarget(u,r,from=u,only=null){
 }
 const siegeTarget=u=>pickTarget(u);
 /**
+ * The enemy units a unit with no `targets` list goes for first when it looks for a fight (attack-move, patrol, guard), by
+ * class: archers take on riders first (they close fastest), then foot soldiers, then other archers; foot soldiers go for
+ * engines, then riders, foot and archers; riders run down archers, engines and villagers. A unit type's own `prefers`
+ * list overrides its class's. Then any enemy unit; then, with no unit about, an enemy building within easy reach (not a
+ * wall: those are breached only when they bar the way).
+ */
+const TARGET_PREFS=Object.freeze({ranged:['cavalry','infantry','ranged'],infantry:['siege','cavalry','infantry','ranged'],cavalry:['ranged','siege','villager']});
+function pickByClass(u,r,from=u,only=null){
+ const U=UNITTYPES[u.type];if(!U.atk)return null;
+ const reach=U.range?rangeOf(u):TILE,can=e=>U.naval||(isNaval(e)?edgeDist(u,e)<=reach:!acrossWater(u,e.x,e.y));   // what it can get at: a ship only within range of the shore
+ for(const k of[...(U.prefers||TARGET_PREFS[U.cls]||[]),'unit']){let best=null,bd=r;
+  for(const e of state.units)if(e.player!==u.player&&targetKind(e,k)&&(!only||only(e))){const d=dist(from.x,from.y,e.x,e.y);if(d<bd&&can(e)){bd=d;best=e;}}
+  if(best)return best;}
+ let best=null,bd=Math.min(r,reach+TILE*2);
+ for(const b of state.blds)if(b.player!==u.player&&!unbreakable(b)&&!isLine(b)&&!BLDTYPES[b.type].hidden&&(!only||only(b))){const d=edgeDist(from,b);if(d<bd){const c=bldCenter(b);if(U.naval||!acrossWater(u,c.x,c.y)){bd=d;best=b;}}}
+ return best;
+}
+/**
  * Does a unit or building match a target kind? Buildings: their role ('gate', 'wall', 'fort', 'castle', 'production') or
  * type ('dock'), 'building' (no fortification role), 'structure' (any), 'defences' (any fortification); never a moat.
  * Units: their class, role ('warship', 'transport', 'fishing') or type, 'unit' (any), 'cluster' (any, packed: see pickTarget).
  */
 function targetKind(t,k){
- if(t.kind==='b'){if(unbreakable(t))return false;const role=BLDTYPES[t.type].role;
+ if(t.kind==='b'){if(unbreakable(t)||BLDTYPES[t.type].hidden)return false;const role=BLDTYPES[t.type].role;
   return k==='structure'||k===role||k===t.type||k==='building'&&!ROLES[role]||k==='defences'&&!!ROLES[role];}
  if(t.kind!=='u')return false;const T=UNITTYPES[t.type];
  return k==='unit'||k==='cluster'||k===T.cls||k===t.type||T.role!==undefined&&k===T.role;}
@@ -3689,9 +3926,31 @@ function backOff(u,x,y,dt){
 }
 /** Seconds a unit shows its attack pose after a shot: a sprite's whole attack animation, else a moment. */
 const atkPose=U=>{const S=U.sprite&&SPRITES[U.sprite],A=S&&S.animations.attack;return A?A.frames*A.speed:U.cls==='siege'?.5:.25;};
+/**
+ * A unit's orders in the order model's terms: what it is doing now, then the order it goes back to after a fight (`ret`).
+ * PATROL gives its first two waypoints as pointA and pointB and currentTarget 'A' or 'B' (a longer round lists all its
+ * points); a guard of a unit is an ESCORT; a land unit's crossing is BOARD, a transport putting it ashore UNLOAD.
+ */
+function ordersOf(u){
+ const view=c=>{const P=(x,y)=>({x,y});
+  switch(c.type){
+   case 'move':return{type:'MOVE',destination:P(c.x,c.y)};
+   case 'attack':return{type:'ATTACK',target:c.tid};
+   case 'attackmove':return{type:'ATTACK_MOVE',destination:P(c.x,c.y)};
+   case 'patrol':return{type:'PATROL',pointA:P(c.pts[0],c.pts[1]),pointB:P(c.pts[2],c.pts[3]),currentTarget:c.i===0?'A':c.i===1?'B':'P'+c.i,
+    ...(c.pts.length>4?{points:Array.from({length:c.pts.length>>1},(_,j)=>P(c.pts[2*j],c.pts[2*j+1]))}:{})};
+   case 'guard':return c.tid!==undefined&&ENT[c.tid]&&ENT[c.tid].kind==='u'?{type:'ESCORT',target:c.tid}:{type:'GUARD',...(c.tid!==undefined?{target:c.tid}:{position:P(c.x,c.y)})};
+   case 'gather':return{type:'GATHER',target:c.tid};
+   case 'repair':return{type:'REPAIR',target:c.bid};
+   case 'build':return{type:'BUILD',target:c.bid};
+   case 'ferry':return isNaval(u)?{type:c.stage==='unload'?'UNLOAD':'FERRY',stage:c.stage}:{type:'BOARD',stage:c.stage,then:c.next?view(c.next):null};
+   default:return{type:c.type.toUpperCase()};}};
+ const out=[];for(let c=u.cmd;c;c=c.ret)out.push(view(c));return out;}
+/** Where a guarded unit or building is (a building: its centre). */
+const wardAt=w=>w.kind==='b'?bldCenter(w):w;
 /** Tiles past its sight a unit on patrol or blockade chases before it gives up and goes back. */
 const LEASH=4;
-/** On patrol or blockade: a few times a second, look for something to attack within r px and go for it, coming back to `c` after. */
+/** On patrol, attack-move or blockade: a few times a second, look for something to attack within r px and go for it, coming back to `c` after. */
 function engage(u,c,dt,r){
  u.seek=(u.seek||0)-dt;if(u.seek>0)return false;u.seek=.4;
  const e=pickTarget(u,r);return!!e&&attackFrom(u,e,c,true);}
@@ -3699,10 +3958,55 @@ function engage(u,c,dt,r){
 function attackFrom(u,e,c,leash){
  orderAttack(u,e);if(!u.cmd||u.cmd.type!=='attack'){u.cmd=c;return false;}
  u.cmd.ret=c;if(leash){u.cmd.ax=u.x;u.cmd.ay=u.y;}return true;}
-/** Send ships to patrol between where each is and (x, y), spread out so they do not crowd one point. */
+/**
+ * Patrol, for any unit: back and forth between where each is and (x, y) (spread out so a group does not crowd one point).
+ * The route is a loop of waypoints `pts` [x, y, ...] with `i` the one it heads for, so the AI can give longer rounds. The
+ * unit's own movement carries it out — on land, over water, or a leg across the sea by ferry.
+ */
 function orderPatrol(units,x,y){
- units.forEach((u,i)=>{const a=i*2.4,rr=units.length>1?14+units.length*4:0,px=clamp(x+Math.cos(a)*rr,10,WPX-10),py=clamp(y+Math.sin(a)*rr,10,WPX-10);
+ units.forEach((u,i)=>{const a=i*2.4,rr=units.length>1?(isNaval(u)?14+units.length*4:8+units.length*1.6):0,px=clamp(x+Math.cos(a)*rr,10,WPX-10),py=clamp(y+Math.sin(a)*rr,10,WPX-10);
   u.cmd={type:'patrol',pts:[u.x,u.y,px,py],i:1,px:-1,py:-1};u.path=[];});}
+/**
+ * Attack-move: march on (x, y), taking on the enemies met on the way — by the unit's targets (siege engines, warships) or
+ * its class's preferences (pickByClass) — and carrying on to (x, y) once each is dealt with. `spd` caps the pace (a
+ * formation). Across the water, a ferry first: the order carries on from the far shore. A unit with nothing to fight
+ * with just moves.
+ */
+function orderAttackMove(u,x,y,spd){
+ if(!UNITTYPES[u.type].atk){orderMove(u,x,y,spd);return;}
+ const c={type:'attackmove',x,y,px:-1,py:-1};if(spd)c.spd=spd;
+ if(Ferry.request(u,x,y,c))return;
+ u.cmd=c;u.path=[];}
+/**
+ * Guard, for any unit that can fight: one of your units (escort it), one of your buildings, or a spot (each unit its own
+ * place round it). It stays by what it guards and takes on whatever comes for it, then goes back. Pick an enemy and it is
+ * attacked instead.
+ */
+function orderGuard(units,x,y,t){
+ if(t&&t.kind==='r')t=null;                       // a resource: guard the spot
+ if(t&&t.player!==units[0].player){units.forEach(u=>orderAttack(u,t));return;}
+ units.forEach((u,i)=>{
+  if(t&&t!==u){u.cmd={type:'guard',tid:t.id,px:-1,py:-1};u.path=[];return;}
+  const a=i*2.4,rr=units.length>1?8+units.length*1.6:0,gx=clamp(x+Math.cos(a)*rr,10,WPX-10),gy=clamp(y+Math.sin(a)*rr,10,WPX-10),c={type:'guard',x:gx,y:gy,px:-1,py:-1};
+  if(!Ferry.request(u,gx,gy,c)){u.cmd=c;u.path=[];}});}
+/** Give an order that goes to a point to a group: land units by the formation (or in a loose cluster), ships spread out. */
+function groupOrder(units,x,y,give){
+ const land=units.filter(u=>!isNaval(u)),ships=units.filter(isNaval);
+ if(land.length)moveSelected(land,x,y,give,true);
+ ships.forEach((e,i)=>{const a=i*2.4,rr=ships.length>1?14+ships.length*4:0;give(e,clamp(x+Math.cos(a)*rr,10,WPX-10),clamp(y+Math.sin(a)*rr,10,WPX-10));});}
+/**
+ * An unarmed or civilian unit on patrol keeps out of trouble: when an enemy that can hurt it comes near (within its sight
+ * and that enemy's reach), it turns about for the waypoint furthest from that enemy.
+ */
+function flee(u,c,dt){
+ u.seek=(u.seek||0)-dt;if(u.seek>0)return false;u.seek=.4;
+ let th=null,bd=Infinity;
+ for(const e of state.units){if(e.player===u.player)continue;const E=UNITTYPES[e.type];if(!E.atk||!canHit(E,u))continue;
+  const d=dist(u.x,u.y,e.x,e.y);if(d<Math.min(losOf(u)*TILE,(E.range?rangeOf(e):TILE)+TILE*3)&&d<bd){bd=d;th=e;}}
+ if(!th)return false;
+ let far=c.i,fd=-1;for(let j=0;j<c.pts.length>>1;j++){const d=dist(c.pts[2*j],c.pts[2*j+1],th.x,th.y);if(d>fd){fd=d;far=j;}}
+ if(far!==c.i){c.i=far;c.px=-1;u.path=[];}
+ return false;}
 /** Simple kiting: while reloading, a ranged unit backs away from a melee enemy closing in. True while it steps back. */
 function kite(u,dt){
  if(u.cd<.3)return false;
@@ -3725,6 +4029,7 @@ const staked=u=>!!u.dep||u.depT>0;
 function nudge(u,dx,dy){const x=u.x+dx,y=u.y+dy;if(x>8&&y>8&&x<WPX-8&&y<WPX-8&&freeTile(x/TILE|0,y/TILE|0)){u.x=x;u.y=y;}}
 function updUnit(u,dt){
  u.cd=Math.max(0,u.cd-dt);u.flash=Math.max(0,u.flash-dt);
+ if(u.slowT>0)u.slowT-=dt;if(u.holdT>0)u.holdT-=dt;   // slowed by oil, held in a pit
  if(u.atkT>0)u.atkT-=dt;if(u.kiting>0)u.kiting-=dt;
  if(u.depT>0){u.depT-=dt;if(u.depT<=0){u.depT=0;u.dep=u.depTo;}return;}   // setting up or packing away: busy
  const c=u.cmd,U=UNITTYPES[u.type];
@@ -3749,25 +4054,40 @@ function updUnit(u,dt){
    if(U.naval&&u.path.length===1&&dist(u.x,u.y,u.path[0].x,u.path[0].y)<TILE*.8&&state.units.some(o=>o!==u&&isNaval(o)&&dist(o.x,o.y,u.path[0].x,u.path[0].y)<TILE*.6)){u.cmd=null;u.path=[];break;}   // another ship is already there: stop alongside
    if(U.deploy&&u.dep){setDeploy(u,false);break;}   // pack up first; the path is kept
    if(followPath(u,dt,c.spd?Math.min(1,c.spd/u.spd):1))u.cmd=null;break;
-  case 'guard':{                               // escort: keep close to a unit (a siege engine, a transport, a fishing boat) and fight off whatever comes for it
-   const w=ENT[c.tid];
-   if(!w||w.kind!=='u'||w.hp<=0){u.cmd=null;break;}
+  case 'guard':{                               // guard a unit (escort it), a building or a spot: stay by it and fight off whatever comes for it
+   const w=c.tid!==undefined?ENT[c.tid]:null;
+   if(c.tid!==undefined&&(!w||w.kind==='r'||w.hp<=0)){u.cmd=null;break;}
+   const at=w?wardAt(w):{x:c.x,y:c.y},span=w&&w.kind==='b'?Math.max(w.w,w.h)*TILE/2:0;
    let e=null;
-   if(U.targets){u.seek=(u.seek||0)-dt;if(u.seek<=0){u.seek=.4;e=pickTarget(u,((U.range||1)+3)*TILE,w);}}   // a warship: its own kinds, round its ward
-   else e=nearestEnemy(w,TILE*4);
+   if(U.atk){u.seek=(u.seek||0)-dt;if(u.seek<=0){u.seek=.4;e=pickTarget(u,((U.range||1)+3)*TILE+span,at);}}   // its own kinds (or its class's), round what it guards
    const ec=e&&(e.kind==='b'?bldCenter(e):e);
-   if(e&&!acrossWater(u,ec.x,ec.y)){orderAttack(u,e);if(u.cmd&&u.cmd.type==='attack')u.cmd.ward=w.id;break;}
-   if(dist(u.x,u.y,w.x,w.y)>TILE*(U.naval?3:1.8)){
-    if(c.px<0||dist(w.x,w.y,c.px,c.py)>TILE){c.px=w.x;c.py=w.y;pathTo(u,w.x,w.y);}
+   if(e&&(U.naval||!acrossWater(u,ec.x,ec.y))){
+    if(w){orderAttack(u,e);if(u.cmd&&u.cmd.type==='attack')u.cmd.ward=w.id;}
+    else if(attackFrom(u,e,c,true)){u.cmd.ax=c.x;u.cmd.ay=c.y;}   // a spot: chase no further than LEASH past its sight from the spot
+    break;}
+   const far=w&&w.kind==='b'?edgeDist(u,w)>TILE*1.5:dist(u.x,u.y,at.x,at.y)>TILE*(w?U.naval?3:1.8:1.2);
+   if(far){
+    if(U.deploy&&u.dep){setDeploy(u,false);break;}
+    if(c.px<0||dist(at.x,at.y,c.px,c.py)>TILE){c.px=at.x;c.py=at.y;pathTo(u,at.x,at.y);}
     followPath(u,dt);}
    else u.path=[];
    break;}
-  case 'patrol':{                              // sail (or march) round its waypoints, taking on whatever comes into sight
-   if(engage(u,c,dt,losOf(u)*TILE))break;
+  case 'patrol':{                              // round its waypoints for ever: soldiers and warships take on what comes into sight, others keep clear of it
+   if(U.deploy&&u.dep){setDeploy(u,false);break;}   // an engine packs up to move on
+   if(U.mil&&U.atk?engage(u,c,dt,losOf(u)*TILE):flee(u,c,dt))break;
    const n=c.pts.length>>1,x=c.pts[2*c.i],y=c.pts[2*c.i+1],d=dist(u.x,u.y,x,y);
    if(d<TILE*1.2||!u.path.length&&c.px===x&&c.py===y&&d<TILE*3){c.i=(c.i+1)%n;c.px=-1;u.path=[];break;}   // there (or as near as the crowd allows): on to the next
-   if(c.px!==x||c.py!==y){c.px=x;c.py=y;pathTo(u,x,y);}
+   if(c.px!==x||c.py!==y){if(Ferry.request(u,x,y,c))break;c.px=x;c.py=y;pathTo(u,x,y);}   // a leg across the water goes by ferry, and the patrol carries on ashore
    if(approach(u,x,y,dt)){u.cmd=c;c.i=(c.i+1)%n;c.px=-1;}   // a point it cannot get to: skip it
+   break;}
+  case 'attackmove':{                          // march on (x, y): every enemy met on the way is fought, then on it goes
+   if(U.deploy&&u.dep){setDeploy(u,false);break;}
+   if(engage(u,c,dt,losOf(u)*TILE))break;
+   const d=dist(u.x,u.y,c.x,c.y);
+   if(d<TILE*.8||!u.path.length&&c.px===c.x&&c.py===c.y&&d<TILE*2.5){u.cmd=null;u.path=[];break;}   // there
+   if(c.px!==c.x||c.py!==c.y){c.px=c.x;c.py=c.y;pathTo(u,c.x,c.y);}
+   if(!u.path.length&&!U.naval){const w=walledOff(u,{kind:'u',x:c.x,y:c.y});if(w&&canHit(U,w)&&attackFrom(u,w,c,false))break;}   // a wall in the way: breach it and march on
+   if(approach(u,c.x,c.y,dt,c.spd?Math.min(1,c.spd/u.spd):1))u.cmd=null;
    break;}
   case 'hunt':{                                // seek out the enemy's ships on this water, the most wanted first, wherever they are
    u.seek=(u.seek||0)-dt;if(u.seek>0)break;u.seek=1;
@@ -3882,7 +4202,7 @@ function updUnit(u,dt){
     const g=c.goal!==undefined?ENT[c.goal]:null;
     if(g&&g.hp>0&&canHit(U,g)){c.tid=g.id;delete c.goal;c.px=-1;break;}   // the breach is open: on to the real target
     if(ward)guard();else back();break;}   // an escort goes back to its engine
-   if(ward&&dist(u.x,u.y,ward.x,ward.y)>TILE*8){guard();break;}                                  // ...and never chases far from it
+   if(ward&&dist(u.x,u.y,wardAt(ward).x,wardAt(ward).y)>TILE*8){guard();break;}                  // ...and never chases far from it
    if(c.ret&&c.ax!==undefined&&dist(u.x,u.y,c.ax,c.ay)>(losOf(u)+LEASH)*TILE){back();break;}   // lured too far off its patrol or station
    if(c.wx!==undefined){                       // flanking riders reach their waypoint first
     if(followPath(u,dt)||dist(u.x,u.y,c.wx,c.wy)<TILE){delete c.wx;delete c.wy;c.px=-1;}
@@ -4030,8 +4350,8 @@ function clearFootprint(b){
  */
 function completeTowerTier(b,n){
  const T=TOWER_TIERS[n];
- if(!T.becomes){if((b.tier||0)>=n)return;
-  const add=T.hp-TOWER_TIERS[b.tier||0].hp;b.tier=n;b.maxhp+=add;b.hp+=add;}
+ if(!T.becomes){if(b.tier===n)return;
+  const add=T.hp-(tierOf(b)||BLDTYPES[b.type]).hp;b.tier=n;b.maxhp+=add;b.hp+=add;}
  else{const spot=growSpot(b,T.becomes);
   if(!spot){const C=T.cost||{};for(const k in C)state.res[b.player][k]+=C[k];if(b.player===0)toast('No room left to grow into a '+BLDTYPES[T.becomes].name+': refunded','bad');return;}
   const B2=BLDTYPES[T.becomes],lost=b.maxhp-b.hp;
@@ -4165,15 +4485,15 @@ function setGateLock(b,on){b.locked=on;if(on)b.open=false;blockBld(b,true);SFX.c
 /** The picture for a building: walls and moats by their joins, gates and drawbridges by direction and state, towers by tier. */
 function bldSprite(b){
  const B=BLDTYPES[b.type],p=b.player;
- if(B.moat)return MSPR[wallMask(b)];
- if(B.drawbridge)return DSPR[p][gateVertical(b)?1:0][b.open?1:0];
- if(B.wall)return WSPR[p][b.type][wallMask(b)];
- if(B.gate)return GSPR[p][b.type][gateVertical(b)?1:0][b.open?1:0];
- if(B.tiers)return tierSprite(p,b.tier||0);
+ if(B.spriteSet&&SSPR[p]&&SSPR[p][B.spriteSet])return setPiece(p,B.spriteSet,wallMask(b),gateVertical(b),b.open);   // a set: by its joins (or a gate's way and state)
+ if(tierOf(b))return tierSprite(p,tierRow(b));
  return BSPR[p][b.type];
 }
+/** One picture from a sprite set: a line or moat set by neighbour mask; a gate or drawbridge set by its way (vertical) and whether it is open. */
+function setPiece(p,set,mask,vertical,open){const k=SPRITES[set].kind,S=SSPR[p][set];
+ return k==='gate'||k==='bridge'?S[vertical?1:0][open?1:0]:S[mask];}
 /** A tier's picture: its own if it has one, else the picture of the row it grows out of (a new tier needs no new art). */
-const tierSprite=(p,i)=>TSPR[p][i]||(i>0?tierSprite(p,Math.max(0,tierIndex(tierFrom(i)))):TSPR[p][0]);
+const tierSprite=(p,i)=>TSPR[p][i]||(TOWER_TIERS[i].becomes?BSPR[p][TOWER_TIERS[i].becomes]:i>0?tierSprite(p,Math.max(0,tierIndex(tierFromList(i)[0]))):TSPR[p][0]);   // up to the building it grew from
 /** Territory: the ground each finished stronghold claims (its territoryOf radius: castles 11, keeps 7). Where both sides' territory meets it is contested: no bonuses. */
 let inflEdges=[];
 function computeInfluence(){
@@ -4240,6 +4560,8 @@ const IMPACT_FX={
   for(let i=0;i<7;i++){const a=i*.9,d=3+k*13,x=f.x+Math.cos(a)*d,y=f.y+Math.sin(a)*d*.45-Math.sin(k*Math.PI)*6;
    ctx.fillStyle=i%2?'#ff8a20':'#ffd060';ctx.fillRect(Math.round(x)-1,Math.round(y)-2,3,3);}
   ctx.fillStyle='rgba(60,40,30,.5)';ctx.beginPath();ctx.arc(f.x,f.y-6-k*10,3+k*5,0,7);ctx.fill();ctx.globalAlpha=1;}},
+ sprung:{life:.6,draw(f,k){ctx.globalAlpha=1-k;ctx.fillStyle='#8a6a44';   // stakes thrust up from a sprung trap
+  for(let i=0;i<5;i++){const x=f.x-8+i*4,h=4+Math.sin(k*Math.PI)*7+(i%2)*2;ctx.fillRect(Math.round(x),Math.round(f.y-h),2,h);}ctx.globalAlpha=1;}},
  debris:{life:4,draw(f,k){const t=state.time*2+f.s,dx=Math.sin(t)*1.5,y=f.y+Math.sin(t*1.3)*.8;   // planks bobbing, then sinking away
   ctx.globalAlpha=Math.min(1,(1-k)*3);ctx.fillStyle=f.s%2?'#6b4423':'#8a5a2c';ctx.fillRect(Math.round(f.x+dx)-3,Math.round(y),f.s%3?6:8,2);
   if(f.s===2){ctx.fillStyle='#5c3a18';ctx.fillRect(Math.round(f.x+dx)-6,Math.round(y)+3,12,1);}ctx.globalAlpha=1;}}
@@ -4333,6 +4655,28 @@ const Projectiles={
   }
  }
 };
+/**
+ * Structures with a `trigger` (boiling oil, traps), every tick: an enemy land unit stepping on one ('step') or attacking
+ * within its radius ('attack') sets it off. Every enemy unit within the radius takes its damage (no armour: it is oil,
+ * stakes, a fall), is slowed (slow) or held fast (hold); burning ground is laid (burn). Then it waits its cooldown, or
+ * is spent (consume).
+ */
+function triggers(dt){
+ for(const b of state.blds){const T=BLDTYPES[b.type].trigger;if(!T||!b.done||!ENT[b.id])continue;
+  if(b.tcd>0){b.tcd-=dt;continue;}
+  const c=bldCenter(b),R=T.radius*TILE,foes=state.units.filter(e=>e.player!==b.player&&!isNaval(e)&&dist(c.x,c.y,e.x,e.y)<=R);
+  if(!foes.length||T.when==='attack'&&!foes.some(e=>e.cmd&&e.cmd.type==='attack'))continue;
+  b.sprung=true;
+ }
+ for(const b of state.blds.filter(o=>o.sprung)){delete b.sprung;const T=BLDTYPES[b.type].trigger,c=bldCenter(b),R=T.radius*TILE;
+  for(const e of state.units.filter(o=>o.player!==b.player&&!isNaval(o)&&dist(c.x,c.y,o.x,o.y)<=R)){
+   if(T.slow){e.slowT=T.slow.time;e.slowMul=T.slow.mul;}if(T.hold)e.holdT=T.hold;
+   if(T.damage)burnHurt(e,T.damage);}
+  if(T.burn){state.fires.push({x:c.x,y:c.y+8,r:T.burn.r,life:T.burn.life,dps:T.burn.dps,owner:b.player});if(state.fires.length>40)state.fires.shift();}
+  addFx({k:T.burn?'fireSplash':'sprung',x:c.x,y:c.y+8,life:T.burn?IMPACT_FX.fireSplash.life:IMPACT_FX.sprung.life});
+  sfxT('trap',T.burn?SFX.blaze:SFX.hit,.2);
+  if(T.consume)killEnt(b,'sprung');else b.tcd=T.cooldown||5;}
+}
 /** Fire damage: no armour, no red flash every frame (the flames show it). */
 function burnHurt(t,d){if(unbreakable(t))return;t.hp-=d;if(t.hp<=0)killEnt(t);}
 /** A boulder of kind P at (x, y), turned by `rot` radians: shaded lower half, a turning chip of light, a glow if it burns. */
@@ -4381,9 +4725,9 @@ function formationSlots(units,x,y,fx,fy,kind){
  return out;
 }
 /** Move a group into formation; everyone marches at the slowest member's pace. */
-function formationMove(units,x,y,fx,fy,kind){
+function formationMove(units,x,y,fx,fy,kind,give=orderMove){
  const spd=Math.min(...units.map(u=>u.spd));
- for(const s of formationSlots(units,x,y,fx,fy,kind))orderMove(s.u,s.x,s.y,units.length>1?spd:0);
+ for(const s of formationSlots(units,x,y,fx,fy,kind))give(s.u,s.x,s.y,units.length>1?spd:0);
 }
 const groupCenter=us=>({x:us.reduce((a,u)=>a+u.x,0)/us.length,y:us.reduce((a,u)=>a+u.y,0)/us.length});
 
@@ -4446,20 +4790,16 @@ function aiTick(dt){
  else if(state.age[p]>=1&&!has('archery')){if(canAfford(p,BLDTYPES.archery.cost))aiPlace('archery',tc.tx,tc.ty);}
  else if(state.age[p]>=2&&!has('stable')){if(canAfford(p,BLDTYPES.stable.cost))aiPlace('stable',tc.tx,tc.ty);}
  else if(!has('siegeworkshop')&&!bldLock(p,'siegeworkshop')&&canAfford(p,BLDTYPES.siegeworkshop.cost))aiPlace('siegeworkshop',tc.tx,tc.ty);
- else if(state.age[p]>=2&&!has('castle')){      // a castle on the side facing the enemy, once Masonry is in
-  if(!state.techs[p].masonry)aiResearch(myB,'masonry');
-  else if(canAfford(p,BLDTYPES.castle.cost)){const f=aiFront(tc);aiPlace('castle',tc.tx+Math.round(f.x*4),tc.ty+Math.round(f.y*4));}}
  const saveStone=state.age[p]>=2&&!has('siegeworkshop');   // Bronze Age stone goes to the workshop before more towers
  if(state.age[p]>=1&&!saveStone&&state.blds.filter(b=>b.player===1&&b.type==='tower').length<(state.age[p]>=2?3:2)&&canAfford(p,BLDTYPES.tower.cost))aiTower(tc);
- if(state.age[p]>=1&&has('barracks')&&has('archery'))aiWalls(tc);
- if(state.age[p]>=2&&has('castle')){aiMoat(tc);aiKeep(tc,myB);}   // the Bronze Age, its castle up: a moat round the walls, drawbridges at the gates, a Keep
  const seas=aiSeas(tc);
  const army=myU.filter(u=>UNITTYPES[u.type].mil&&!isNaval(u)),siege=army.filter(u=>UNITTYPES[u.type].cls==='siege');   // its fleet has its own orders (aiFleet)
  aiNavy(tc,myB,army,vils,seas);
- const towers=state.blds.filter(b=>b.player===0&&b.type==='tower').length;
+ const towers=state.blds.filter(b=>b.player===0&&roleOf(b)&&fireOf(b)).length;   // your shooting defences: towers, keeps, bastions…
  const saving=towers>=3&&state.age[p]===1&&!state.advancing[p]&&vils.length>=10&&R.food<AGES[1].cost.food&&army.length>=D.armyToAttack;   // a fortified player: save for the Bronze Age and its siege
  if(!saving&&!ai.fleetFirst&&army.length-siege.length<ai.landCap)aiTrain(myB,army);
  if(!ai.fleetFirst)aiSiege(myB,army);              // siege engines have their own allowance on top of the 14 soldiers; a fleet that is short comes first
+ if(!saveStone)aiFortify(tc,myB,vils);             // its defences, by AI_FORT_PLAN, with what the army leaves
  if(army.length>=6){aiResearch(myB,'fletching');aiResearch(myB,'horsebreeding');}
  if(siege.length){aiResearch(myB,'engineering1');aiResearch(myB,'reinforcedframes');}
  if(siege.length>=2)aiResearch(myB,'counterweight');   // unlocks the trebuchet
@@ -4474,13 +4814,14 @@ function aiTick(dt){
  {const Q=aiQuota(p),n=aiRoles(p);                 // move one empty-handed gatherer a tick to a resource short of its quota
   if(Object.keys(Q).some(k=>n[k]<Q[k])){const from=Object.keys(Q).find(k=>n[k]>Q[k]),v=from&&vils.find(o=>o.cmd&&o.cmd.role===from&&!o.carry.amt);
    if(v){v.cmd=null;v.path=[];assignAI(v);}}}
- const homeArmy=seas.A<0?army:army.filter(u=>regionOf(u)===seas.A);
+ const homeArmy=(seas.A<0?army:army.filter(u=>regionOf(u)===seas.A)).filter(u=>!aiPatrolling(u));   // its border patrols stay on their rounds
  aiOverseas(army,seas,tcc);                        // soldiers landed abroad fight on there
  const threat=state.units.find(u=>u.player===0&&!isNaval(u)&&dist(u.x,u.y,tcc.x,tcc.y)<TILE*9&&(seas.A<0||regionOf(u)===seas.A));   // ships are left to the towers
  aiShelter(myB,vils);
  if(!threat){aiUpgradeTowers(myB,army);aiRepair(myB,vils);}
- if(threat){ai.wave=null;for(const s of homeArmy)if(!UNITTYPES[s.type].bldOnly&&(!s.cmd||s.cmd.type!=='attack'))orderAttack(s,threat);return;}   // rams cannot fight units: they stay put
- if(ai.wave){aiWave(army);return;}
+ if(threat){ai.wave=null;for(const s of homeArmy)if(!UNITTYPES[s.type].bldOnly&&(!s.cmd||!['attack','attackmove'].includes(s.cmd.type)))orderAttackMove(s,threat.x,threat.y);return;}   // the army attack-moves on raiders (rams cannot fight units: they stay put)
+ if(ai.wave){aiWave(army.filter(u=>!aiPatrolling(u)));return;}
+ aiPatrols(tc,army);
  aiRally(tc,homeArmy);
  ai.attackT=Math.max(ai.attackT-1.2,army.length<D.armyToAttack?0:-300);   // the clock only runs past zero once the army is ready
  const waitForSiege=towers>=3&&!siege.length&&army.length<14&&ai.attackT>-240;   // a fortified base: bring siege first (but wait no more than 4 minutes)
@@ -4635,7 +4976,7 @@ function aiOverseas(army,seas,home){
  if(seas.A<0)return;
  for(const s of army){if(s.cmd)continue;const R=regionOf(s);if(R<0||R===seas.A)continue;
   let t=null,bd=Infinity;
-  for(const b of state.blds)if(b.player===0&&!isLine(b)&&NAV.land[b.ty*MAP+b.tx]===R){const c=bldCenter(b),d=dist(s.x,s.y,c.x,c.y);if(d<bd){bd=d;t=b;}}
+  for(const b of state.blds)if(b.player===0&&townBld(b)&&NAV.land[b.ty*MAP+b.tx]===R){const c=bldCenter(b),d=dist(s.x,s.y,c.x,c.y);if(d<bd){bd=d;t=b;}}
   if(!t&&!UNITTYPES[s.type].bldOnly)for(const u of state.units)if(u.player===0&&!isNaval(u)&&regionOf(u)===R){const d=dist(s.x,s.y,u.x,u.y);if(d<bd){bd=d;t=u;}}
   if(t)orderAttack(s,t);else orderMove(s,home.x,home.y);}
 }
@@ -4682,16 +5023,6 @@ function aiExits(tc,ring){
  const r=route(true);if(r)for(let i=r.end;i!==r.from[i];i=r.from[i])if(onRing.has(i)&&onRing.get(i).kind==='wall')out.add(i);
  return out;
 }
-/** Wall the town in, a few segments at a time (at most 3 unfinished), gates at the planned spots and wherever the way out crosses the ring. */
-function aiWalls(tc){
- const p=1;let open=state.blds.filter(b=>b.player===p&&!b.done&&isLine(b)).length;
- const ring=aiRing(tc);if((ai.exitT=(ai.exitT||0)-1)<=0||!ai.exits){ai.exits=aiExits(tc,ring);ai.exitT=5;}   // re-plan the way out every few ticks
- for(const t of ring){if(open>=3)break;
-  if(t.kind==='corner')continue;
-  const type=t.kind==='gate'||ai.exits.has(t.y*MAP+t.x)?'gate':'wall';
-  if(!canPlace(type,t.x,t.y,p)||!canAfford(p,BLDTYPES[type].cost))continue;
-  aiBuildAt(type,t.x,t.y);open++;}
-}
 /**
  * The AI's moat: a ring one tile outside its wall ring, dug a few segments at a time once its stone can spare it, with
  * a Drawbridge on the moat in front of every gate of the ring (the planned gates and the way-out gates of aiExits).
@@ -4704,15 +5035,107 @@ function aiMoatRing(tc){
   if(dx&&!dy||dy&&!dx)bridges.add((t.y+dy)*MAP+t.x+dx);}
  for(const[x,y]of ringTiles(x0,y0,x1,y1))if(x>=0&&y>=0&&x<MAP&&y<MAP)out.push({x,y,bridge:bridges.has(y*MAP+x)});
  return out;}
-function aiMoat(tc){
- const p=1,R=state.res[p];
- if(R.stone<120)return;                                 // keep stone for the castle's upkeep and siege
- let open=state.blds.filter(b=>b.player===p&&!b.done&&(BLDTYPES[b.type].moat||BLDTYPES[b.type].drawbridge)).length;
- for(const t of aiMoatRing(tc)){if(open>=4)break;
-  const here=ENT[occ[t.y*MAP+t.x]];
-  if(t.bridge&&here&&here.player===p&&here.type==='moat'&&here.done){if(canPlace('drawbridge',t.x,t.y,p)&&!bldLock(p,'drawbridge')&&canAfford(p,BLDTYPES.drawbridge.cost)){aiBuildAt('drawbridge',t.x,t.y);open++;}continue;}
-  if(!here&&canPlace('moat',t.x,t.y,p)&&canAfford(p,BLDTYPES.moat.cost)){aiBuildAt('moat',t.x,t.y);open++;}}
+/**
+ * The AI's fortification plan, as data: the order it raises its defences in. Each step names a building type or a
+ * TOWER_TIERS row (the Imperial Keep). How it is built comes from the role (ROLES[*].plan): 'ring' — a wall-role line
+ * round its town on AI_RING (a heavier one rebuilds a lighter one in place; a moat goes one tile outside it, with
+ * drawbridges at the gates), a gate-role structure on the ring's access points; 'corner' — a fort on the ring's
+ * corners, the side facing you first; 'front' — a castle-role building on the side facing you. A type or row the tower
+ * line reaches is grown from one of its buildings on the line when one can take it (walking the line there). A step
+ * waits for its age, the step before it (and `villagers`, `needs`) and spare money; it researches what it needs first.
+ * The steps already done keep their rings whole.
+ */
+const AI_FORT_PLAN=Object.freeze([
+ {build:'palisade',villagers:10},
+ {build:'wall',age:1,needs:['barracks']},
+ {build:'moat',age:2},
+ {build:'gatehouse',age:2},
+ {build:'keep',age:2},
+ {build:'bastion',age:2},
+ {build:'imperialkeep',age:2},
+ {build:'castle',age:2},
+ {build:'citadel',age:2}
+]);
+function aiFortify(tc,myB,vils){
+ for(const st of AI_FORT_PLAN){
+  if(st.age&&state.age[1]<st.age||st.villagers&&vils.length<st.villagers||st.needs&&!st.needs.every(t=>myB.some(b=>b.type===t&&b.done)))return;
+  if(!aiFortStep(tc,myB,st.build))return;         // one new step at a time
+ }
 }
+/** Work one step of the plan; true once it is done (or there is nothing left it can do there). */
+function aiFortStep(tc,myB,id){
+ const B=BLDTYPES[id];
+ if(!B){const row=tierIndex(id);if(row<0)return true;   // a tower-line row: grow it from a building that can take it
+  if(state.blds.some(b=>b.player===1&&(b.tier===row||b.queue.includes('up:'+row))))return true;
+  const T=TOWER_TIERS[row];if(T.tech&&!state.techs[1][T.tech]){aiResearch(myB,T.tech);return false;}
+  aiGrow(myB,row);return false;}
+ if(B.tech&&!state.techs[1][B.tech]){aiResearch(myB,B.tech);return false;}
+ const plan=(ROLES[B.role]||{}).plan;
+ if(B.lay==='line'&&B.role==='wall')return B.moat?aiMoatStep(tc,id):aiRingStep(tc,id);
+ if(B.role==='gate')return aiGateStep(tc,id);
+ if(state.blds.some(b=>b.player===1&&b.type===id)||myB.some(b=>b.queue.some(it=>isUpItem(it)&&TOWER_TIERS[+it.slice(3)].becomes===id)))return true;
+ for(const[i,T]of TOWER_TIERS.entries())if(T.becomes===id&&aiGrow(myB,i))return false;   // grown out of the line: a keep from a tower, a castle from a keep…
+ if(bldLock(1,id)||!canAfford(1,B.cost))return false;
+ const f=aiFront(tc);
+ if(plan==='corner'){const c=aiRing(tc).filter(t=>t.kind==='corner');
+  for(const t of c)for(let dy=1-B.h;dy<=0;dy++)for(let dx=1-B.w;dx<=0;dx++)if(canPlace(id,t.x+dx,t.y+dy,1)){aiBuildAt(id,t.x+dx,t.y+dy);return false;}}
+ aiPlace(id,tc.tx+Math.round(f.x*(plan==='front'?4:5)),tc.ty+Math.round(f.y*(plan==='front'?4:5)));
+ return false;
+}
+/** Queue the next upgrade on the way to row `target` of the tower line on one of the AI's buildings that is on that way (with room to grow at the end). */
+function aiGrow(myB,target){
+ const fin=TOWER_TIERS[target].becomes;
+ for(const b of myB){if(!b.done||b.queue.length)continue;const step=aiPathStep(b,target);if(step===null)continue;
+  if(fin&&!growSpot(b,fin))continue;
+  if(!tierLock(b,step)){queueTowerTier(b,step);return true;}}
+ return false;}
+/** The first row on the way from where building b stands to row `target` on the tower line, or null if its line does not lead there. */
+function aiPathStep(b,target){
+ const cur=lineIdOf(b.type,b.tier);if(cur===null)return null;
+ const back=(i,seen)=>{if(seen.has(i))return null;seen.add(i);
+  for(const f of tierFromList(i)){if(f===cur)return i;const j=tierIndex(f);if(j<0)continue;const r=back(j,seen);if(r!==null)return r;}return null;};
+ return back(target,new Set());}
+/** The gate type the AI sets in its ring's access points while it builds a wall of this type: the first gate-role, non-drawbridge type it may build there. */
+const aiAccessGate=type=>Object.keys(BLDTYPES).find(t=>{const G=BLDTYPES[t];return G.role==='gate'&&G.gate&&!G.drawbridge&&(G.over||[]).includes(type)&&!bldLock(1,t);})||null;
+/**
+ * A wall-role line round the town on the ring: this type on every wall tile (over a lighter wall of its own), access
+ * gates on the gate tiles and wherever the way out crosses the ring; at most 3 sites at a time. Done once every wall
+ * tile holds a wall at least this strong.
+ */
+function aiRingStep(tc,type){
+ const p=1,B=BLDTYPES[type],ring=aiRing(tc);let open=state.blds.filter(b=>b.player===p&&!b.done&&isLine(b)).length,done=true;
+ if((ai.exitT=(ai.exitT||0)-1)<=0||!ai.exits){ai.exits=aiExits(tc,ring);ai.exitT=5;}   // re-plan the way out every few ticks
+ const gt=aiAccessGate(type);
+ for(const t of ring){if(t.kind==='corner')continue;
+  const i=t.y*MAP+t.x,here=ENT[occ[i]],gateTile=t.kind==='gate'||ai.exits.has(i);
+  if(here&&here.player!==p)continue;
+  let want=null;
+  if(gateTile){if(gt&&!(here&&BLDTYPES[here.type].role==='gate'))want=gt;}
+  else if(!here){if(!block[i]&&TERRAIN[ttype[i]].build)want=type;}
+  else if(BLDTYPES[here.type].role==='wall'&&BLDTYPES[here.type].lay==='line'&&BLDTYPES[here.type].hp<B.hp&&(B.over||[]).includes(here.type))want=type;
+  if(!want)continue;if(want===type)done=false;
+  if(open>=3||!canPlace(want,t.x,t.y,p)||!canAfford(p,BLDTYPES[want].cost))continue;
+  aiBuildAt(want,t.x,t.y);open++;}
+ return done;}
+/** A gate-role structure of this type on every access point of the ring (over its lighter gate or wall); at most 2 sites at a time. */
+function aiGateStep(tc,type){
+ const p=1,B=BLDTYPES[type],ring=aiRing(tc);let open=state.blds.filter(b=>b.player===p&&!b.done&&b.type===type).length,done=true;
+ const exits=ai.exits||new Set();
+ for(const t of ring){const i=t.y*MAP+t.x;if(t.kind!=='gate'&&!exits.has(i))continue;
+  const here=ENT[occ[i]];if(here&&(here.player!==p||here.type===type||BLDTYPES[here.type].hp>=B.hp))continue;
+  if(here&&!(B.over||[]).includes(here.type))continue;
+  done=false;if(open>=2||!canPlace(type,t.x,t.y,p)||!canAfford(p,B.cost))continue;
+  aiBuildAt(type,t.x,t.y);open++;}
+ return done;}
+/** The moat of this type one tile outside the ring, a few segments at a time (once its stone can spare it), with a Drawbridge before every gate. */
+function aiMoatStep(tc,type){
+ const p=1,R=state.res[p],B=BLDTYPES[type],bridge=Object.keys(BLDTYPES).find(t=>BLDTYPES[t].drawbridge&&(BLDTYPES[t].over||[]).includes(type));
+ let open=state.blds.filter(b=>b.player===p&&!b.done&&(BLDTYPES[b.type].moat||BLDTYPES[b.type].drawbridge)).length,done=true;
+ for(const t of aiMoatRing(tc)){const here=ENT[occ[t.y*MAP+t.x]];
+  if(t.bridge&&bridge&&here&&here.player===p&&BLDTYPES[here.type].moat&&here.done){done=false;
+   if(open<4&&canPlace(bridge,t.x,t.y,p)&&!bldLock(p,bridge)&&canAfford(p,BLDTYPES[bridge].cost)){aiBuildAt(bridge,t.x,t.y);open++;}continue;}
+  if(!here&&canPlace(type,t.x,t.y,p)){done=false;if(open<4&&R.stone>=120&&canAfford(p,B.cost)){aiBuildAt(type,t.x,t.y);open++;}}}
+ return done;}
 /** Towers on the ring's corners, front first; elsewhere near the town when no corner is free. */
 function aiTower(tc){
  const c=aiRing(tc).find(t=>t.kind==='corner'&&canPlace('tower',t.x,t.y,1));
@@ -4725,24 +5148,11 @@ function aiTower(tc){
  */
 function aiUpgradeTowers(myB,army){
  if(army.length<6)return;
- const castle=myB.some(x=>x.type==='castle'),keeps=state.blds.filter(x=>x.player===1&&x.type==='keep').length;
- const want=T=>T.becomes?false:castle||T.id==='watch';   // growing into a Keep is aiKeep's business, into a castle never
- for(const b of myB){if(b.queue.length)continue;
+ const castle=myB.some(x=>BLDTYPES[x.type].role==='castle');
+ const want=T=>T.becomes?false:castle||T.id==='watch';   // growing into anything else is the fortification plan's business (aiFortify)
+ for(const b of myB){if(b.queue.length||!BLDTYPES[b.type].tiers)continue;   // the Guard Tower's own tiers
   const opts=nextTiers(b).filter(n=>want(TOWER_TIERS[n])&&!tierLock(b,n)).sort((a,c)=>(TOWER_TIERS[c].becomes?1:0)-(TOWER_TIERS[a].becomes?1:0));   // a Keep before a Ballista Tower
   if(opts.length){queueTowerTier(b,opts[0]);return;}}
-}
-/**
- * One Keep once the castle stands: a Fortified Tower with room grows into it; failing that, a tower with room is brought
- * up the line towards it; and if no tower has room to grow, the AI raises a Keep outright on the side facing you.
- */
-function aiKeep(tc,myB){
- const kn=tierIndex('keep');
- if(state.blds.some(b=>b.player===1&&(b.type==='keep'||b.queue.some(it=>isUpItem(it)&&+it.slice(3)===kn))))return;
- const grow=myB.find(b=>b.type==='tower'&&nextTiers(b).includes(kn)&&!tierLock(b,kn));
- if(grow){queueTowerTier(grow,kn);return;}
- const roomy=myB.find(b=>b.type==='tower'&&!b.queue.length&&growSpot(b,'keep')&&nextTiers(b).some(n=>!TOWER_TIERS[n].becomes&&!tierLock(b,n)));
- if(roomy){queueTowerTier(roomy,nextTiers(roomy).find(n=>!TOWER_TIERS[n].becomes&&!tierLock(roomy,n)));return;}
- if(!myB.some(b=>b.type==='tower'&&growSpot(b,'keep'))&&!bldLock(1,'keep')&&canAfford(1,BLDTYPES.keep.cost)){const f=aiFront(tc);aiPlace('keep',tc.tx+Math.round(f.x*5),tc.ty+Math.round(f.y*5));}
 }
 /** Send the nearest empty-handed gatherer (or a villager laying wall or moat: mending comes first) to mend any fortification (wall, gate, drawbridge, tower, keep, castle) or the town center below 60%, one at a time. */
 function aiRepair(myB,vils){
@@ -4760,6 +5170,38 @@ function aiShelter(myB,vils){
   const s=safe.filter(b=>garrisonRoom(b)>0).sort((a,b)=>edgeDist(v,a)-edgeDist(v,b))[0];
   if(s&&edgeDist(v,s)<TILE*10)orderGarrison(v,s);}
  for(const b of safe)if(b.garrison&&b.garrison.length&&!foes.some(e=>edgeDist(e,b)<TILE*10))ejectGarrison(b);
+}
+/**
+ * Border defence: riders the AI keeps on patrol, as data. who(U): the unit types that may go; count: how many; route:
+ * 'forts' (round its towers, keeps and castle, from one to the next) or 'chokepoint' (from just inside its gate facing
+ * you to the ground beyond it); tag: marks the patrol on the order, so the AI keeps count and leaves these riders out of
+ * its waves and its rally. They take on what comes into sight like any patrol. (Its warships patrol their sea lanes:
+ * aiFleetOrders.)
+ */
+const AI_PATROLS=Object.freeze([
+ {tag:'border',who:U=>U.cls==='cavalry'&&!!U.light,count:1,route:'forts'},   // a border scout, fort to fort
+ {tag:'choke',who:U=>U.cls==='cavalry',count:1,route:'chokepoint'}           // a rider at the gate facing you
+]);
+const aiPatrolling=u=>!!(u.cmd&&(u.cmd.tag||u.cmd.ret&&u.cmd.ret.tag));
+/** The waypoints [x, y, ...] of an AI patrol route, or null when it has no such route yet (fewer than two forts, no gate). */
+function aiRoute(tc,route){
+ const c=bldCenter(tc);
+ if(route==='forts'){
+  const f=state.blds.filter(b=>b.player===1&&b.done&&['fort','castle'].includes(BLDTYPES[b.type].role)).map(b=>{const q=bldCenter(b),dx=q.x-c.x,dy=q.y-c.y,l=Math.hypot(dx,dy)||1,o=(Math.max(b.w,b.h)/2+1.5)*TILE;
+   return{x:clamp(q.x+dx/l*o,TILE,WPX-TILE),y:clamp(q.y+dy/l*o,TILE,WPX-TILE),a:Math.atan2(dy,dx)};}).sort((a,b)=>a.a-b.a).slice(0,8);   // just outside each, round the town
+  return f.length>=2?f.flatMap(p=>[p.x,p.y]):null;}
+ if(route==='chokepoint'){
+  const f=aiFront(tc),gates=state.blds.filter(b=>b.player===1&&b.done&&BLDTYPES[b.type].gate);if(!gates.length)return null;
+  const g=gates.sort((a,b)=>((bldCenter(b).x-c.x)*f.x+(bldCenter(b).y-c.y)*f.y)-((bldCenter(a).x-c.x)*f.x+(bldCenter(a).y-c.y)*f.y))[0],gc=bldCenter(g);
+  return[gc.x-f.x*TILE*2.5,gc.y-f.y*TILE*2.5,gc.x+f.x*TILE*6,gc.y+f.y*TILE*6].map(v=>clamp(v,TILE,WPX-TILE));}
+ return null;}
+/** Keep the border patrols (AI_PATROLS) manned from idle or rallying riders. */
+function aiPatrols(tc,army){
+ for(const P of AI_PATROLS){
+  const on=army.filter(u=>u.cmd&&(u.cmd.tag===P.tag||u.cmd.ret&&u.cmd.ret.tag===P.tag)).length;if(on>=P.count)continue;
+  const free=army.filter(u=>P.who(UNITTYPES[u.type])&&!aiPatrolling(u)&&(!u.cmd||u.cmd.type==='move'));if(!free.length)continue;
+  const pts=aiRoute(tc,P.route);if(!pts)continue;
+  for(const u of free.slice(0,P.count-on)){u.cmd={type:'patrol',pts:[...pts],i:0,px:-1,py:-1,tag:P.tag};u.path=[];}}
 }
 /** Between attacks the army holds the gate facing the enemy, just inside it: a chokepoint guarded by riders and archers. */
 function aiRally(tc,army){
@@ -4794,7 +5236,7 @@ function aiUnitFor(cls,plan){
 function aiTrain(myB,army){
  const plan=aiArmyPlan(1),M=plan.mine,tot=M.infantry+M.ranged+M.cavalry||1,W=plan.want,sum=W.infantry+W.ranged+W.cavalry;
  const need=c=>W[c]/sum-plan.mine[c]/tot,order=['infantry','ranged','cavalry'].filter(c=>W[c]>0).sort((a,b)=>need(b)-need(a));
- const castle=myB.find(x=>x.type==='castle'&&!x.queue.length);   // a castle adds the elite of the class most needed
+ const castle=myB.find(x=>BLDTYPES[x.type].role==='castle'&&TRAINS[x.type]&&!x.queue.length);   // a castle (or a citadel) adds the elite of the class most needed
  if(castle){const e=order.map(c=>ELITE[c]).find(t=>canAfford(1,UNITTYPES[t].cost));if(e)queueTrain(castle,e);}
  for(const cls of order){
   const b=myB.find(x=>x.type===CLASS_HOME[cls]&&!x.queue.length);if(!b)continue;
@@ -4807,7 +5249,7 @@ function aiTrain(myB,army){
  */
 function aiSiege(myB,army){
  if(army.filter(u=>UNITTYPES[u.type].cls!=='siege').length<6)return;
- const p=1,towers=state.blds.filter(x=>x.player===0&&x.type==='tower').length,have=r=>army.filter(u=>UNITTYPES[u.type].siegeRole===r).length;
+ const p=1,towers=state.blds.filter(x=>x.player===0&&roleOf(x)&&fireOf(x)).length,have=r=>army.filter(u=>UNITTYPES[u.type].siegeRole===r).length;
  const open=t=>{const U=UNITTYPES[t];return U.cls==='siege'&&(!U.age||state.age[p]>=U.age)&&(!U.tech||state.techs[p][U.tech])&&canAfford(p,U.cost)&&
   [...state.units,...state.blds].some(e=>e.player===0&&canHit(U,e));};
  const roles=[...Object.keys(AI_SIEGE_MIX),...new Set(Object.values(UNITTYPES).map(U=>U.siegeRole).filter(r=>r&&!(r in AI_SIEGE_MIX)))];
@@ -4824,12 +5266,12 @@ function aiResearch(myB,id){
  * behind. An army bringing siege goes for the player's defences nearest to it first, then a production building.
  */
 function aiMuster(army,home){
- const targets=state.blds.filter(b=>b.player===0&&!isLine(b));if(!targets.length)return;   // the town, not its walls: those get breached on the way
+ const targets=state.blds.filter(b=>b.player===0&&townBld(b));if(!targets.length)return;   // the town, not its walls: those get breached on the way
  const near=list=>list.sort((a,b)=>{const A=bldCenter(a),B=bldCenter(b);return dist(A.x,A.y,home.x,home.y)-dist(B.x,B.y,home.x,home.y);})[0];
  const role=r=>targets.filter(b=>BLDTYPES[b.type].role===r);
  const tgt=(army.some(u=>UNITTYPES[u.type].cls==='siege')&&(near(role('fort'))||near(role('production'))))||targets[Rng.next()*targets.length|0],tc=bldCenter(tgt);
  if(acrossWater(army[0],tc.x,tc.y)){              // an amphibious invasion: the army sails as a convoy and storms the target from the beach
-  for(const s of army)orderAttack(s,tgt);
+  for(const s of army)if(UNITTYPES[s.type].cls==='siege')orderAttack(s,tgt);else orderAttackMove(s,tc.x,tc.y);   // siege for the target; the rest attack-move on it, from the beach on
   toast('An enemy fleet is setting sail!','bad');SFX.bell();return;}
  let dx=home.x-tc.x,dy=home.y-tc.y;const l=Math.hypot(dx,dy)||1;dx/=l;dy/=l;
  const sx=clamp(tc.x+dx*TILE*9,TILE,WPX-TILE),sy=clamp(tc.y+dy*TILE*9,TILE,WPX-TILE);
@@ -4838,8 +5280,9 @@ function aiMuster(army,home){
  toast('The enemy army is on the march!','bad');SFX.bell();
 }
 /**
- * Attack, step 2 (once gathered, or after 25 s): siege engines go for the target, each with up to two infantry escorts
- * guarding it; the other infantry storm the target, archers shoot from behind, riders flank (going for archers, villagers and engines that deploy).
+ * Attack, step 2 (once gathered, or after 25 s): siege engines go straight for the target, each with up to two infantry
+ * escorts guarding it; the other infantry and the archers attack-move on it (taking on whatever meets them on the way);
+ * riders flank (going for archers, villagers and engines that deploy).
  */
 function aiWave(army){
  const w=ai.wave,tgt=ENT[w.tid];
@@ -4855,7 +5298,8 @@ function aiWave(army){
    escorts.add(g);g.cmd={type:'guard',tid:e.id,px:-1,py:-1};g.path=[];}
  for(const s of army){
   if(escorts.has(s))continue;
-  if(UNITTYPES[s.type].cls!=='cavalry'){orderAttack(s,tgt);continue;}
+  if(UNITTYPES[s.type].cls==='siege'){orderAttack(s,tgt);continue;}                  // siege engines go straight for the target
+  if(UNITTYPES[s.type].cls!=='cavalry'){orderAttackMove(s,tc.x,tc.y);continue;}       // infantry and archers attack-move on it, fighting whatever meets them
   const prey=soft.length?soft[Rng.next()*soft.length|0]:tgt;        // riders swing wide and hit archers, deployed siege engines and villagers
   orderAttack(s,prey,{x:clamp(tc.x-fy/l*side*TILE*6-fx/l*TILE*2,TILE,WPX-TILE),y:clamp(tc.y+fx/l*side*TILE*6-fy/l*TILE*2,TILE,WPX-TILE)});
  }
@@ -4910,6 +5354,7 @@ function drawUnit(u,simple){
    if(moving){const t=(state.time*3+u.id)%1,bx=u.x-hx*S*(SK?1.4:1),by=u.y+wy-hy*S*1.4;ctx.globalAlpha=.7*(1-t);ctx.beginPath();
     for(const sgn of[-1,1]){ctx.moveTo(bx,by);ctx.lineTo(bx-hx*(10+t*14)-hy*sgn*(3+t*5),by-hy*(10+t*14)+hx*sgn*(3+t*5)*(SK?.5:1));}ctx.stroke();ctx.globalAlpha=1;}}
   else{ctx.fillStyle='rgba(0,0,0,.25)';ctx.beginPath();ctx.ellipse(u.x,u.y+1,S+1,3,0,0,7);ctx.fill();}}
+ if(u.holdT>0&&!simple){ctx.fillStyle='rgba(28,18,6,.7)';ctx.beginPath();ctx.ellipse(u.x,u.y+2,S+2,4,0,0,7);ctx.fill();}   // held fast in a pit
  if(SK){const SP=SPRITES[SK],an=u.atkT>0?'attack':moving?'move':'idle',An=SP.animations[an];   // a sprite: its animation's frame by time
   const f=an==='attack'?clamp(Math.floor((An.frames*An.speed-u.atkT)/An.speed),0,An.frames-1):Math.floor((state.time+u.id*.37)/An.speed)%An.frames;
   drawSpriteFrame(SK,u.player,u.hd||0,an,simple?0:f,u.x,u.y);}
@@ -5053,7 +5498,8 @@ function render(){
  const k=TPX/TILE;                                 // the ground is painted at TPX pixels a tile
  if(bx>ax&&by>ay)ctx.drawImage(terr,ax*k,ay*k,(bx-ax)*k,(by-ay)*k,ax,ay,bx-ax,by-ay);
  for(const d of state.decals)if(seen(d.x,d.y)){const spr=RSPR[d.k]||RSPR.rubble;ctx.drawImage(spr,d.x-spr.width/2,d.y-spr.height);}
- for(const b of state.blds)if(BLDTYPES[b.type].layer==='ground'&&(b.player===0||explored[b.ty*MAP+b.tx])&&seen((b.tx+.5)*TILE,(b.ty+1)*TILE))drawBld(b);   // render layer 'ground': moats and drawbridges lie flat under everything
+ for(const b of state.blds)if(BLDTYPES[b.type].layer==='ground'&&(b.player===0||explored[b.ty*MAP+b.tx]&&!BLDTYPES[b.type].hidden)&&seen((b.tx+.5)*TILE,(b.ty+1)*TILE)){   // hidden traps: only their owner sees them
+  if(BLDTYPES[b.type].hidden)ctx.globalAlpha=.65;drawBld(b);ctx.globalAlpha=1;}   // render layer 'ground': moats and drawbridges lie flat under everything
  if(inflEdges.length){                             // castle territory borders (the enemy's only where explored)
   ctx.lineWidth=Math.max(1.5,1.5/z);ctx.setLineDash([5,4]);
   for(const p of[0,1]){ctx.strokeStyle=PCOL[p][0];ctx.globalAlpha=.6;ctx.beginPath();
@@ -5098,7 +5544,7 @@ function render(){
    for(const[x,y]of line){
     const m=(joins(x,y-1)?1:0)|(joins(x+1,y)?2:0)|(joins(x,y+1)?4:0)|(joins(x-1,y)?8:0);
     const ok=canPlace(t,x,y)&&Object.entries(B.cost).every(([k,v])=>state.res[0][k]>=v*(money+1));if(ok)money++;
-    const spr=B.moat?MSPR[m]:WSPR[0][t][m];ctx.globalAlpha=.6;ctx.drawImage(spr,x*TILE,(y+1)*TILE-spr.height);ctx.globalAlpha=1;
+    const spr=setPiece(0,B.spriteSet,m,false,false);ctx.globalAlpha=.6;ctx.drawImage(spr,x*TILE,(y+1)*TILE-spr.height);ctx.globalAlpha=1;
     ctx.fillStyle=ok?'rgba(60,200,60,.22)':'rgba(220,50,30,.3)';ctx.fillRect(x*TILE,y*TILE,TILE,TILE);}
    ctx.font='bold '+Math.round(11/Math.min(1,z))+'px sans-serif';ctx.textBaseline='bottom';ctx.fillStyle='#f4ead0';   // segments that fit, and what they cost
    ctx.fillText(money+' × '+costStr(B.cost),tx*TILE+TILE+4,ty*TILE);
@@ -5159,7 +5605,7 @@ function renderMM(){
   mmCtx.fillRect(r.tx,r.ty,1,1);}
  if(state.map)for(const m of state.map.marks)if(m.found){mmCtx.fillStyle='#fff8d0';mmCtx.fillRect(m.x-1,m.y,3,1);mmCtx.fillRect(m.x,m.y-1,1,3);}   // landmarks found
  for(const b of state.blds){const i=((b.ty+b.h/2)|0)*MAP+((b.tx+b.w/2)|0);
-  if(b.player===1&&!explored[i])continue;
+  if(b.player===1&&!explored[i]||BLDTYPES[b.type].hidden)continue;
   mmCtx.fillStyle=BLDTYPES[b.type].mm||PCOL[b.player][0];mmCtx.fillRect(b.tx,b.ty,b.w,b.h);}
  for(const u of state.units){const i=(u.y/TILE|0)*MAP+(u.x/TILE|0);
   if(u.player===1&&!vis[i])continue;
@@ -5191,7 +5637,14 @@ const RES_TIPS={Wood:'Chop trees. Pays for buildings, archers and siege engines.
  Population:'Units / housing. Each house adds 4, up to '+POP_MAX+'. Siege engines take 3 to 5.'};
 for(const el of document.querySelectorAll('#topbar .res'))el.addEventListener('click',()=>{
  if(Game.phase==='playing')toast(el.title+': '+el.querySelector('span').textContent+' — '+RES_TIPS[el.title]);});
-const SHIP_ORDERS={patrol:'Patrolling',hunt:'Hunting enemy ships',blockade:'Blockading a dock',guard:'Escorting',move:'Sailing'};
+const ORDER_TEXT={patrol:'Patrolling',attackmove:'Attack-moving',hunt:'Hunting enemy ships',blockade:'Blockading a dock',move:'Moving'};
+/** What a unit is doing, for its panel (orders that keep it busy), or '' to say nothing. */
+function orderText(e){const c=e.cmd;if(!c)return isNaval(e)&&UNITTYPES[e.type].targets?'Idle: takes on enemies in sight':'';
+ const o=c.type==='attack'&&c.ret?c.ret:c;let t='';
+ if(o.type==='guard'){const w=o.tid!==undefined?ENT[o.tid]:null;t=w?(w.kind==='u'?'Escorting the ':'Guarding the ')+entityName(w).toLowerCase():'Guarding a spot';}
+ else if(ORDER_TEXT[o.type]&&(o!==c||o.type!=='move'))t=ORDER_TEXT[o.type];
+ else if(c.type==='attack')return'Attacking';
+ return t?t+(o!==c?' (engaging)':''):'';}
 const entityName=e=>e.kind==='u'?UNITTYPES[e.type].name:e.kind==='b'?bldName(e):RNAME[e.type];
 /** Stat lines (HTML) for a unit, building or resource: the selection panel and the long-press information card. */
 function entityStats(e){
@@ -5203,8 +5656,7 @@ function entityStats(e){
   stats+='<br>Cargo '+cargoSlots(e)+' / '+capacityOf(e)+' slots'+(g.length?': '+Object.entries(by).map(([k,v])=>v+' '+k).join(', '):'');
   const c=e.cmd;if(c&&c.type==='ferry')stats+='<br>'+{pickup:'Sailing to pick units up',load:'Taking units aboard',sail:'Ferrying units across',unload:'Putting units ashore'}[c.stage];}
  if(e.kind==='u'&&e.cmd&&e.cmd.type==='ferry'&&!isNaval(e))stats+='<br>'+(e.cmd.stage==='walk'?'Heading to the shore to cross the water':e.cmd.sid!==undefined?'Waiting to board a transport':'Waiting at the shore for a transport ship');
- if(e.kind==='u'&&isNaval(e)&&UNITTYPES[e.type].targets&&e.player===0){const c=e.cmd,o=c&&c.type==='attack'&&c.ret?c.ret:c;   // what a warship is about
-  stats+='<br>'+(!c?'Idle: takes on enemies in sight':c.type==='attack'&&!c.ret?'Attacking':(SHIP_ORDERS[o.type]||'Sailing')+(c.type==='attack'?' (engaging)':''));}
+ if(e.kind==='u'&&e.player===0){const t=orderText(e);if(t)stats+='<br>'+t;}   // what it is about
  if(e.kind==='u'&&e.atk){const U=UNITTYPES[e.type],ar=armorOf(e);
   stats+='<br>Attack '+e.atk+(U.range?' · Range '+(U.minRange?U.minRange+'–':'')+Math.round(rangeOf(e)/TILE*10)/10+' tiles':'')+(U.bldOnly?' · Buildings only':'')+(ar?' · Armour '+ar:'');
   if(U.pop>1)stats+=' · Pop '+U.pop;
@@ -5262,7 +5714,11 @@ function updInfo(){
 const cmdsEl=$('#cmds'),tipEl=$('#tip');
 const curDefs=[];
 let cmdsReady=false;
-let cmdPage='main';                             // the villagers' build menu: 'main' (the town) or 'defence'
+let cmdPage='main';                             // the villagers' build menu: 'main' (the town) or a DEF_PAGES page
+/** The Defences pages of the villagers' build menu: each lists the BLDTYPES entries whose `menu` names it, in data order (with Moat ring after the Moat). */
+const DEF_PAGES=Object.freeze([{id:'walls',name:'Walls & Gates',desc:'Palisades, walls, gates, gatehouses and boiling oil.'},
+ {id:'forts',name:'Towers & Castles',desc:'Towers, keeps, bastions, castles and citadels.'},{id:'moats',name:'Moats & Traps',desc:'Moats, drawbridges and hidden traps.'}]);
+const defPage=id=>Object.keys(BLDTYPES).filter(t=>BLDTYPES[t].menu===id).flatMap(t=>t==='moat'?[t,'moatring']:[t]);
 function cmdDefs(){
  const out=[];const s=state.sel.filter(e=>ENT[e.id]);if(!s.length)return out;
  const vils=s.filter(e=>e.kind==='u'&&e.type==='villager'&&e.player===0);
@@ -5279,12 +5735,13 @@ function cmdDefs(){
   out.push(mk(id,'Research '+T.name,T.cost,T.desc,()=>queueResearch(b,id),queued||noAge||noReq||poor,
    queued?'Researching…':noAge?'Requires '+AGENAMES[T.age]:noReq?'Requires '+TECHS[T.req].name:poor?'Not enough resources':''));}};
  if(vils.length){                              // two pages: the town, and its defences
-  const defence=cmdPage==='defence';
-  if(defence)out.push(mk('back','Back','','Back to the town buildings.',()=>{cmdPage='main';SFX.click();}));
-  for(const t of defence?['tower','keep','castle','wall','stonewall','gate','stonegate','moat','moatring','drawbridge']:['house','farm','storagepit','dock','barracks','archery','stable','siegeworkshop','towncenter']){
+  const page=DEF_PAGES.find(P=>P.id===cmdPage),defence=!!page;
+  if(defence){out.push(mk('back','Back','','Back to the town buildings.',()=>{cmdPage='main';SFX.click();}));
+   for(const P of DEF_PAGES)if(P!==page)out.push(mk('page_'+P.id,P.name,'',P.desc,()=>{cmdPage=P.id;SFX.click();}));}
+  for(const t of defence?defPage(page.id):['house','farm','storagepit','dock','barracks','archery','stable','siegeworkshop','towncenter']){
    const ring=t==='moatring',k=ring?'moat':t,Bt=BLDTYPES[k],lock=bldLock(0,k),poor=!canAfford(0,Bt.cost);
    out.push(mk(t,ring?'Moat ring (per segment)':Bt.name+(Bt.lay==='line'?' (per segment)':''),Bt.cost,ring?'Drag from one corner to the opposite one to dig a rectangular ring of moat. '+Bt.desc:Bt.desc,B(k,ring?'ring':'line'),lock||poor,lock||(poor?'Not enough resources':'')));}
-  if(!defence)out.push(mk('defences','Defences','','Towers, walls, gates and the Castle.',()=>{cmdPage='defence';SFX.click();}));
+  if(!defence)out.push(mk('defences','Defences','','Walls and gates, towers and castles, moats and traps.',()=>{cmdPage=DEF_PAGES[0].id;SFX.click();}));
   out.push(mk('stop','Stop','','Halt current orders.',()=>{for(const v of vils){v.cmd=null;v.path=[];}SFX.click();}));
  }
  for(const b of s)if(b.kind==='b'&&b.player===0&&isLine(b)){const B=BLDTYPES[b.type];
@@ -5312,17 +5769,17 @@ function cmdDefs(){
   if(Bb.gate)out.push(Bb.drawbridge?mk(b.locked?'unlock':'lock',b.locked?'Unlock drawbridge':'Raise and lock','',b.locked?'Let it lower for your units again.':'Keep it raised against everyone, your own units too.',()=>setGateLock(b,!b.locked)):
    mk(b.locked?'unlock':'lock',b.locked?'Unlock gate':'Lock gate','',b.locked?'Let your units through again.':'Shut the gate to everyone, your own units too.',()=>setGateLock(b,!b.locked)));
  }
+ const units=s.filter(e=>e.kind==='u'&&e.player===0);
+ if(units.length&&!vils.length){                 // the orders (ORDERS), for any units but villagers (theirs is the build menu; the hotkeys still work)
+  for(const o in ORDERS){const O=ORDERS[o];if(units.some(u=>O.who(UNITTYPES[u.type])))out.push({...mk(o,O.name,'',O.desc,()=>startOrdering(o)),on:state.ordering===o});}
+  out.push(mk('stop','Stop','','Halt current orders. Units aboard a ship stay aboard.',()=>{for(const m of units){m.cmd=null;m.path=[];}SFX.click();}));}
  const ships=s.filter(e=>e.kind==='u'&&e.player===0&&isNaval(e));
  if(ships.length){
-  if(!vils.length)out.push(mk('stop','Stop','','Halt current orders. Units aboard stay aboard.',()=>{for(const m of ships){m.cmd=null;m.path=[];}SFX.click();}));
-  if(ships.some(e=>UNITTYPES[e.type].targets))out.push(mk('patrol','Patrol','','Sail back and forth between here and a point you pick, taking on enemies that come into sight. Right-click one of your ships to escort it.',
-   ()=>{state.ordering='patrol';gameCv.classList.add('placing');updFloatBtns();SFX.click();toast(isTouchUI?'Tap where to patrol to':'Click where to patrol to');},false,'',0));
   const full=ships.filter(e=>e.cargo&&e.cargo.length);
   if(full.length)out.push(mk('unload','Unload','','Sail to the nearest shore and put everyone aboard ashore. Or right-click (tap) the land where they should go ashore.',
    ()=>{let any=false;for(const e of full)any=unloadAt(e,e.x,e.y)||any;if(!any)toast('No shore to land on from here','bad');SFX.click();},false,'',full.reduce((n,e)=>n+e.cargo.length,0)));}
  const mil=s.filter(e=>e.kind==='u'&&e.type!=='villager'&&e.player===0&&!isNaval(e));
  if(mil.length){
-  if(!vils.length)out.push(mk('stop','Stop','','Halt current orders.',()=>{for(const m of mil){m.cmd=null;m.path=[];}SFX.click();}));
   const eng=mil.filter(u=>UNITTYPES[u.type].deploy),set=on=>()=>{for(const u of eng)if(!!u.dep!==on&&!(u.depT>0)){u.cmd=null;setDeploy(u,on);}SFX.click();};
   const T0=eng.length?deployTimes(UNITTYPES[eng[0].type]):DEPLOY;
   if(eng.some(u=>!u.dep&&!(u.depT>0)))out.push(mk('deploy','Deploy','','Stake to the ground to fire: '+T0.on+' s. A deployed engine cannot move.',set(true)));
@@ -5492,7 +5949,8 @@ const CMD_RULES={
  deposit:c=>isInt(c.tid),
  build:c=>isInt(c.bid),
  attack:c=>isInt(c.tid)&&isNum(c.px)&&isNum(c.py),
- guard:c=>isInt(c.tid)&&isNum(c.px)&&isNum(c.py),
+ guard:c=>(isInt(c.tid)||c.tid===undefined&&isNum(c.x)&&isNum(c.y))&&isNum(c.px)&&isNum(c.py),   // a unit (escort), a building, or a spot (x, y)
+ attackmove:c=>isNum(c.x)&&isNum(c.y)&&isNum(c.px)&&isNum(c.py),
  garrison:c=>isInt(c.bid),
  repair:c=>isInt(c.bid),
  // fleet orders: patrol waypoints [x, y, ...] and the one it heads for; a hunt; a blockade of Dock tid from station (x, y)
@@ -5505,14 +5963,14 @@ const CMD_RULES={
   (c.next===undefined||c.next===null||validCmd(c.next)&&c.next.type!=='ferry')
 };
 const CMD_FIELDS=['type','x','y','tid','rtype','farm','resume','role','bid','px','py','spd','ch','wx','wy','ward','goal',
- 'stage','sid','ex','ey','bx','by','lx','ly','dx','dy','t','grp','ready','miss','next','pts','i','ret','ax','ay'];
+ 'stage','sid','ex','ey','bx','by','lx','ly','dx','dy','t','grp','ready','miss','next','pts','i','ret','ax','ay','tag'];
 const validCmd=c=>isObj(c)&&!!CMD_RULES[c.type]&&CMD_RULES[c.type](c)&&
  (c.resume===undefined||isInt(c.resume))&&(c.role===undefined||['wood','food','gold','stone'].includes(c.role))&&(c.farm===undefined||typeof c.farm==='boolean')&&
  (c.spd===undefined||isNum(c.spd)&&c.spd>0)&&(c.ch===undefined||c.ch===0||c.ch===1)&&((c.wx===undefined&&c.wy===undefined)||isNum(c.wx)&&isNum(c.wy))&&
  (c.ward===undefined||isInt(c.ward))&&(c.goal===undefined||isInt(c.goal))&&   // goal: what an attack behind a breach is really after
- (c.ret===undefined||isObj(c.ret)&&c.ret.ret===undefined&&!['ferry','attack'].includes(c.ret.type)&&validCmd(c.ret))&&((c.ax===undefined&&c.ay===undefined)||isNum(c.ax)&&isNum(c.ay));   // ret: the order an attack breaks off from
+ (c.ret===undefined||isObj(c.ret)&&c.ret.ret===undefined&&!['ferry','attack'].includes(c.ret.type)&&validCmd(c.ret))&&((c.ax===undefined&&c.ay===undefined)||isNum(c.ax)&&isNum(c.ay))&&(c.tag===undefined||typeof c.tag==='string'&&c.tag.length<=20);   // ret: the order an attack breaks off from; tag: an AI patrol's name
 /** A unit's running timers (re-planning, getting stuck, looking for targets): kept so a loaded battle carries on exactly. */
-const UNIT_TIMERS=['rp','stk','lx','ly','rt','seek'];
+const UNIT_TIMERS=['rp','stk','lx','ly','rt','seek','slowT','slowMul','holdT'];   // …and boiling oil's slow, a pit's hold
 const validTimers=t=>t===undefined||isObj(t)&&Object.keys(t).every(k=>UNIT_TIMERS.includes(k)&&isNum(t[k])&&Math.abs(t[k])<1e6);
 /** An engine's deployment: deployed (dep 1) or packed, and the seconds left of setting up / packing away. */
 const validDeploy=u=>(u.dep===undefined||u.dep===0||u.dep===1)&&(u.depT===undefined||isNum(u.depT)&&u.depT>=0&&u.depT<=30)&&(u.depTo===undefined||u.depTo===0||u.depTo===1);
@@ -5544,7 +6002,7 @@ const GameSerializer={
    units:state.units.map(serUnit),
    blds:state.blds.map(b=>({id:b.id,type:b.type,player:b.player,tx:b.tx,ty:b.ty,hp:r2(b.hp),maxhp:b.maxhp,done:b.done,
     progress:b.progress,queue:[...b.queue],qt:b.qt,cd:b.cd,amount:b.amount,
-    ...(b.tier?{tier:b.tier}:{}),...(b.locked?{locked:true}:{}),...(b.shutT>0?{shutT:r2(b.shutT)}:{}),...(b.garrison&&b.garrison.length?{garrison:b.garrison.map(serUnit)}:{})})),   // tower tier, gate lock, a drawbridge kept up after a hit, units inside
+    ...(b.tier?{tier:b.tier}:{}),...(b.under?{under:b.under,underHp:b.underHp}:{}),...(b.tcd>0?{tcd:b.tcd}:{}),...(b.locked?{locked:true}:{}),...(b.shutT>0?{shutT:r2(b.shutT)}:{}),...(b.garrison&&b.garrison.length?{garrison:b.garrison.map(serUnit)}:{})})),   // tower tier, gate lock, a drawbridge kept up after a hit, units inside
    ress:state.ress.filter(r=>!r.dead&&r.amount>0).map(r=>({id:r.id,type:r.type,tx:r.tx,ty:r.ty,amount:r.amount})),
    projs:state.projs.map(p=>({type:p.type,sourceId:p.sourceId,targetId:p.targetId,owner:p.owner,x:p.x,y:p.y,vx:p.vx,vy:p.vy,
     damage:p.damage,range:p.range,tx:p.tx,ty:p.ty,d0:p.d0,miss:p.miss,...(PROJ_TYPES[p.type].splash?{atk:p.atk,st:p.st}:{})})),
@@ -5640,7 +6098,9 @@ const GameSerializer={
    if(typeof b.done!=='boolean'||!isNum(b.progress)||b.progress<0||b.progress>1)err('building '+b.id+' has bad progress');
    if(!Array.isArray(b.queue)||b.queue.length>30||!b.queue.every(it=>UNITTYPES[it]!==undefined||(isTechItem(it)&&TECHS[it.slice(5)]!==undefined)||(isUpItem(it)&&tierOptions(b.type,b.tier).includes(+it.slice(3)))))err('building '+b.id+' has a bad queue');
    if(!isNum(b.qt)||!isNum(b.cd)||b.cd<0||!isNum(b.amount)||b.amount<0)err('building '+b.id+' has bad timers');
-   if(b.tier!==undefined&&!(B.tiers&&isInt(b.tier)&&b.tier>=0&&b.tier<TOWER_TIERS.length&&!TOWER_TIERS[b.tier].becomes))err('building '+b.id+' has a bad tier');
+   if(b.tier!==undefined&&!(isInt(b.tier)&&b.tier>=0&&b.tier<TOWER_TIERS.length&&!TOWER_TIERS[b.tier].becomes&&lineTypeOf(b.tier)===b.type))err('building '+b.id+' has a bad tier');   // a plain row of its own type's line
+   if(b.under!==undefined&&!(BLDTYPES[b.under]&&B.over&&B.over.includes(b.under)&&isNum(b.underHp)&&b.underHp>0))err('building '+b.id+' stands on something odd');
+   if(b.tcd!==undefined&&!(B.trigger&&isNum(b.tcd)&&b.tcd>=0&&b.tcd<=600))err('building '+b.id+' has a bad trigger timer');
    if(b.locked!==undefined&&!(B.gate&&typeof b.locked==='boolean'))err('building '+b.id+' has a bad lock');
    if(b.shutT!==undefined&&!(B.drawbridge&&isNum(b.shutT)&&b.shutT>=0&&b.shutT<=60))err('building '+b.id+' has a bad drawbridge state');
    if(b.garrison!==undefined){                // units inside: checked like those outside (ids too)
@@ -5655,7 +6115,7 @@ const GameSerializer={
   }
   for(const pr of p.projs)if(!isObj(pr)||!PROJ_TYPES[pr.type]||!isInt(pr.sourceId)||!isInt(pr.targetId)||(pr.owner!==0&&pr.owner!==1)||
    !['x','y','vx','vy','damage','range','tx','ty','d0'].every(k=>isNum(pr[k])&&Math.abs(pr[k])<1e5)||pr.damage<0||pr.d0<=0||typeof pr.miss!=='boolean'||
-   (PROJ_TYPES[pr.type].splash&&!(isNum(pr.atk)&&pr.atk>=0&&pr.atk<1e5&&UNITTYPES[pr.st])))err('bad projectile');   // a stone needs its splash data
+   (PROJ_TYPES[pr.type].splash&&!(isNum(pr.atk)&&pr.atk>=0&&pr.atk<1e5&&(UNITTYPES[pr.st]||pr.st===''))))err('bad projectile');   // a stone needs its splash data (st: the unit that threw it; '' a building, a Bastion)
   for(const c of p.corpses)if(!isObj(c)||!isNum(c.x)||!isNum(c.y)||!isNum(c.life)||
    (c.t!==undefined&&(!UNITTYPES[c.t]||(c.p!==0&&c.p!==1)||(c.f!==1&&c.f!==-1)))||(c.h!==undefined&&!(isNum(c.h)&&Math.abs(c.h)<=7)))err('bad corpse');
   for(const d of p.decals)if(!isObj(d)||!isNum(d.x)||!isNum(d.y)||(d.k!=='stump'&&d.k!=='rubble'))err('bad decal');
@@ -5690,18 +6150,18 @@ const GameSerializer={
   for(const b of p.blds){const B=BLDTYPES[b.type];
    const o={id:b.id,kind:'b',type:b.type,player:b.player,tx:b.tx,ty:b.ty,w:B.w,h:B.h,maxhp:b.maxhp,hp:b.hp,done:b.done,
     progress:b.done?1:b.progress,queue:[...b.queue],qt:b.qt,cd:b.cd,amount:b.amount};
-   if(b.tier)o.tier=b.tier;if(b.locked)o.locked=true;if(b.shutT>0)o.shutT=b.shutT;   // a drawbridge comes back raised; it lowers again for its owner
+   if(b.tier)o.tier=b.tier;if(b.under){o.under=b.under;o.underHp=b.underHp;}if(b.tcd>0)o.tcd=b.tcd;if(b.locked)o.locked=true;if(b.shutT>0)o.shutT=b.shutT;   // a drawbridge comes back raised; it lowers again for its owner
    if(b.garrison&&b.garrison.length)o.garrison=b.garrison.map(u=>{const g=mkU(u);g.cmd=null;g.path=[];return g;});   // inside: off the map
    state.blds.push(o);ENT[o.id]=o;blockBld(o,true);}
   for(const u of p.units){const o=mkU(u);state.units.push(o);ENT[o.id]=o;}
   const refsOk=c=>{const t=c.type==='build'||c.type==='garrison'||c.type==='repair'?ENT[c.bid]:ENT[c.tid];   // what an order is about still exists
-   return c.type==='move'||c.type==='patrol'||c.type==='hunt'||(!!t&&(c.type==='gather'?(c.farm?t.kind==='b':t.kind==='r'):c.type==='attack'?t.kind!=='r':c.type==='guard'?t.kind==='u':t.kind==='b'));};
+   return c.type==='move'||c.type==='patrol'||c.type==='hunt'||c.type==='attackmove'||c.type==='guard'&&c.tid===undefined||(!!t&&(c.type==='gather'?(c.farm?t.kind==='b':t.kind==='r'):c.type==='attack'||c.type==='guard'?t.kind!=='r':t.kind==='b'));};
   for(const u of state.units){const c=u.cmd;if(!c)continue;
    if(c.type==='ferry'){if(c.sid!==undefined&&!(ENT[c.sid]&&ENT[c.sid].type==='transport'))delete c.sid;continue;}   // a crossing: its ship, if still afloat
    if(c.ret&&!refsOk(c.ret)){delete c.ret;delete c.ax;delete c.ay;}
    if(!refsOk(c)){u.cmd=c.ret||null;u.path=[];continue;}
    if(c.resume!==undefined&&!(ENT[c.resume]&&ENT[c.resume].kind==='r'))delete c.resume;
-   if(c.ward!==undefined&&!(ENT[c.ward]&&ENT[c.ward].kind==='u'))delete c.ward;
+   if(c.ward!==undefined&&!(ENT[c.ward]&&ENT[c.ward].kind!=='r'))delete c.ward;
    if(c.goal!==undefined&&!(ENT[c.goal]&&ENT[c.goal].kind!=='r'))delete c.goal;}
   state.projs=p.projs.map(x=>({...x}));
   state.corpses=p.corpses.map(c=>({x:c.x,y:c.y,life:c.life,t:c.t,p:c.p,f:c.f,...(c.h!==undefined?{h:c.h}:{})}));
@@ -6247,10 +6707,37 @@ function updFloatBtns(){
  if(bb.dataset.l!==lbl){bb.innerHTML=lbl;bb.dataset.l=lbl;}
  $('#zoomCtl').classList.toggle('hidden',!playing);
 }
-/** Carry out an order that waits for a point on the map (Patrol), then leave that mode. */
+/**
+ * The orders you give with a button or a hotkey and then a click (tap) on the map, as data. who(U): the unit types that
+ * take it (its button shows when any selected unit does, and the order goes to those that do); pick: what the click
+ * means — 'point' (a place), 'target' (an enemy; open ground means attack-move there), 'any' (a place, or a unit or
+ * building, yours or the enemy's); key: its hotkey (with units selected that take it); ask: the prompt; give(units, x, y,
+ * hit): the order itself. Every order works the same for land units and ships: the unit's own movement carries it out.
+ */
+const ORDERS={
+ move:{name:'Move',key:null,pick:'point',ask:'where to move to',who:U=>true,
+  desc:'Move to a point you pick (as a right-click on open ground does).',give:(us,x,y)=>groupOrder(us,x,y,orderMove)},
+ attack:{name:'Attack',key:null,pick:'target',ask:'what to attack (open ground: attack-move there)',who:U=>!!U.atk,
+  desc:'Attack the enemy you pick. Pick open ground to attack-move there.',give:(us,x,y,t)=>t?us.forEach(u=>orderAttack(u,t)):groupOrder(us,x,y,orderAttackMove)},
+ attackmove:{name:'Attack-Move',key:'a',pick:'point',ask:'where to attack-move to',who:U=>!!U.atk,
+  desc:'March on a point you pick, taking on every enemy met on the way, then carry on. Hotkey A.',give:(us,x,y)=>groupOrder(us,x,y,orderAttackMove)},
+ patrol:{name:'Patrol',key:'p',pick:'point',ask:'where to patrol to',who:U=>true,
+  desc:'Go back and forth between here and a point you pick, for ever. Soldiers and warships take on enemies that come into sight and then carry on; unarmed units and villagers turn away from danger. Hotkey P.',give:(us,x,y)=>orderPatrol(us,x,y)},
+ guard:{name:'Guard',key:'g',pick:'any',ask:'what to guard: a spot, a building or one of your units',who:U=>!!U.atk,
+  desc:'Guard a spot, a building or one of your units (escort it) that you pick: stay by it and fight off whatever comes for it. Hotkey G.',give:(us,x,y,t)=>orderGuard(us,x,y,t)}
+};
+/** The selected units of yours that take an order. */
+const orderable=o=>state.sel.filter(e=>e.kind==='u'&&e.player===0&&e.hp>0&&ORDERS[o].who(UNITTYPES[e.type]));
+/** Wait for the click (tap) that an order needs. */
+function startOrdering(o){cancelPlacing();state.ordering=o;gameCv.classList.add('placing');updFloatBtns();SFX.click();
+ toast((isTouchUI?'Tap ':'Click ')+ORDERS[o].ask+(isTouchUI?'':' (right-click cancels)'));}
+/** Carry out the order waiting for a point on the map, at (wx, wy), then leave that mode. */
 function applyOrdering(wx,wy){
- const war=state.sel.filter(e=>e.kind==='u'&&e.player===0&&isNaval(e)&&UNITTYPES[e.type].targets);
- if(state.ordering==='patrol'&&war.length){orderPatrol(war,wx,wy);SFX.click();addMark(wx,wy);}
+ const o=state.ordering,O=ORDERS[o],us=O?orderable(o):[];
+ if(us.length){const eu=unitAt(wx,wy),b=bldAt(wx,wy);let t=null;
+  if(O.pick==='target')t=eu&&eu.player!==0?eu:b&&b.player!==0&&!unbreakable(b)?b:null;
+  else if(O.pick==='any')t=eu&&!us.includes(eu)?eu:b&&!unbreakable(b)?b:null;
+  O.give(us,wx,wy,t);SFX.click();const c=t?(t.kind==='b'?bldCenter(t):t):{x:wx,y:wy};addMark(c.x,c.y,!!t&&t.player!==0||o==='attackmove');}
  cancelPlacing();}
 function cancelPlacing(){if(state.ordering){state.ordering=null;gameCv.classList.remove('placing');updFloatBtns();}if(!state.placing)return;state.placing=null;state.layMode='line';state.wallFrom=null;gameCv.classList.remove('placing');updFloatBtns();}
 
@@ -6315,7 +6802,7 @@ function unitAt(wx,wy,pad=pickPad()){
 }
 function bldAt(wx,wy){
  const tx=wx/TILE|0,ty=wy/TILE|0;
- return state.blds.find(b=>tx>=b.tx&&tx<b.tx+b.w&&ty>=b.ty&&ty<b.ty+b.h&&(b.player===0||explored[ty*MAP+tx]))||null;
+ return state.blds.find(b=>tx>=b.tx&&tx<b.tx+b.w&&ty>=b.ty&&ty<b.ty+b.h&&(b.player===0||explored[ty*MAP+tx]&&!BLDTYPES[b.type].hidden))||null;
 }
 function resAt(wx,wy,pad=pickPad()){
  const tx=wx/TILE|0,ty=wy/TILE|0,ok=r=>!r.dead&&explored[r.ty*MAP+r.tx];
@@ -6396,13 +6883,13 @@ function shipCmd(ships,wx,wy,b,r,eu){
  SFX.click();addMark(wx,wy);
 }
 /** Move the given units to a point: in the player's formation for a group, otherwise in a loose cluster. */
-function moveSelected(sel,wx,wy){
+function moveSelected(sel,wx,wy,give=orderMove,quiet=false){   // give: the order each unit gets for its place (a move, an attack-move)
  const form=state.formation[0];
- if(form!=='none'&&sel.length>1){const c=groupCenter(sel);formationMove(sel,wx,wy,wx-c.x,wy-c.y,form);}
+ if(form!=='none'&&sel.length>1){const c=groupCenter(sel);formationMove(sel,wx,wy,wx-c.x,wy-c.y,form,give);}
  else sel.forEach((s,i)=>{
   const a=i*2.4,rr=sel.length>1?8+sel.length*1.6:0;
-  orderMove(s,clamp(wx+Math.cos(a)*rr,10,WPX-10),clamp(wy+Math.sin(a)*rr,10,WPX-10));});
- SFX.click();addMark(wx,wy);
+  give(s,clamp(wx+Math.cos(a)*rr,10,WPX-10),clamp(wy+Math.sin(a)*rr,10,WPX-10));});
+ if(!quiet){SFX.click();addMark(wx,wy);}
 }
 function tryPlace(){
  const t=state.placing,B=BLDTYPES[t];
@@ -6734,7 +7221,8 @@ window.addEventListener('keydown',e=>{
   return;}
  if(Game.phase!=='playing'||state.over||e.ctrlKey||e.metaKey||e.altKey)return;
  if(k===' '||k==='Home'||k.startsWith('Arrow'))e.preventDefault();
- keys[k]=true;keys[k.toLowerCase()]=true;
+ const ok=!e.repeat&&!state.placing&&Object.keys(ORDERS).find(o=>ORDERS[o].key&&ORDERS[o].key===k.toLowerCase());
+ if(ok&&orderable(ok).length){e.preventDefault();startOrdering(ok);return;}   // with units selected that take it, A, P and G give orders (scroll with the arrow keys; Pause still pauses)
  if(k==='Escape')handleEscape();
  else if(k==='p'||k==='P'||k==='Pause')Game.togglePause();
  else if(k==='m'||k==='M')Sound.toggleMute();
@@ -6780,6 +7268,7 @@ function update(dt){
  if(mouse.in){const w=cam.toWorld(mouse.x,mouse.y);mouse.wx=w.x;mouse.wy=w.y;}
  for(const u of[...state.units])if(ENT[u.id])updUnit(u,dt);
  for(const b of[...state.blds])if(ENT[b.id])updBld(b,dt);
+ triggers(dt);
  Projectiles.update(dt);
  Projectiles.burn(dt);
  separate(dt);separateShips(dt);repairShips(dt);
@@ -6802,8 +7291,8 @@ function update(dt){
  cmdT-=dt;if(cmdT<=0){cmdT=.3;refreshCmds();if(state.sel.length)updInfo();else updGroundInfo();updFloatBtns();}
  winT-=dt;if(winT<=0){winT=1;
   if(state.time>5&&!state.over){                // walls and gates left standing do not keep a side alive
-   if(!state.blds.some(b=>b.player===0&&!isLine(b)))endGame(false);
-   else if(!state.blds.some(b=>b.player===1&&!isLine(b)))endGame(true);}}
+   if(!state.blds.some(b=>b.player===0&&townBld(b)))endGame(false);
+   else if(!state.blds.some(b=>b.player===1&&townBld(b)))endGame(true);}}
 }
 let last=0;
 function loop(ts){
@@ -6879,11 +7368,11 @@ window.addEventListener('resize',checkRotateHint);
    UNITTYPES,BLDTYPES,TECHS,TRAINS,PROJ_TYPES,FORMATIONS,USPR,UANIM,BSPR,get block(){return block;},get vis(){return vis;},Projectiles,ai,aiTick,aiArmyPlan,aiUnitFor,aiMuster,aiWave,
    makeUnit,placeBld,killEnt,queueTrain,queueResearch,completeTech,orderAttack,orderMove,formationSlots,formationMove,setFormation,
    hitDamage,hasLOS,findPath,smoothPath,separate,rangeOf,rateOf,armorOf,cmdDefs,computeVis,
-   siegeTarget,pickTarget,Rng,SPRITES,shotDps,canAfford,loop,sailTile,dockOn,isNaval,SHIP_ORDERS,drawShipModel,cancelPlacing,repairShips,DOCK_REPAIR,buildUnitSprites,spriteAnchor,wrapA,SHIP_ANIMS,shipFrame,shipFrames,dirOf,orderPatrol,aiFleet,aiShipChoice,aiFleetOrders,AI_FLEET,losOf,techFor,IMPACT_FX,TRAIL_FX,projData,applyOrdering,shipCmd,isWarship,blockadeStation,seaward,LEASH,atkPose,unitData,AGE_KEYS,UNIT_KINDS,engage,attackFrom,addFx,ramGroup,setDeploy,bldLock,techBonus,unitStats,popOf,dmgMult,aiSiege,TRAINS,orderMove,edgeDist,drawIcon,siegeDesc,targetKind,canHit,deployState,deployTimes,AI_SIEGE_MIX,UNIT_PACE,UNIT_KINDS,artOf,COUNTERS,
-   TOWER_TIERS,CASTLE,ROLES,ROLE_ARMOR,SIEGE_ORDER,BLK,MOAT,DRAWBRIDGE,nextTiers,tierLock,growSpot,tierOptions,fireOf,garrisonCap,territoryOf,joinOf,moatAround,aiMoat,aiMoatRing,aiUpgradeTowers,ringTiles,MSPR,DSPR,BSPR,
+   siegeTarget,pickTarget,Rng,SPRITES,shotDps,canAfford,loop,sailTile,dockOn,isNaval,ORDER_TEXT,orderText,ORDERS,orderable,startOrdering,orderAttackMove,orderGuard,groupOrder,flee,pickByClass,TARGET_PREFS,ordersOf,wardAt,moveSelected,AI_PATROLS,aiPatrols,aiRoute,aiPatrolling,drawShipModel,cancelPlacing,repairShips,DOCK_REPAIR,buildUnitSprites,spriteAnchor,wrapA,SHIP_ANIMS,shipFrame,shipFrames,dirOf,orderPatrol,aiFleet,aiShipChoice,aiFleetOrders,AI_FLEET,losOf,techFor,IMPACT_FX,TRAIL_FX,projData,applyOrdering,shipCmd,isWarship,blockadeStation,seaward,LEASH,atkPose,unitData,AGE_KEYS,UNIT_KINDS,engage,attackFrom,addFx,ramGroup,setDeploy,bldLock,techBonus,unitStats,popOf,dmgMult,aiSiege,TRAINS,orderMove,edgeDist,drawIcon,siegeDesc,targetKind,canHit,deployState,deployTimes,AI_SIEGE_MIX,UNIT_PACE,UNIT_KINDS,artOf,COUNTERS,
+   TOWER_TIERS,CASTLE,ROLES,ROLE_ARMOR,SIEGE_ORDER,BLK,MOAT,DRAWBRIDGE,nextTiers,tierLock,growSpot,tierOptions,fireOf,garrisonCap,territoryOf,joinOf,moatAround,aiMoatRing,aiUpgradeTowers,ringTiles,MSPR,DSPR,BSPR,SSPR,setPiece,linePieces,DEF_PAGES,defPage,triggers,townBld,repairable,wadeAt,bldLos,tierOf,unbreakable,isLine,bldSprite,drawIcon,refreshCmds,updInfo,selectionChanged,tierRow,lineTypeOf,tierData,tierFromList,
    wallLine,placeWallLine,wallMask,gateVertical,enterGarrison,ejectGarrison,canGarrison,orderGarrison,orderRepair,
    queueTowerTier,completeTowerTier,defenseOf,volley,computeInfluence,ownGround,computeWalled,walledOff,bldName,setGateLock,updGates,
-   aiRing,aiWalls,aiTower,aiRepair,aiShelter,aiRally,aiFront,
+   aiRing,aiTower,aiRepair,aiShelter,aiRally,aiFront,AI_FORT_PLAN,aiFortify,aiFortStep,aiGrow,aiPathStep,aiRingStep,aiGateStep,aiMoatStep,aiAccessGate,
    fortFactor,canPlace,rightCmd,tryPlace,damage,blockBld,bldCenter,armorOf,pathTo,DRAWBRIDGE,get occ(){return occ;},get infl(){return infl;},walled,
    get ttype(){return ttype;},get explored(){return explored;},get MAP(){return MAP;},get terr(){return terr;},TT,TERRAIN,MAP_TYPES,MAP_SIZES,DENSITY,LANDMARKS,MAP_DEFAULT,
    generateWorld,applyWorld,seedNum,cleanSeed,randomSeed,mapOpts,mapLabel,drawPreview,MapPrefs,parseShare,shareCode,terrainAt,pathBudget,followPath,discoverLandmarks,
