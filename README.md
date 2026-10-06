@@ -10,7 +10,7 @@ A small real-time strategy game *Aethoria*, written as **one HTML file** with pl
 
 ## Quick start
 
-Download `Aethoria.html` and open it in any modern browser. You can double-click the file, or drag it into a browser window. You don't need to install anything, run a server or build anything.
+Download `index.html` and open it in any modern browser. You can double-click the file, or drag it into a browser window. You don't need to install anything, run a server or build anything.
 
 The only network request is for the **Cinzel** and **Spectral** fonts from Google Fonts. If you're offline, the game still runs and uses fallback serif fonts.
 
@@ -423,7 +423,7 @@ Each save is one JSON record. It holds the slot name, save time, play time, play
 
 ## Code structure
 
-Everything is in `Aethoria.html`. The script is split into labeled sections:
+Everything is in `index.html`. The script is split into labeled sections:
 
 The script is a single `<script type="module">`, so nothing is added to `window`. The only exception is the optional `?debug` URL flag, which exposes `window.__aethoria` for testing.
 
