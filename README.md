@@ -4,7 +4,7 @@ A small real-time strategy game *Aethoria*, written as **one HTML file** with pl
 
 > Gather resources, grow your town, advance through the ages, and destroy every enemy building.
 
-**[Play the live demo](https://aethoria.makemysitelive.com/)**
+**[Play the live demo](https://aminul1993.github.io/Aethoria/)**
 
 ---
 
