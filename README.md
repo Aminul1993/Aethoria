@@ -18,18 +18,23 @@ The only network request is for the **Cinzel** and **Spectral** fonts from Googl
 
 ## Features
 
-- **Economy.** Villagers gather wood, food (berries and farms), gold and stone, and carry it back to a Town Center or Storage Pit.
+- **Economy.** Villagers gather wood, food (berries, deer and farms), gold and stone, and carry it back to a Town Center or Storage Pit. Fishing boats bring in fish.
+- **Ships and crossing water.** Build a Dock on deep water beside the shore. It launches fishing boats and transport ships. Send land units anywhere, even to another island, and they find their own way across. They walk to the shore (your Dock if one is near), a free transport comes for them, they board, cross and land on the far shore, then carry on with their order. A transport holds 10 slots: 1 for each villager or foot soldier, 2 for a rider, and a siege engine's population (3 to 5). Big groups get several ships, which sail as a convoy and land side by side. Ships steer clear of each other and of the shore. Moored at your Dock, they're repaired. A transport sunk with units aboard loses them all. Build a Storage Pit on an island you work, or every load sails home. The AI builds docks, fishes, takes islands and invades by sea.
+- **Naval combat.** The Dock builds five warships: galleys, war galleys, fire ships, ballista ships and cannon ships. Each works down its own target list. War galleys pierce armour, fire ships set the water alight, ballista ships hunt war galleys and cannon ships, and cannon ships shell docks, towers and castles from the sea. Ships turn at their own rate, and sink with wreckage left floating. **Patrol** sends warships back and forth. Right-click one of your ships to escort it. Seven Dock upgrades include Elite War Galley. The AI builds the fleet that best counters yours and sends it to hunt, escort, guard its fishing boats, blockade your Dock or patrol. Battles are deterministic: a save plays out exactly as the live game would have.
+- **Procedural maps.** 17 map types (Classic, Plains, Forest, Desert, Island, Mountain, Highlands, Badlands, Riverlands, Archipelago, Canyon, Frozen Tundra, Volcanic, Oasis, Jungle, Continental and Mixed Biomes) in four sizes from 48×48 to 128×128 tiles, with three resource levels. A seed, which can be any word or number, makes the whole world: the same seed always gives the same map. The New Game screen previews the map, picks random seeds, copies a shareable map code and keeps favourites. Terrain comes from layered noise: rivers run downhill from the high ground to the sea or the map's edge with fords to cross them, basins fill into lakes, and mountains, hills, forests, deserts, snow, marsh and lava take their share of each map type. Both towns start the same distance from the centre with the same starting resources. Gold, stone, deer and berries are shared out in matching pairs, and every map is checked so the towns can always reach each other and every resource. Landmarks hold extra resources and are announced when you discover them.
 - **Construction.** Several villagers can build the same site together, and each building shows its progress.
 - **Three ages.** Advance from the Stone Age to the Tool Age and then the Bronze Age to unlock stronger units and buildings.
-- **Combat.** Infantry, ranged units and cavalry, plus watch towers that shoot arrows. A counter system decides who beats whom.
+- **Combat.** Infantry, ranged units and cavalry, plus towers and castles that shoot arrows. A counter system decides who beats whom.
 - **Ranged warfare.** Archers, skirmishers and composite archers fire real arrows and javelins. Shots arc through the air and follow their target. They can miss at long range, and a building in the way blocks them. Archers step back from melee attackers while they reload.
 - **Cavalry.** Scout cavalry, horsemen and heavy cavalry are fast and see far. They charge: an attack begun 3 or more tiles away hits 50% harder. Riders take straighter, smoother paths and take up more room than foot soldiers.
-- **Formations.** Line, Square and Wedge. Group moves keep the shape, with infantry in front, ranged units behind and riders at the tip of a wedge.
-- **AI opponent.** It runs its own economy, builds houses, barracks, an archery range, a stable and towers, advances through the ages and defends its base. It trains a mixed army weighted to counter yours. It attacks in waves: the army gathers in formation, then the infantry go in with the archers behind them while the riders swing round a flank.
+- **Fortifications.** Wooden and stone walls that you drag across the map and that join up by themselves into corners, T-junctions and crossings. Gates open for your units and stay shut to the enemy, and you can lock them. Moats, dug in lines or rings or wrapped round your walls automatically, slow foot soldiers to half speed and stop riders and siege engines. Drawbridges carry your army across, lowering for your units and rising when the enemy comes or when they're hit. Guard Towers upgrade one at a time to Watch and Fortified Towers. From there a tower becomes a Ballista Tower, or grows into a 2×2 Keep and then a 3×3 Castle. Towers, keeps and castles can be garrisoned; archers inside add arrows. The Castle fires 4-arrow volleys, trains three elite units and projects territory that heals your units, makes them fight harder and speeds production. A town the enemy can't walk into takes less damage. Units walled off from their target break through the wall or gate in the way. Villagers repair damaged buildings, and a horn sounds when enemies come near your town.
+- **Siege.** The Siege Workshop builds five engines: battering rams, stone throwers, trebuchets, ballistas and cannons. It also researches six siege upgrades. Every engine has a role and a target list. Rams breach gates, then walls, towers and castles. Stone throwers lob boulders at walls, towers and castles, then at packed infantry. Trebuchets hurl huge boulders 18 tiles at any structure. Ballistas pick off siege engines, riders and ships. Cannons batter fortifications and engines with flat shots. Siege hits gates ×3, walls ×2.5, towers ×2, castles ×1.75, other engines ×1.5 and soldiers only ×0.75. Every engine but the ram must set up before it fires and pack up before it moves; how long each takes is its own. Engines take 3 to 5 population. Arrows barely scratch them; infantry and cavalry break them, and fire burns rams badly. A new engine is just two data entries (see Code map).
+- **Formations.** Line, Square and Wedge. Group moves keep the shape, with infantry in front, ranged units and siege engines behind and riders at the tip of a wedge.
+- **AI opponent.** It runs its own economy, builds houses, barracks, an archery range, a stable, a siege workshop and towers, advances through the ages and defends its base. Where there's sea it builds a Dock and fishing boats. When the sea stands between you, it builds transports and lands its army on your shore. It builds warships to escort its crossings and guard its fishing boats. Once you sail warships it matches your fleet with the ships that counter it best, and gives the fleet priority over new soldiers until it does. It hunts your ships when they come near or when it outnumbers you, and blockades your Dock with three or more. When its island runs out of gold or stone, it ships villagers to other islands and builds a storage pit there. From the Tool Age it walls its town in, with a gate in each side and towers on the corners, and upgrades those towers. In the Bronze Age it mines stone for siege and a castle, which it builds on the side facing you once it has Masonry. Once the castle stands, it digs a moat one tile outside its walls with a drawbridge in front of each gate. It also grows a tower into a Keep, or builds one outright when no tower has room. It repairs every kind of damaged fortification, ahead of laying more wall or moat, sends raided villagers into its towers until the danger passes, and keeps its army just inside the gate that faces you between attacks. It trains a mixed army weighted to counter yours, plus rams and stone throwers (more stone throwers if you build towers), and researches siege upgrades. It attacks in waves: the army gathers in formation, then the siege engines go for the target with two infantry escorts each, the other infantry storm it with the archers behind them, and the riders swing round a flank to hit archers, stone throwers and villagers. An army with siege goes for your defences first. If you've built 3 or more towers, the AI saves up for the Bronze Age and holds its attacks until it has siege, for up to 4 minutes.
 - **Fog of war.** Unexplored areas are black, and areas you've explored but can't currently see are dimmed.
 - **Minimap.** Click or tap it to look around, double-click or double-tap to zoom in on that spot, and right-click or long-press to send your selected units there.
 - **Zoom.** The camera zooms from 0.5× to 3× with smooth, animated steps, and the spot under the cursor or between your fingers stays put. There are four tactical layers: Close, Medium, Far and Strategic. At Strategic zoom units become team-coloured icons. Your last zoom is remembered between visits.
-- **A\* pathfinding** on a 64×64 tile grid, with 8-direction movement and no corner-cutting.
+- **A\* pathfinding** on the tile grid (48×48 to 128×128), with 8-direction movement and no corner-cutting. Units wade through fords and walk round mountains and deep water. Ships use their own water graph, and a hybrid router joins the two for any trip that has to cross water.
 - **Procedural pixel art.** Units are drawn from ASCII sprite maps, with idle, walk, attack and death animations. Trees, mines, buildings and terrain use seeded noise.
 - **Synthesized sound.** Chopping, mining, combat, the building-complete bell and the age-up fanfare are all generated with the Web Audio API.
 - **Classic interface.** A resource bar at the top, and a bottom panel with the minimap, info panel, command grid and tooltips.
@@ -51,7 +56,17 @@ The only network request is for the **Cinzel** and **Spectral** fonts from Googl
 | Box-select units | Left drag |
 | Select all units of one type on screen | Double click |
 | Move / gather / attack / help build / drop off | Right click |
-| Place a building | Choose it in the command panel, then left click (right click cancels) |
+| Repair your damaged building (villagers), or garrison a tower or castle (others) | Right click the building |
+| Send units across water | Right click anywhere on the other shore: they walk to the shore and board a transport by themselves |
+| Board a particular transport | Select land units, right click your transport |
+| Put a transport's cargo ashore | Right click the land with the transport selected, or press **Unload** |
+| Fish | Select fishing boats, right click a shoal of fish |
+| Attack with warships | Right click an enemy ship or Dock (or whatever else is on the ship's target list) |
+| Escort one of your ships | Select warships, right click the ship to escort |
+| Patrol | Select warships, press **Patrol**, then left click the far end of the patrol (right click or `Esc` cancels) |
+| Place a building | Choose it in the command panel, then left click (right click cancels). Towers, walls, gates and the Castle are on the **Defences** page |
+| Lay a wall or moat | Choose it, then drag from where it starts to where it ends (or click both ends). **Moat ring**: drag corner to corner |
+| Moat round your walls | Select wall and gate segments, then **Moat around** |
 | Scroll the camera | `W` `A` `S` `D`, arrow keys, screen edges, or drag with the middle mouse button |
 | Zoom in and out at the cursor | Mouse wheel |
 | Fine zoom | `Ctrl` + mouse wheel (a trackpad pinch works too) |
@@ -74,7 +89,7 @@ The only network request is for the **Cinzel** and **Spectral** fonts from Googl
 | Action | Gesture |
 |---|---|
 | Select a unit, building or resource | Tap |
-| Give an order to the selected units (move, gather, attack, build, drop off, farm) | Tap the ground, resource, enemy or building site |
+| Give an order to the selected units (move, gather, attack, build, drop off, farm, repair, garrison, cross water, board, unload, fish) | Tap the ground, resource, enemy, building site, your own building or your transport |
 | Select all units of one type on screen | Double tap a unit |
 | Box-select units | Drag one finger |
 | Command menu, with an information card for whatever is under your finger | Long-press the map |
@@ -87,6 +102,7 @@ The only network request is for the **Cinzel** and **Spectral** fonts from Googl
 | Read a command's information card without using it | Long-press a command button |
 | See what a resource is for | Tap its counter in the top bar |
 | Place a building | Choose it in the command panel, then tap the map. **Cancel build** stops placing |
+| Lay a wall or moat | Choose it, tap where it starts, then tap where it ends (**Moat ring**: tap two opposite corners) |
 | Clear the selection | **Deselect** button (top right) |
 
 Four or more fingers are ignored. A gesture never steps down to fewer fingers: after a pinch, a finger left on the screen does nothing until you lift it. If you'd rather scroll with one finger, set **Settings → Touch & zoom → One-finger drag** to *Scrolls the map*. A **Box select** button then appears for drawing a selection box.
@@ -98,7 +114,7 @@ Four or more fingers are ignored. A gesture never steps down to fewer fingers: a
 | Close | 1.5× – 3× (button: 2×) | Units in detail |
 | Medium | 0.87× – 1.5× (button: 1×) | Standard play |
 | Far | 0.62× – 0.87× (button: 0.75×) | Army management. Shadows and idle animations are left out |
-| Strategic | 0.5× – 0.62× (button: 0.5×) | Map overview. Units become icons: ● villager, ■ infantry, ▲ ranged, ◆ cavalry |
+| Strategic | 0.5× – 0.62× (button: 0.5×) | Map overview. Units become icons: ● villager, ■ infantry, ▲ ranged, ◆ cavalry, ▬ siege |
 
 ### Touch & zoom settings
 
@@ -119,7 +135,72 @@ Four or more fingers are ignored. A gesture never steps down to fewer fingers: a
 
 ### Starting conditions
 - 1 Town Center, 3 villagers, **200 wood** and **200 food**.
-- Your Town Center is in the top-left of the map and the enemy's is in the bottom-right.
+- On the Classic map your Town Center is in the top-left and the enemy's is in the bottom-right. On the other map types the two towns face each other across the centre, in a direction drawn from the seed.
+- On generated maps each town starts with the same resources nearby, laid out the same way: 6 berry bushes, 4 deer, two woods of 14 and 10 trees, 4 gold and 3 stone.
+
+### Maps
+
+**New Game** sets up the map as well as the difficulty, slot and name. A preview shows the whole map in its key colours (green grass and forest, yellow desert, blue water, light blue fords, grey mountains, brown hills, white snow), with gold, stone and food as dots, the landmarks as stars and both towns as red markers (**1** is yours). Underneath it are the map's land and water shares and its resource counts.
+
+- **Seed.** Any word or number up to 24 characters. Letters are upper-cased and spaces become dashes. A number of up to 9 digits is used as it is, and anything else is hashed into one. The same seed, type, size and resources always make exactly the same map. **Random** picks a fresh seed, such as `4817305` or `IRON-HOLD-42`. New Game opens on a fresh random seed, with the map type, size and resources you last played. **Play again** on the end screen keeps the same map.
+- **Map code.** **Copy code** copies a code such as `IRON-HOLD-42/mountain/large/high` (seed / type / size / resources). Paste one into the seed box to set all four. The pause menu shows the current map and can copy its code too.
+- **Favourites.** **☆ Favourite** stars the current settings, up to 20 maps. Click a favourite to bring it back, and ✕ removes it. Favourites are kept when you reset progress.
+- **Size.** Small 48×48, Medium 64×64 (the default), Large 96×96, Huge 128×128 tiles.
+- **Resources.** Sparse, Normal or Rich: about 0.65×, 1× or 1.45× the scattered gold, stone, deer and berries, with fewer or more trees. The starting resources are the same at every level.
+- **Players.** Two: you and one AI.
+- **Restart** in the pause menu replays the same map.
+
+| Map type | What to expect |
+|---|---|
+| Classic | The original valley: towns in opposite corners, forests and mines between. The seed shapes the forests and mines |
+| Plains | Open grassland with scattered woods, a river and a few lakes. Extra food |
+| Forest | About 70% grass, 25% dense forest and 5% water. Short sight lines and choke points. Extra wood |
+| Desert | About 75% sand, 15% rocky ground and outcrops and 10% oases. Little wood, plenty of gold |
+| Island | About 60% water. Each town has its own island, joined only by shallow fords |
+| Mountain | About 40% mountains, 40% hills and 20% valleys. Narrow passes and plenty of stone |
+| Highlands | Rolling hills, craggy peaks, glens and lochs |
+| Badlands | Red rock, dry washes and mesas. Barren ground with rich veins |
+| Riverlands | Many rivers with fords, marsh and meadow |
+| Archipelago | A scatter of islands in a wide sea. No ford joins the homelands: you need a Dock and transport ships to cross |
+| Canyon | Sheer rock walls and winding canyon floors. Every route is a choke point |
+| Frozen Tundra | Snowfields and frozen moor with pine woods and cold lakes |
+| Volcanic | Ash plains, black peaks and lava flows. Rich in stone and gold, poor in wood |
+| Oasis | Deep desert with many green oases, each ringed with palms and date bushes |
+| Jungle | Rainforest, swamps and rivers. Wood everywhere |
+| Continental | One great landmass ringed by sea, with a mountain spine and rivers |
+| Mixed Biomes | Snow where the climate is cold, desert where it's hot, and green land in between |
+
+**Terrain**
+
+| Terrain | Effect |
+|---|---|
+| Mountains, deep water, lava, ancient ruins | Impassable |
+| Hills | Walking is 20% slower. Ranged units and siege engines that shoot (not rams) on a hill shoot 1 tile further, and your units on a hill see 1 tile further |
+| Shallows (fords) | Walking is 40% slower. Nothing can be built on them |
+| Marsh | Walking is 25% slower. Nothing can be built on it |
+| Snow | Walking is 10% slower |
+| Forest floor | Walking is 15% slower (the trees themselves block the way) |
+| Grass, earth, sand, rocky ground, ash, tundra and jungle | Open ground |
+
+With nothing selected, the info panel names the ground under the mouse. On a touch screen, long-press the ground instead.
+
+**How maps are made.** Layered value noise gives each map elevation, moisture and climate. The map type decides how much of the map becomes water (the lowest ground), mountains and hills (the highest), and forest, sand, snow, rock and marsh (by moisture and climate). Island, Archipelago and Continental maps raise land round the towns and sink the rest, and canyons are cut by winding floors. Every tile drains to the sea or the map's edge along the lowest way out, so rivers run downhill from the high ground, widen as they go, get a ford about every 12 tiles and spread into lakes where they cross a basin. Lava runs straight downhill and pools where the ground traps it.
+
+**Fairness.** The towns stand the same distance from the centre, on cleared, buildable ground, with identical starting resources. The other gold, stone, deer, berry bushes, oases and fish come in pairs, one on each town's side at about the same distance from it. Landmarks sit on contested ground, about as far from both towns. When a map is made, the generator checks that the towns can walk to each other, opening a ford, a pass or a gap in the trees if needed. On Archipelago it checks instead that both homelands lie on the same sea with room for a Dock within 16 tiles of each town. It also checks that every mine, bush and herd can be reached on foot from a town, or from the shore of an island a ship can reach.
+
+**Fish.** Shoals of 3 swim in deep water within 3 tiles of a shore, on any sea the towns touch. There are more of them on maps with more water.
+
+**Landmarks.** Every map type except Classic has 1 to 4, by map size, plus up to two oases on Desert and Oasis maps. Each one is announced and marked on the minimap the first time you see it.
+
+| Landmark | What's there |
+|---|---|
+| Ancient Ruins | Fallen walls, with gold and stone |
+| Stone Circle | Standing stones, with stone to quarry |
+| Lost Castle | Ruined walls round gold and stone |
+| Mountain Fortress | A walled hilltop, with stone and gold. Archers on the hill shoot further |
+| Sacred Forest | Ancient trees holding 200 wood each |
+| Gold Valley | A hill-ringed valley with 5 gold mines |
+| Oasis | Fresh water, palms and dates (Desert and Oasis maps) |
 
 ### Units
 
@@ -134,6 +215,23 @@ Four or more fingers are ignored. A gesture never steps down to fewer fingers: a
 | Scout Cavalry | Stable | 80 food | 65 | 6 | melee | Very fast, 12-tile vision | Bronze Age |
 | Horseman | Stable | 100 food, 40 gold | 90 | 12 | melee | Fast. +25% against ranged units, 1 armour | Bronze Age |
 | Heavy Cavalry | Stable | 120 food, 70 gold | 140 | 18 | melee | Tank. +50% against infantry, 2 armour | Bronze Age and Horse Breeding |
+| Battering Ram | Siege Workshop | 200 wood, 50 stone | 350 | 60 | melee | Breach. 4 population, 8 armour, slow. Batters every 3 s: gates, then walls, towers and castles. Never attacks units. Fire deals it double damage | Bronze Age |
+| Stone Thrower | Siege Workshop | 150 wood, 100 stone | 120 | 120 | 2–12 tiles | Artillery. 3 population, 2 armour. Sets up in 3 s, packs in 2 s, then throws every 8 s. Boulders fly over buildings and splash. Walls, towers and castles, then the most packed infantry | Bronze Age |
+| Trebuchet | Siege Workshop | 250 wood, 150 stone, 100 gold | 180 | 220 | 4–18 tiles | Long-range artillery. 5 population, 3 armour, the slowest unit. Sets up in 5 s, packs in 4 s, then hurls every 12 s. Bigger boulders, wider splash. Gates, walls, towers and castles, then any building | Bronze Age and Counterweight Systems |
+| Ballista | Siege Workshop | 180 wood, 50 stone, 60 gold | 140 | 80 | 1–13 tiles | Precision. 3 population, 4 armour. Sets up in 2 s, packs in 1 s, then shoots a bolt every 4 s. The bolt hits one target, flat, so it needs a clear line. Siege engines, riders, ships and towers; never foot soldiers | Bronze Age |
+| Cannon | Siege Workshop | 150 wood, 50 stone, 150 gold | 160 | 140 | 2–12 tiles | Bombard. 4 population, 4 armour, slow. Sets up and packs in 3 s, then fires every 6 s. Flat cannonballs (it needs a clear line) with a small burst. Gates, walls, towers, castles and siege engines | Bronze Age and Engineering II |
+| Royal Guard | Castle | 80 food, 60 gold | 95 | 13 | melee | Elite infantry, 2 armour. +50% against cavalry | Bronze Age |
+| Elite Archer | Castle | 60 food, 50 wood, 45 gold | 55 | 9 | 8 tiles | Elite archer, fires every 1.3 s, 10-tile vision | Bronze Age |
+| Champion Cavalry | Castle | 140 food, 110 gold | 180 | 20 | melee | Elite rider, 3 armour. +40% against infantry. Charges | Bronze Age |
+| Fishing Boat | Dock | 60 wood | 40 | — | — | Catches fish, 15 food a trip, and brings it to the Dock. Every warship deals it ×1.5 | — |
+| Transport Ship | Dock | 125 wood | 150 | — | — | Carries 10 slots of units across water. 2 armour, fast | — |
+| Galley | Dock | 130 wood, 25 gold | 260 | 28 | 8 tiles | Light warship: 3 armour, 3 population, sees 9. An arrow every 2.5 s (11.2 a second), ×1.5 against fishing boats and transports | Tool Age |
+| War Galley | Dock | 180 wood, 80 gold | 380 | 42 | 10 tiles | Mainline warship: 6 armour, 4 population, sees 11. A heavy arrow every 2.2 s (19.1 a second) that pierces up to 15 armour. ×1.3 against galleys, ×1.5 against transports | Bronze Age |
+| Fire Ship | Dock | 120 wood, 70 gold | 220 | 20 | 3 tiles | Fast: 2 armour, 3 population. A pot of burning pitch every 2 s that splashes a tile and sets the water alight (5 s, 6 damage a second). ×1.25 against warships. Goes for packed groups | Bronze Age |
+| Ballista Ship | Dock | 170 wood, 110 gold | 450 | 95 | 1–13 tiles | 4 armour, 5 population. A heavy bolt every 7 s (big hits, low damage a second): ×1.75 against war galleys, ×2.5 against cannon ships, ×1.5 against ballista ships | Bronze Age |
+| Cannon Ship | Dock | 250 wood, 250 gold | 800 | 130 | 2–13 tiles | Slow: 6 armour, 6 population. A cannonball every 7 s with a small burst: ×2 against docks, towers, walls and gates, ×1.75 against castles, ×1.25 against ballista and cannon ships | Bronze Age, Engineering II |
+
+Riders take 2 slots on a transport, a siege engine as many as its population (ballista and stone thrower 3, ram and cannon 4, trebuchet 5), everyone else 1. Ships sail deep water and shallows (fords too) and never go ashore.
 
 ### Buildings
 
@@ -145,8 +243,29 @@ Four or more fingers are ignored. A gesture never steps down to fewer fingers: a
 | Barracks | 125 wood | 2×2 | Trains infantry | — |
 | Archery Range | 175 wood | 2×2 | Trains ranged units, researches archery upgrades. 400 HP | Tool Age |
 | Stable | 200 wood, 100 food | 2×2 | Trains cavalry, researches cavalry upgrades. 500 HP | Bronze Age |
-| Town Center | 300 wood | 2×2 | Trains villagers, accepts all resources, advances ages, +4 population | — |
-| Watch Tower | 150 stone | 1×1 | Shoots arrows at enemies within about 6 tiles. +50% against light cavalry | Tool Age |
+| Siege Workshop | 250 wood, 150 stone | 2×2 | Builds battering rams, stone throwers, ballistas, trebuchets and cannons, researches siege upgrades. 800 HP, 2 armour | Bronze Age, a Barracks and a Stable |
+| Town Center | 300 wood | 2×2 | Trains villagers, accepts all resources, advances ages, researches Domestication and Masonry, +4 population | — |
+| Guard Tower | 125 wood, 50 stone | 1×1 | Shoots arrows 8 tiles, sees 10. +50% against archers and light cavalry. 500 HP, 1 armour. Garrisons 3. Upgrades along the tower line below | Tool Age |
+| Keep | 300 stone, 150 wood, 75 gold | 2×2 | 2-arrow volleys 11 tiles, sees 13. Garrisons 10 (archers add arrows, villagers shelter). Claims territory 7 tiles round. 3000 HP, 6 armour. Grows into a Castle | Bronze Age, Masonry |
+| Wooden Wall | 5 wood a segment | 1×1 | Blocks units (not arrows). 200 HP, 1 armour, burns twice as fast | Tool Age |
+| Stone Wall | 10 stone a segment | 1×1 | Blocks units (not arrows). 750 HP, 4 armour | Bronze Age, Masonry |
+| Wooden Gate | 50 wood | 1×1 | Opens for your units, shut to the enemy; can be locked. 300 HP, 1 armour | Tool Age |
+| Stone Gate | 50 stone | 1×1 | As the wooden gate. 900 HP, 4 armour | Bronze Age, Masonry |
+| Moat | 5 stone a segment | 1×1 | A water-filled ditch, dug in 3 s. Can't be damaged. Foot units wade it at half speed; riders and siege engines can't cross it (engines and archers shoot over it). Fill it in with **Fill in** | Bronze Age |
+| Drawbridge | 120 wood, 30 stone | 1×1 | Placed on your moat. Lowers for your units (anyone can cross while it's down), rises when an enemy is within 3 tiles or when it's hit (stays up 8 s), can be locked up. Destroyed, the moat stays. 1200 HP, 3 armour | Bronze Age, a Moat |
+| Castle | 500 stone, 250 wood, 150 gold | 3×3 | 4-arrow volleys 12 tiles, sees 15. Trains elite units. Garrisons 20 (riders too). Claims territory 11 tiles round. 5000 HP, 6 armour | Bronze Age, Masonry |
+| Dock | 150 wood | 2×2 | Built on deep water beside the shore. Builds fishing boats, transport ships and the five warships, researches seven naval upgrades, takes in fish, repairs ships moored beside it (3 HP a second). Units cross from it. 600 HP | Deep water on the map |
+
+The tower line, upgraded at each tower (select it and use an upgrade button). Guard → Watch → Fortified Tower, which then becomes a Ballista Tower or grows into a Keep, and a Keep grows into a Castle. Growing needs free, buildable ground around it for the bigger footprint. The upgrade button says so when there's no room, and if something is built there before it finishes, the cost is refunded. A grown building keeps its damage and its garrison. A Keep or Castle you build outright continues along the same line.
+
+| Tier | Upgrade cost | Attack | Range | Sight | HP | Armour | Notes | Requires |
+|---|---|---|---|---|---|---|---|---|
+| Guard Tower | (built) | 9 | 8 | 10 | 500 | 1 | Arrows | Tool Age |
+| Watch Tower | 100 stone, 50 wood | 11 | 10 | 12 | 825 | 2 | | Tool Age |
+| Fortified Tower | 150 stone, 100 gold | 14 | 11 | 13 | 1500 | 3 | Reloads in 1.8 s | Bronze Age |
+| Ballista Tower (from Fortified) | 200 stone, 150 gold, 100 wood | 22 | 11 | 13 | 1500 | 3 | Heavy bolts: ×1.5 against siege engines, ×1.3 against cavalry | Bronze Age |
+| Keep (from Fortified) | 150 stone, 75 wood, 40 gold | 12 × 2 arrows | 11 | 13 | 3000 | 6 | Grows to 2×2. Garrisons 10, territory 7 | Bronze Age, Masonry |
+| Castle (from Keep) | 200 stone, 100 wood, 75 gold | 8 × 4 arrows | 12 | 15 | 5000 | 6 | Grows to 3×3. Everything a castle does | Bronze Age, Masonry |
 
 ### Ages
 
@@ -170,26 +289,84 @@ Four or more fingers are ignored. A gesture never steps down to fewer fingers: a
 | Horse Breeding | Stable | 150 food, 100 wood | Cavalry +20 hit points. Unlocks Heavy Cavalry | Bronze Age |
 | Steel Horseshoes | Stable | 100 food, 50 gold | Cavalry move 15% faster | Bronze Age |
 | Cavalry Armour | Stable | 120 food, 80 gold | Cavalry +2 armour (each hit they take deals 2 less) | Bronze Age |
+| Engineering I | Siege Workshop | 150 wood, 100 gold | Siege engines deal 10% more damage | Bronze Age |
+| Engineering II | Siege Workshop | 250 wood, 200 gold | Siege engines deal a further 20% more damage. Unlocks the Cannon | Bronze Age, Engineering I |
+| Reinforced Frames | Siege Workshop | 200 wood, 100 stone | Siege engines +25% hit points | Bronze Age |
+| Counterweight Systems | Siege Workshop | 150 wood, 150 gold | Stone throwers +15% range (12 → 13.8 tiles). Unlocks the Trebuchet | Bronze Age |
+| Improved Ammunition | Siege Workshop | 150 stone, 100 gold | Stone throwers splash 20% wider (36 → 43 px) | Bronze Age |
+| Masonry | Town Center | 150 food, 100 stone | Unlocks stone walls, stone gates and the Castle | Bronze Age |
+| Fletched Arrows | Dock | 100 wood, 50 gold | Galleys and war galleys deal 10% more damage | Tool Age |
+| Reinforced Hulls | Dock | 120 wood, 120 gold | Ships +20% hit points | Tool Age |
+| Improved Rudders | Dock | 100 wood, 75 gold | Ships sail 15% faster | Tool Age |
+| Sea Navigation | Dock | 150 gold | Ships see 20% further | Tool Age |
+| Armoured Decks | Dock | 100 wood, 150 gold | Ships +2 armour | Bronze Age |
+| Naval Engineering | Dock | 200 wood, 250 gold | Warships shoot 15% further | Bronze Age |
+| Elite War Galley | Dock | 300 gold | War galleys: 380 → 500 hit points, 42 → 55 attack (afloat and new) | Bronze Age |
+| Fire Projectiles | Siege Workshop | 200 wood, 150 gold | Burning boulders set the ground alight for 4 s: 5 damage a second to enemy units and buildings in it, through armour (rams take double) | Bronze Age, Improved Ammunition |
 
 ### Counters
 
-Each hit is multiplied by the attacker's bonus against the target's class, then the target's armour is subtracted. A hit always deals at least 1.
+Each hit is multiplied by the attacker's damage type (its class: melee, ranged, cavalry, siege, ship or tower) against the target. A unit is looked up by its type, then its role (`warship`, `transport`, `fishing`), then its class (infantry, ranged, cavalry, siege, ship). A building is looked up by its armour class: one of four fortification classes that come from a structure's role. Gates and drawbridges are the **gate** class. Walls are the **wall** class. Towers and keeps are the **fort** class. Castles are the **castle** class. Fortifications count as buildings unless the attacker has its own bonus against their class or against forts (defences in general). On top of that, each fortification class resists some attackers (see Fortifications). Castle territory and walled towns then adjust it (see Fortifications), and finally the target's flat armour is subtracted, less whatever the projectile pierces (a war galley's heavy arrows pierce 15). A hit always deals at least 1.
 
 | Attacker | Strong against |
 |---|---|
-| Archers (all ranged units) | Villagers ×1.5, infantry ×1.25. Only ×0.5 against buildings, and half damage at point-blank range |
+| Archers (all ranged units) | Villagers ×1.5, infantry ×1.25. Only ×0.5 against buildings, ×0.4 against siege engines and ×0.75 against ships, and half damage at point-blank range |
 | Skirmisher | Archers and other ranged units ×1.5 |
-| Infantry | Cavalry ×1.25 |
-| Cavalry | Ranged units ×1.15 (Horseman ×1.25), buildings ×0.75 |
+| Infantry | Cavalry ×1.25, siege engines ×2.5 |
+| Cavalry | Ranged units ×1.15 (Horseman ×1.25), siege engines ×1.25, buildings ×0.75 |
 | Heavy Cavalry | Infantry ×1.5 |
-| Watch Tower | Light cavalry (scouts, horsemen) ×1.5 |
+| Towers and Castle | Archers and other ranged units ×1.5, light cavalry (scouts, horsemen) ×1.5. Only ×0.4 against siege engines, except the Ballista Tower's bolts (×1.5) |
+| Royal Guard | Cavalry ×1.5 |
+| Champion Cavalry | Infantry ×1.4 |
+| Siege engines (all of them) | Gates ×3, walls ×2.5, towers and keeps ×2, castles ×1.75, other buildings and other siege engines ×1.5, ships ×1. Any other unit only ×0.75 |
+| Warships (all of them) | Fishing boats ×1.5, transports ×1.25 |
+| Galley | Fishing boats and transports ×1.5 |
+| War Galley | Galleys ×1.3, transports ×1.5 |
+| Fire Ship | Every warship ×1.25; the burning water hurts every ship in it |
+| Ballista Ship | War galleys ×1.75, cannon ships ×2.5, ballista ships ×1.5 |
+| Cannon Ship | Docks, towers, walls and gates ×2, castles ×1.75, ballista and cannon ships ×1.25 |
+| Battering Ram | Can't attack units. Rams battering the same building: 2 → ×1.1, 3–4 → ×1.2, 5 or more → ×1.35 |
+| Stone Thrower, Trebuchet, Cannon | Splash by distance from the impact: 100% within a quarter of the radius, 75% to half, 50% to three quarters, 25% to the edge. The radius is 36 px for a boulder, 48 px for a trebuchet's and 22 px for a cannonball. Each victim takes the siege multiplier for its class (×0.75 for soldiers) |
 
-### Ranged combat, cavalry and formations
-- **Projectiles.** Arrows and javelins fly in an arc and follow their target. The chance to hit is 97% up to half range and falls to about 65% at maximum range. It's 10% lower against a moving target. A miss lands harmlessly beside the target. Buildings between the shooter and the target block the shot, so the shooter moves until it has a clear line.
-- **Kiting.** While reloading, a ranged unit steps back from melee attackers that come within about 2 tiles, then stops to shoot again.
+### Ranged combat, cavalry, siege and formations
+- **Projectiles.** Arrows and javelins fly in an arc and follow their target. The chance to hit is 97% up to half range and falls to about 65% at maximum range. It's 10% lower against a moving target. A miss lands harmlessly beside the target, unless it's a boulder that still comes down on the building it was thrown at. Buildings between the shooter and the target block the shot, so the shooter moves until it has a clear line. Ballista bolts and cannonballs fly flat like arrows; boulders fly over everything.
+- **Kiting.** While reloading, a ranged unit steps back from melee attackers that come within about 2 tiles, then stops to shoot again. Rams can't hurt units, so archers don't back away from them.
 - **Charge.** Cavalry that start an attack on a unit from 3 or more tiles away move 35% faster until the first hit, and that hit deals 50% more damage.
-- **Formations.** With soldiers selected, the command panel offers Line (best for archers), Square (infantry) and Wedge (cavalry). Choosing one re-forms the group facing the enemy. Group moves then keep the shape at the pace of the slowest member. Choose it again to march loosely.
-- **Vision.** Villagers and infantry see 6 tiles, skirmishers 7, archers 8, composite archers 9 and scouts 12.
+- **Rams.** A battering ram only attacks buildings. Ordered to attack a unit, it rolls to where that unit stands instead. An idle ram looks up to 7 tiles away for its next fortification: gates first (drawbridges too), then walls, towers and castles. It doesn't pick other buildings by itself, but you can send it at any building. In the AI's army, rams stay out of fights with units. The stats panel shows a ram's teamwork bonus while it batters with others.
+- **Setting up.** Every engine but the ram must deploy before it fires and pack up before it moves. It goes packed → deploying → deployed → packing → packed. A stone thrower takes 3 s to set up and 2 s to pack, a trebuchet 5 s and 4 s, a ballista 2 s and 1 s, a cannon 3 s and 3 s. Packed, an engine can move but not fire; deployed, it can fire but not move, and nothing can push it aside. It deploys and packs by itself when it's given orders, or you can use the **Deploy** and **Pack up** buttons; a bar under it shows the progress. Each has a minimum range it can't hit inside: 1 tile for a ballista, 2 for a stone thrower or cannon, 4 for a trebuchet. Packed, it backs away from a target that close and gives up if it's cornered; deployed, it switches to another target.
+- **Targets.** Each engine works down its own list, by itself, within its range. Ram: gate → wall → tower → castle. Stone thrower: wall → tower → castle → foot soldiers (the most packed group first). Trebuchet: gate → wall → tower → castle → any other building. Ballista: siege engine → rider → ship → tower. Cannon: gate → wall → tower → castle → siege engine. You can order an engine against any building if its list has one, but only against units of a class on its list. Ordered at any other unit, it moves to where that unit stands instead.
+- **Boulders.** Boulders fly high, so buildings in the way don't block them, and they don't follow their target. A boulder lands where the target stood when it was thrown, then rolls on a little. Every enemy unit near the impact is hurt (see Counters), and the building it was aimed at takes the full blow. A cannonball bursts too, over a smaller area.
+- **Fire.** With Fire Projectiles, boulders set the ground alight for 4 seconds. Enemy units and buildings in the flames take 5 damage a second, through armour, and rams take double.
+- **Formations.** With soldiers selected, the command panel offers Line (best for archers), Square (infantry) and Wedge (cavalry). Choosing one re-forms the group facing the enemy. Siege engines take the back rank. Group moves then keep the shape at the pace of the slowest member. Choose it again to march loosely.
+- **Vision.** Rams see 5 tiles, villagers and infantry 6, skirmishers 7, archers 8, composite archers 9, elite archers 10, scouts, stone throwers, trebuchets and cannons 12, ballistas 13; fire ships 8, galleys 9, war galleys 11, ballista and cannon ships 12 (Sea Navigation: +20%). Buildings see 7, except walls (0), gates (2), towers (10 to 12 by tier) and the Castle (15). Units on your own castle territory see 2 tiles further.
+
+### Naval combat
+- **Warships.** The Dock builds galleys (Tool Age), and war galleys, fire ships, ballista ships and cannon ships (Bronze Age; the cannon ship also needs Engineering II). Every fighting ship has the role *warship*; boats are *fishing* and *transport*. Each warship works down its own target list. Galley and war galley: warship → transport → fishing boat → dock. Fire ship: warship → transport → fishing boat, the most packed group first. Ballista ship: war galley → cannon ship → ballista ship → any warship → transport → fishing boat → dock. Cannon ship: dock → castle → tower → cannon ship → ballista ship → any warship. A warship can only be ordered at what its list names; ordered at anything else, it sails there instead. None attacks land units.
+- **At sea.** An idle warship takes on the first enemy on its list that comes into sight (8 to 12 tiles) on its own water, and chases it. Ships turn at their own rate (a galley comes about in about 0.6 s, a cannon ship takes twice as long) and slow down while turning. Ships under way glide past each other; ships at rest keep apart. A sunk ship plays its sinking and leaves wreckage afloat for a few seconds; a transport takes its cargo down with it. Your Dock repairs ships moored beside it, 3 HP a second.
+- **Orders.** Right-click (tap) an enemy ship or Dock to attack it. Right-click one of your own ships to escort it: escorts stay close and take on whatever comes for it within their range plus 3 tiles, never chasing more than 8 tiles from it. **Patrol**, then click (tap) a point: the warships sail back and forth between where they are and there. They take on anything that comes into sight and go back to the patrol afterwards, giving up a chase 4 tiles past their sight. Each warship's panel shows its order.
+- **Shots.** Heavy arrows fly flat and fast, pierce armour and leave a trail and a splash. Pots of burning pitch splash a tile and set the water alight (any ship in it burns, through armour). Ballista bolts hit one ship hard. Cannonballs burst over a small area. Flat shots need a clear line past buildings.
+- **The AI's fleet.** It builds warships to escort its crossings and guard its fishing boats. Once you sail warships it matches your fleet, ship for ship (up to 6). It chooses what trades best against your ships for its cost: its damage against them, after counters, armour and piercing, against theirs against it, per cost squared. Then it waits for room for that ship. Its missions follow each ship's `aiOrders`:
+  - it hunts your ships when they come within 14 tiles of its docks, boats or transports, or anywhere on its water once it outnumbers your warships;
+  - it escorts its loaded transports and guards the fishing boat furthest out;
+  - with 3 warships or more, up to half of them blockade your nearest Dock: they hold station off it, sink whatever comes and goes, then shell the Dock;
+  - the rest patrol from its Dock towards you.
+- **The AI's priorities at sea.** While its fleet is short of yours it trains no new soldiers or siege, keeps fewer soldiers to leave room for ships, and builds a second Dock if the first is busy. It researches Fletched Arrows and Armoured Decks with 2 warships, Reinforced Hulls and Naval Engineering with 3, and Elite War Galley with 2 war galleys.
+
+### Fortifications
+- **Walls.** Choose a wall on the Defences page, then drag from one end of the line to the other, or click (tap) both ends. The line runs in steps, so every segment touches the next, and the cost of the segments that fit shows as you drag. Segments join their neighbours, your gates, towers and castle, drawing ends, straights, corners, T-junctions and crossings. Villagers build a line one segment after another by themselves. Walls stop every unit, cavalry included, but not arrows: archers shoot over them. You can demolish your own walls and gates (no refund).
+- **Gates.** A gate opens for your units and stays shut to the enemy, which pathfinding knows: your units route through your gates, the enemy's go round or break in. Place a gate on your own wall to replace that segment. A gate turns to match the wall it sits in, swings open while your units are near, and can be locked against everyone.
+- **Breaching.** A unit whose path can't bring it within reach of its target attacks the enemy wall, gate or building in the way, then goes back to its target once through.
+- **Moats.** Choose **Moat** on the Defences page and drag a line, like a wall, or **Moat ring** and drag from corner to corner for a rectangle. Or select some of your walls and gates and press **Moat around**: it lays moat on every free tile just outside them, diagonals included, and on a closed ring of walls only on the outside. Villagers dig it (3 s a segment), and segments join into straights, corners, crossings and ends. A moat can't be damaged or attacked. Foot soldiers and villagers, yours and the enemy's, wade it at half speed. Riders and siege engines can't enter it and path round it, but engines and archers shoot over it. A ram facing a moat goes for its drawbridge instead. Fill your own moat in with **Fill in**.
+- **Drawbridges.** Place one on a segment of your moat (it needs a finished moat first) to make a crossing for your riders and siege. It lowers while your units are within 1.6 tiles and no enemy is within 3, and then anyone can cross. It rises when an enemy comes close, stays up for 8 s after it's hit, and can be raised and locked. Rams target drawbridges first along with gates. If one is destroyed, the moat underneath is left.
+- **Keeps.** A heavy stone stronghold (2×2): 2-arrow volleys 11 tiles, 13-tile sight, 3000 HP, 6 armour, room for 10 inside, and territory 7 tiles round. Build one outright on the Defences page, or grow a Fortified Tower into one. A keep grows into a castle.
+- **Armour classes.** A fortification's role decides its armour class. Gates and drawbridges (**gate**) and walls and moats (**wall**) take ×0.6 from infantry, villagers and cavalry. Forts (towers, keeps) take ×0.6 from archers and ×0.85 from infantry and cavalry. Castles take ×0.6 from archers and villagers, and ×0.7 from infantry and cavalry. Siege engines hit each class by the siege multipliers (see Counters).
+- **Siege priority.** The roles' order is gate, wall, fort (towers, keeps), castle (`SIEGE_ORDER`); a siege engine's target list can name a role or `defences` for all four. Rams batter gates first, then walls, forts and castles. Other engines follow their own lists (see Ranged combat, cavalry, siege and formations).
+- **Garrison.** Right-click (tap) your tower, keep or castle with units selected to send them inside: up to 3 in a tower, 10 in a keep (foot soldiers, archers and villagers) or 20 in a castle (riders too); never siege engines or ships. Units inside are off the map, safe, still count towards population and heal 1 HP a second. Anyone inside raises the building's attack by 15% and its armour by 2. Each archer inside adds an arrow to a tower's or keep's volley; in a castle every two add an arrow, and each also speeds its reload by 5% and adds 3% damage. **Ungarrison** brings everyone out, and a falling tower, keep or castle lets its garrison out alive.
+- **Castle volleys.** A castle fires 4 arrows at once at the nearest enemies: all of them at a lone target, or one each spread over several. It shoots soldiers before villagers.
+- **Territory.** Each castle claims the ground within 11 tiles, each keep within 7 (shown with a dashed border). On your own territory your units heal 1.5 HP a second, hit 10% harder, take 15% less damage and see 2 tiles further, your buildings there take 15% less damage, and production there is 25% faster. Where both sides' territory overlaps, it's contested and nobody gains.
+- **Walled town.** If no enemy unit can walk from the enemy's buildings to your Town Center, because walls, gates, buildings and resources close every way in, your buildings take 10% less damage. A moat alone doesn't count: foot soldiers can wade it. A message tells you when your town becomes walled or is breached.
+- **Repair.** Villagers right-click (tap) your damaged building to repair it, paying half its cost for a full repair. They repair at half its building speed, or a third for a castle (the castle role). A drawbridge can be mended from inside its gate. Moats never need it.
+- **Alarm.** When enemies come near your town (within a building's sight, or 10% beyond a tower's), a horn sounds and a message appears, at most every 25 seconds.
 
 ### Difficulty
 
@@ -206,9 +383,9 @@ You earn points for resources you drop off, units you train, buildings you compl
 
 ### Rules to know
 - Villagers carry up to **10** resources at a time and gather about 1 per second.
-- Population is capped at **50**.
-- Resource amounts: tree 100, berry bush 150, gold mine 400, stone mine 350.
-- You **win** when every enemy building is destroyed and **lose** when all of yours are gone.
+- Population is capped at **50**. Most units take 1; siege engines take 3 (stone thrower, ballista), 4 (ram, cannon) or 5 (trebuchet).
+- Resource amounts: tree 100, berry bush 150, deer 120, fish 225, gold mine 400, stone mine 350. Hunting deer is 30% faster than picking berries, and fishing 15% faster.
+- You **win** when every enemy building is destroyed and **lose** when all of yours are gone. Walls and gates don't count, and destroying one is worth only 2 points.
 
 ---
 
@@ -224,12 +401,14 @@ Everything is stored in your browser's `localStorage` under keys that start with
 | `aethoria.save.quarantine` | The last save that failed validation, kept only so it isn't lost silently |
 | `aethoria.profile.v1` | High score, XP and rank, achievements and lifetime statistics |
 | `aethoria.settings.v1` | Your settings, including the last camera zoom |
+| `aethoria.maps.v1` | Your favourite maps and the last map you started |
 
-Each save is one JSON record. It holds the slot name, save time, play time, player level, completion percentage, difficulty, age, score, resources, location on the map, a small screenshot and the game version, plus the whole game: every unit, building, resource, order, path, training and research queue, projectile, the fog of war, the AI's state, camera, selection, score, statistics and missions. It also stores your camera preferences (`zoomLevel`, `uiScale`, `pinchSensitivity`, `touchMode`), and loading the save restores them. A checksum covers the entire record.
+Each save is one JSON record. It holds the slot name, save time, play time, player level, completion percentage, difficulty, age, score, resources, location on the map, a small screenshot and the game version, plus the whole game: the map (seed, type, size, resources, the generator version, the terrain of every tile, both starting positions and the landmarks with whether you've found them), every unit, building, resource (fish included), order, path, training and research queue, every ship's cargo, heading and crossing (its stage, shores, berths and convoy, and each passenger's order for the far shore), warship orders (patrols, escorts, blockades, hunts, and the order an attack broke off from), projectile, siege engine's deployment, patch of burning ground, wall, gate and whether it's locked, tower tier and upgrade, the units inside every tower and castle, the fog of war, the AI's state, camera, selection, score, statistics and missions. It also stores the simulation's dice (the seeded generator behind every shot's accuracy and the AI's choices) and when the periodic sweeps next run. Positions, hit points, timers and projectiles are kept at full precision, so a battle loaded from a save carries on exactly as it would have. The same save played twice ends the same way. It also stores your camera preferences (`zoomLevel`, `uiScale`, `pinchSensitivity`, `touchMode`), and loading the save restores them. A checksum covers the entire record.
 
 - **Save slots.** The five slots are independent, and nothing writes to one without you asking. **Save Game** in the pause menu opens the save screen. Pick a slot, confirm if it already holds a save, and you get a confirmation message. `Ctrl` + `S` and **Quick Save** save straight to the slot your game belongs to. **Save & Quit** saves there too.
 - **Autosaves.** The game autosaves every 30 seconds of play. It also autosaves after age-ups, missions, achievements, upgrades, resource milestones, completed or lost buildings and the fall of the enemy Town Center, and when you pause, switch away or close the page. Autosaves rotate through three slots (1 → 2 → 3 → 1), so the two older copies are always intact. They never overwrite a manual slot. An unchanged game isn't written again, and routine autosaves are spaced at least 8 seconds apart. The indicator in the top bar shows *Autosaving…*, *Saved ✓* or *Save failed*.
-- **New game.** Choose a difficulty, a slot (the first empty one is picked for you) and a name. You can also start a new game from any empty slot's **New Game** button.
+- **New game.** Choose the map (see [Maps](#maps)), a difficulty, a slot (the first empty one is picked for you) and a name. You can also start a new game from any empty slot's **New Game** button. Each save card shows the map type, size and seed.
+- **Saves from before map seeds** load on the Classic 64×64 map they were played on. Because a save stores the terrain itself, a map always loads as it was saved, even if a later version generates maps differently.
 - **Continue and load.** **Continue** on the title screen and **Load Game** in the pause menu open the save screen. It lists every slot and autosave with its details and marks the most recent one. A save is never loaded automatically. You always pick it.
 - **Managing saves.** **Saved Games** (on the title screen or in Settings) opens the same screen. From there you can load, overwrite, delete, rename, copy (to another slot, including from an autosave), export and import saves.
 - **Backups.** Before a slot is overwritten, its current save is copied to a backup. The new save is written, read back and checked. The backup is then removed, or put back if anything failed.
@@ -237,7 +416,7 @@ Each save is one JSON record. It holds the slot name, save time, play time, play
 - **Finished games.** Winning or losing doesn't delete any save, so earlier saves of that campaign can still be loaded. Your score, XP, achievements and statistics are recorded when the game ends.
 - **Export and import.** **Export** downloads a slot or autosave as a `.json` file. **Import** reads a `.json` file, validates it, and then puts it in the slot you chose, after you confirm if that slot is in use. Saves exported by Aethoria 1.1 can be imported too.
 - **Upgrading from 1.1.** On the first start, your old single save (`aethoria.save.v1`, or its backup if that's the only good copy) is moved into the first free slot.
-- **Reset progress.** This button is on the title screen and in Settings, and asks you to confirm first. It deletes every slot, autosave and backup, and your profile. Your settings are kept.
+- **Reset progress.** This button is on the title screen and in Settings, and asks you to confirm first. It deletes every slot, autosave and backup, and your profile. Your settings and favourite maps are kept.
 - If the browser blocks storage (for example, in some private modes), the game still runs, warns you, and keeps progress only until you close the tab.
 
 ---
@@ -250,26 +429,29 @@ The script is a single `<script type="module">`, so nothing is added to `window`
 
 | Section | Responsibility |
 |---|---|
-| `helpers` | DOM shortcut, canvas factory, `mulberry32` seeded RNG, 2D hash noise, `cyrb53` checksum, bit packing |
+| `helpers` | DOM shortcut, canvas factory, `mulberry32` seeded RNG, 2D hash noise, `cyrb53` checksum, bit and nibble packing |
 | `config` | `CONFIG` (timings, storage keys, limits) and the `DIFFICULTY` table |
 | `persistence` | `StorageManager` (guarded `localStorage` access, settings, profile), `SaveSlotManager` (`createSlot`, `saveToSlot`, `loadFromSlot`, `deleteSlot`, `copySlot`, `renameSlot`, `getSlotInfo`, `listSlots`, `exportSlot`, `importSlot`, plus `autoSave`, `restoreFromBackup` and `parse` for validation), `Settings`, `Profile` |
 | `audio` | `AudioManager` (master, effects and music buses), the generative `MusicPlayer` and the `SFX` table |
-| `game data` / `progression tables` | Unit, building, upgrade and age definitions, the counter table (`COUNTERS`), projectile kinds, formations, score values, achievements, missions |
-| `pixel sprites` / `icons` | Code-drawn sprites for units, buildings, resources and HUD icons |
-| `game state` | The `state` object, tile blocking, fog grids, entity registry `ENT` |
-| `terrain` / `map generation` | Noise-based grass and dirt, forests, mines, starting bases |
-| `pathfinding` | A\* on the tile grid, plus `nearestFree` fallback |
-| `orders` / `unit update` | Command state machine for units: `move`, `gather`, `deposit`, `build`, `attack`. Includes ranged combat (range, line of sight, kiting), cavalry charges, the counter system (`dmgMult`, `hitDamage`) and soldier collision |
-| `buildings, training & research` | Training queues (`TRAINS`), upgrade effects (`TECHS`), tower targeting |
-| `projectiles` | The `Projectiles` manager: `fire`, `update` (flight, target tracking, hits and misses) and `draw` (arcs and shadows) |
+| `game data` / `progression tables` | Unit, building, upgrade and age definitions (upgrades apply by class, type, `types`, role or every ship), the counter table (`COUNTERS`, whose `siege` row is the siege damage model), projectile kinds (`PROJ_TYPES`), formations, score values, achievements, missions. Siege engines are data: a `UNITTYPES` entry with `cls: 'siege'`, `siegeRole`, `targets`, `speed`, `damage`, `attackCooldown`, `deploy` with `deployTime` / `teardownTime`, and `projectileType` (a `PROJ_TYPES` key). `siegeData` reads them into the engine's terms at start-up, adds each one to the Siege Workshop (or `at`), and names and describes any that leave that out. A picture is optional (`UNIT_ART` with a `draw` function; otherwise the generic `drawEngine`). So a new engine is one `UNITTYPES` entry and one `PROJ_TYPES` entry. Warships are data the same way: `naval: true`, `role`, attack stats (`attack`, `range`, `attackCooldown`, `speed`, `vision`, `turnRate`), `proj`, `sprite` (a `SPRITES` key), `targets` and `aiOrders`; `unitData` reads them in and adds them to the Dock. Projectile kinds may be written in the same terms (`speed` in tiles a second, `arc`, `splashRadius`, `armorPen`, `impactEffect`, `trailEffect`), and `projData` reads them in |
+| `pixel sprites` / `icons` | Code-drawn sprites for units, buildings, resources and HUD icons. `SPRITES` describes pictures in a sprite sheet's layout (frame size, 16 headings, idle / move / attack / sink animations). A `sheet` image is sliced by heading row and frame column; with none, `drawShipModel` draws each frame from the entry's `model` (hull, oars, braced sails, crew), and `shipFrame` keeps the frames it has drawn |
+| `game state` | The `state` object, tile blocking (`block`: resources, buildings, walls, and gates by owner), the tile-to-building grid `occ`, castle territory `infl`, fog grids, entity registry `ENT` |
+| `terrain` | Terrain types (`TT`, `TERRAIN`: name, colours, blocking, speed, buildable), `setMapSize` (reallocates every grid), `blockTerrain`, `renderTerrain` (the painted ground and the minimap base) and `terrainAt` |
+| `map generation` | Map settings (`MAP_SIZES`, `DENSITY`, `MAP_TYPES`, `LANDMARKS`, `START_KIT`), seeds (`cleanSeed`, `seedNum`, `randomSeed`), seeded fractal noise (`makeNoise`) and `generateWorld(settings)`, a pure function that returns the terrain, resources, starts and landmarks. `applyWorld` builds that into the game. A new map type is one `MAP_TYPES` entry; a new landmark is a `LANDMARKS` entry and a builder in `generateWorld` |
+| `pathfinding` | A\* with a binary-heap open list on the tile grid (each side walks through its own gates). With `naval`, the same search runs on the water graph (open water only, no corner-cutting). Plus `nearestFree`, `nearestSail` and `landNear` fallbacks. Land and water regions (`regionsOf`, kept in `NAV`) say at once whether a trip needs a ship |
+| `naval` | The hybrid router and ferry service (`Ferry`). `request` turns any order across water into a crossing. `tick` gives waiting units a ship (one already loading there with room, else a free transport: moored at a Dock, then idle, then nearest). `sail` runs a transport's trip (pickup → load → sail → unload), with convoys and spread-out landing berths. `landing` picks the landing tiles. `orderBoard` and `unloadAt` handle the manual commands, `separateShips` keeps ships at rest apart (ships under way pass), `repairShips` mends them at docks. Every decision uses tiles and the unit list in order, so it's deterministic |
+| `orders` / `unit update` | Command state machine for units: `move`, `gather`, `deposit`, `build`, `repair`, `garrison`, `guard` (escort), `attack` (with `ret`, the order to go back to, and a leash), `ferry`, `patrol`, `hunt`, `blockade`. `pickTarget` works down any unit's `targets`: siege engines and warships alike, measured from the unit or from what it escorts, and a ship only picks what it can reach on its own water. `engage` and `attackFrom` break off an order to fight and come back to it. A ship's heading turns at its `turnRate` in `followPath`. Includes ranged combat (range, line of sight, kiting), cavalry charges, siege (`siegeTarget` works down an engine's `targets`, `canHit` and `targetKind` filter what it may attack, `ramGroup`, the deploy state machine `setDeploy` / `deployState` / `deployTimes`, minimum range), breaching walls (`walledOff`), the counter system (`dmgMult`, `hitDamage`, `fortFactor`) and soldier collision |
+| `buildings, training & research` | Training queues (`TRAINS`), upgrade effects (`TECHS`), tower upgrades and tower / castle volleys |
+| `fortifications` | Data-driven. Every defensive structure is a `BLDTYPES` entry with a `role`, and `ROLES` says what the role means: armour class (`ROLE_ARMOR`), siege priority (`SIEGE_ORDER`), join group, repair rate and cost, AI planning, and whether it counts as a town building. A structure's own data adds `fire` (volleys), `garrison` (plus `riders`), `territory`, `lay: 'line'`, `over` / `overOnly` (placed on another structure, replacing it), `indestructible` and `layer: 'ground'`. `fortifyData` fills in each entry's `id`, `armorClass` and `upgrades` at start-up. The tower line is `TOWER_TIERS`: a row grows out of the row before it unless `after` names another, and `becomes` turns the building into another type, growing it into free ground (`growSpot`). `nextTiers`, `tierLock`, `queueTowerTier` and `completeTowerTier` read only this table, so a new tier is one row, and a tier without its own picture borrows its parent's (`tierSprite`). Also: volleys (`fireOf`, `defenseOf`, `volley`), garrisons (`enterGarrison`, `ejectGarrison`), lines, rings and joins (`wallLine`, `ringTiles`, `placeWallLine`, `wallMask`, `joinOf`), moat round walls (`moatAround`), gates and drawbridges (`updGates`, `setGateLock`), territory (`computeInfluence`, `ownGround`), walled towns (`computeWalled`) and the alarm (`checkWarning`) |
+| `projectiles` | `Rng`, the seeded dice behind every roll the simulation makes (saved with the game). The `Projectiles` manager: `fire`, `update` (flight, target tracking, hits and misses, armour piercing, `IMPACT_FX` where it lands), `burst` (splash damage for any `PROJ_TYPES` kind with `splash`, the rolling boulder and fire), `burn` (burning ground) and `draw` (arcs, shadows, tumbling boulders and `TRAIL_FX`) |
 | `formations` | `formationSlots` and `formationMove` for Line, Square and Wedge |
-| `AI` | Economy balancing, build order, age-ups, upgrades, an army mix that counters yours, defence, and attack waves that gather in formation and flank with cavalry |
+| `AI` | Economy balancing (gatherer quotas per age, `aiQuota`), the navy (`aiNavy`: a Dock, fishing boats and transports; `aiCamp`: storage pits on islands it works; `aiOverseas`: landed soldiers fight on; seaborne invasions straight from `aiMuster`; the fleet: `aiFleet`, `aiShipChoice` (the best trade against your ships per cost squared), `aiFleetOrders` (missions from each ship's `aiOrders`), `blockadeStation`, `seaward`), build order, age-ups, upgrades, an army mix that counters yours, siege engines by role (`aiSiege` fills `AI_SIEGE_MIX`: 2 breach, then 1 of each other role, plus artillery against many towers), fortification (`aiRing`, `aiWalls` with `aiExits` keeping a gate where its way out crosses the ring, `aiTower`, `aiUpgradeTowers`, `aiRepair`, `aiShelter`, `aiRally`, the castle), defence, and attack waves that gather in formation, escort their siege and flank with cavalry |
 | `camera` | The `cam` object: position, `zoomCurrent` easing toward `zoomTarget`, the anchor that keeps the zoomed-on spot in place, clamping, tactical layers and the strategic overview |
 | `fog` / `rendering` / `minimap` | Visibility. One world transform (zoom × pixel density) with view culling, a pooled Y-sorted draw queue, simplified drawing at Far zoom and icons at Strategic zoom. The fog is drawn as merged runs in device pixels, and the minimap fog as one image |
 | `HUD` / `command panel` | Resource bar, selection info, context-sensitive command buttons |
 | `progression` | Score, milestones, achievements, missions and debounced save requests |
-| `serializer` | `GameSerializer.serialize` / `validate` / `restore`, which convert between the live world and plain JSON |
-| `game controller` / `UI` | New game, load, pause, restart and quit; the overlay stack, confirm / prompt / choice dialog, save-slot screen, settings, records and end screen |
+| `serializer` | `GameSerializer.serialize` / `validate` / `restore`, which convert between the live world and plain JSON. Whatever moves or counts down in a fight is saved at full precision, with the units' running timers, the dice and the sweep clocks, so a loaded battle resumes exactly |
+| `game controller` / `UI` | New game, load, pause, restart and quit; the overlay stack, confirm / prompt / choice dialog, the New Game screen with its map preview (`drawPreview`), map codes (`shareCode`, `parseShare`) and favourites (`MapPrefs`), save-slot screen, settings, records and end screen |
 | `input` | Mouse (wheel zoom, middle-button scroll), the touch gesture recogniser (tap, double tap, long-press, drag, pinch, three-finger overview), the long-press command menu and information cards, keyboard and minimap handlers, smart mobile mode, and the lifecycle autosave hooks |
 | `main loop` | `requestAnimationFrame` loop with a timestep capped at 50 ms. If a high-density canvas keeps drawing slowly (software rendering), it drops to 1× pixel density for the rest of the session |
 
@@ -287,16 +469,23 @@ Works in any current version of Chrome, Edge, Firefox or Safari, with a mouse an
 ---
 
 ## Known limitations
-- There's one map layout and one AI opponent. Of the upgrades, the AI researches only Fletching and Horse Breeding.
-- The AI gets a passive trickle of resources on top of what it gathers, scaled by difficulty.
+- There's one AI opponent, so every map has two players. Maps go up to 128×128 tiles. Larger maps would need a faster pathfinder and a tiled ground canvas. The AI doesn't seek out hills, landmarks or fords on purpose.
+- Warships fight only ships, and the cannon ship also docks, towers and castles: no ship attacks land units. Land units hit ships only from the shore (archers, towers, castles and ballistas), or soldiers when a ship is beside them. Units waiting at the shore for a ship don't fight back unless re-ordered. Boarding and landing take no time. Fishing boats and transports keep their side-view pictures; warships are drawn in 16 headings. The simulation is deterministic from a save and a sequence of frame times, but live play runs on real frame times, so two live games never match.
+- Of the upgrades, the AI researches only Fletching, Horse Breeding, Masonry, Engineering I and II, Counterweight Systems, Reinforced Frames and five of the Dock's (not Improved Rudders or Sea Navigation). Its fleet is capped at 6 warships and, like its army, shares the 50 population. Its waves send every siege engine at the wave's target, so a ballista shoots a town center if your army has no engines or riders for it. It builds wooden walls and gates only, never stone ones. It keeps one Keep and never grows one into a second castle.
+- The game has three ages, so the Keep (an "Iron Age" building in some designs) comes in the Bronze Age with Masonry. Moats can only be crossed at a drawbridge or on foot: pontoon bridges and engineers aren't in yet. Like a gate, a drawbridge changes only the routes planned after it moves, so a unit already crossing finishes.
+- The AI gets a passive trickle of resources on top of what it gathers, scaled by difficulty. It reaches the Bronze Age, and so its siege and castle, late (often after 10–15 minutes, its castle after 20 or more), and its villagers don't avoid your towers when they go looking for resources.
+- Territory and the walled-town check are worked out from the buildings, so a save doesn't need to store them. There's no morale or "security" beyond the combat bonuses described above.
 - Saves live in one browser. Use export and import to move them to another browser or device.
-- There are no walls or siege units. The counter table already has a siege row, and the projectile manager supports spears and fire arrows, so siege units only need data and art.
+- The projectile manager also supports fire arrows, which no unit uses yet.
 - Touch gestures were tested with simulated touch events and phone-sized screens, not on physical devices.
 
 ## Ideas for contributions
-- A siege workshop with rams and stone throwers
-- Random map seeds and more map layouts
-- Attack-move and patrol orders
+- More defences: palisades, bastions, curtain walls, gatehouses, citadels, imperial keeps, moat upgrades, boiling oil, traps. Each is a `BLDTYPES` entry with a `role`, so joins, armour class, siege priority, repairs and the AI's planning follow from `ROLES`. A wall-like one adds `lay: 'line'` and a sprite set. A stronger tower or keep is one more `TOWER_TIERS` row (with `becomes` if it is a building of its own).
+- More siege engines (mangonels, siege towers, bombards): one `UNITTYPES` entry with `cls: 'siege'`, a `siegeRole`, its `targets` and stats, and one `PROJ_TYPES` entry for its `projectileType`. It is built at the Siege Workshop, picks its targets, deploys, fires, saves and shows up in the AI's mix with no other change. Add a `UNIT_ART` entry with a `draw` function for a picture of its own. A siege tower that carries troops onto walls would need new behaviour.
+- More players per map. `generateWorld` already places starts and shares resources out in pairs, so it would need to work in sets of N instead.
+- More warships: one `UNITTYPES` entry with `naval: true`, a `role`, attack stats, a `proj`, a `sprite`, `targets` and `aiOrders`. It is built at the Dock, picks its targets, fights, saves, sinks and joins the AI's fleet with no other change. Give it a new picture with a `SPRITES` entry: a `model`, or a `sheet` image. Ships that fight land units or carry troops into battle would need new behaviour.
+- A map editor that saves a seed's terrain with your changes (saves already store terrain per tile)
+- Attack-move for every unit, and the Patrol order for land units (the order itself works for any unit; only warships have the button)
 
 ---
 
