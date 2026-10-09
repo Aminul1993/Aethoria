@@ -12,7 +12,7 @@ A small real-time strategy game *Aethoria*, written as **one HTML file** with pl
 
 Download `index.html` and open it in any modern browser. You can double-click the file, or drag it into a browser window. You don't need to install anything, run a server or build anything.
 
-The only network request is for the **Cinzel** and **Spectral** fonts from Google Fonts. If you're offline, the game still runs and uses fallback serif fonts.
+The only network request is for the **Cinzel** and **Rajdhani** fonts from Google Fonts. If you're offline, the game still runs and uses fallback fonts.
 
 ---
 
@@ -36,14 +36,15 @@ The only network request is for the **Cinzel** and **Spectral** fonts from Googl
 - **Minimap.** Click or tap it to look around, double-click or double-tap to zoom in on that spot, and right-click or long-press to send your selected units there.
 - **Zoom.** The camera zooms from 0.5× to 3× with smooth, animated steps, and the spot under the cursor or between your fingers stays put. There are four tactical layers: Close, Medium, Far and Strategic. At Strategic zoom units become team-coloured icons. Your last zoom is remembered between visits.
 - **A\* pathfinding** on the tile grid (48×48 to 128×128), with 8-direction movement and no corner-cutting. Units wade through fords and walk round mountains and deep water. Ships use their own water graph, and a hybrid router joins the two for any trip that has to cross water.
-- **Procedural pixel art.** Units are drawn from ASCII sprite maps, with idle, walk, attack and death animations. Trees, mines, buildings and terrain use seeded noise.
+- **Painted graphics.** Every picture is painted in code when the page loads, with gradients, soft shadows and light from the north-west. People are posed figures (six-frame walk, breathing idle, a strike or a drawn bow) in their side's colours; riders sit horses with a gait and barding; siege engines set up, loose and pack away. Buildings have thatch, timber, plaster and dressed stone, with banners in their owner's colours. The ground is painted from seeded noise: blended grass, earth and sand, lit hills, craggy ranges with snow on the peaks, coasts with foam lines and deepening water, and lava with glowing veins, with tufts, flowers, pebbles and reeds drawn over it.
+- **Atmosphere.** Soft-edged fog of war, cloud shadows drifting over the land, warm light, a vignette and film grain, glints moving on the water, chimney smoke and birds. Settings can turn the atmosphere off.
 - **Synthesized sound.** Chopping, mining, combat, the building-complete bell and the age-up fanfare are all generated with the Web Audio API.
-- **Classic interface.** A resource bar at the top, and a bottom panel with the minimap, info panel, command grid and tooltips.
+- **Interface.** A gold-on-dark resource bar at the top (with the idle villager count, score and age), a mission card, and a bottom panel with the minimap, info panel, command grid and tooltips. Hovering a unit, building or resource names it; selections are marked with gold rings and corner brackets.
 - **Save slots.** Five independent save slots and three rotating autosaves, stored in your browser's `localStorage`. Each slot shows a screenshot, level, completion, play time, difficulty, resources, location and when it was saved. You can load, overwrite, delete, rename, copy, export and import saves, and damaged saves can be restored from a backup.
 - **Upgrades.** Eleven technologies researched at the Storage Pit, Town Center, Barracks, Archery Range and Stable.
 - **Missions, score and achievements.** A mission tracker guides you through a 12-step campaign. You earn points for your economy, army and conquests, and there's a persistent high score, an XP rank and 15 achievements.
 - **Three difficulty levels** (Easy, Normal, Hard) that change the enemy's income, army size and attack timing.
-- **Settings.** Master, effects and music volume, difficulty, three interface themes (Classic, Midnight, High contrast), automatic interface fitting and UI scale, scroll speed, edge scrolling, swapped mouse buttons, touch controls, one-finger drag, pinch zoom, zoom and gesture sensitivity, touch feedback, reduced motion, colour-blind-friendly team colours and longer on-screen messages. Settings are remembered between visits.
+- **Settings.** Master, effects and music volume, difficulty, three interface themes (Gold and ember, Midnight, High contrast), the atmosphere, automatic interface fitting and UI scale, scroll speed, edge scrolling, swapped mouse buttons, touch controls, one-finger drag, pinch zoom, zoom and gesture sensitivity, touch feedback, reduced motion, colour-blind-friendly team colours and longer on-screen messages. Settings are remembered between visits.
 - **Touch screens.** The game is fully playable on phones, tablets and touch laptops. Pinch to zoom, use two fingers to scroll, long-press for a command menu, and tap with three fingers for the strategic overview. Touch mode switches on automatically and makes every control at least 48×48 px. Hover tooltips become tap-to-view details and long-press information cards. On a phone held sideways, the minimap and commands move to a side column. The interface scales to the screen, and the battlefield renders at the screen's pixel density.
 - **Generative music.** A quiet ambient score is played by the Web Audio API alongside the sound effects.
 
