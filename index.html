@@ -50,6 +50,9 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:var(--titleBg)}
+html{color-scheme:dark}   /* every theme is dark: native checkboxes, selects, scrollbars and pickers follow */
+input{caret-color:var(--gold)}
+::selection{background:var(--gold);color:var(--bg1)}
 body{font-family:'Rajdhani',system-ui,sans-serif;font-weight:500;color:var(--text);touch-action:pan-x pan-y;   /* no browser pinch-zoom or double-tap zoom: pinches belong to the map */
  background:radial-gradient(1200px 800px at 50% 30%,var(--bg0) 0%,var(--bg1) 55%,var(--bg2) 100%)}
 button{font:inherit}
@@ -83,7 +86,7 @@ svg{display:block}
 .res{display:flex;align-items:center;gap:8px;padding:5px 12px 5px 7px;border-radius:11px;border:1px solid var(--line);background:var(--chip);white-space:nowrap;cursor:default;flex:none}
 .res .ric{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;flex:none;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.07)}
 .res .ric svg{width:16px;height:16px}
-.res .rv{display:block;font:700 19px 'Rajdhani',sans-serif;line-height:1;min-width:30px;color:var(--text)}
+.res .rv{display:block;font:700 19px 'Rajdhani',sans-serif;line-height:1;min-width:30px;color:var(--text);font-variant-numeric:tabular-nums}
 .res .rl{display:block;font:600 9.5px 'Rajdhani',sans-serif;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-top:1px}
 .res.cap .rv{color:var(--amber)}
 .spacer{flex:1;min-width:0}
@@ -94,13 +97,13 @@ svg{display:block}
 .idle-btn.none{border-color:var(--line)!important;color:var(--muted)!important}
 .idle-btn.none .pulse{animation:none;background:var(--dim);box-shadow:none}
 @keyframes pulse{50%{opacity:.3;transform:scale(.7)}}
-.idle-count{font:700 13px 'Rajdhani',sans-serif;background:rgba(240,168,60,.18);border:1px solid rgba(240,168,60,.4);border-radius:6px;padding:0 7px;line-height:18px}
+.idle-count{font:700 13px 'Rajdhani',sans-serif;font-variant-numeric:tabular-nums;background:rgba(240,168,60,.18);border:1px solid rgba(240,168,60,.4);border-radius:6px;padding:0 7px;line-height:18px}
 .idle-btn.none .idle-count{background:rgba(255,255,255,.04);border-color:var(--line)}
 .score-chip{display:flex;flex-direction:column;align-items:flex-end;padding:4px 13px;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.25);line-height:1.05;white-space:nowrap;flex:none}
-.score-chip .sv{font:700 19px 'Rajdhani',sans-serif;color:var(--goldHi)}
+.score-chip .sv{font:700 19px 'Rajdhani',sans-serif;color:var(--goldHi);font-variant-numeric:tabular-nums}
 .score-chip .sb{font:600 10px 'Rajdhani',sans-serif;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
 .score-chip .sb span{color:var(--gold)}
-#saveInd{font:600 11px 'Rajdhani',sans-serif;letter-spacing:.06em;color:var(--muted);white-space:nowrap;opacity:.9;min-width:0;max-width:150px;overflow:hidden;text-overflow:ellipsis}
+#saveInd{font:600 11px 'Rajdhani',sans-serif;letter-spacing:.06em;color:var(--muted);white-space:nowrap;opacity:.9;flex:none;max-width:150px;overflow:hidden;text-overflow:ellipsis}
 #saveInd.saving{color:var(--gold)}#saveInd.ok{color:var(--good)}#saveInd.err{color:var(--bad)}
 .age-chip{display:flex;align-items:center;gap:10px;padding:6px 15px 6px 8px;border-radius:11px;white-space:nowrap;flex:none;
  border:1px solid var(--line2);background:linear-gradient(180deg,rgba(233,196,106,.12),rgba(233,196,106,.03))}
@@ -115,7 +118,7 @@ svg{display:block}
 #game{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}
 #game.placing{cursor:crosshair}
 #game.hover{cursor:pointer}
-#toasts{position:fixed;top:calc(env(safe-area-inset-top) + 76px);left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;z-index:45;width:max-content;max-width:92%}
+#toasts{position:absolute;top:18px;left:50%;   /* just under the top bar, however many rows it has */transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;z-index:45;width:max-content;max-width:92%}
 .toast{display:flex;align-items:center;gap:11px;padding:10px 20px 10px 16px;border-radius:12px;background:var(--panel2);border:1px solid var(--line2);
  box-shadow:0 12px 34px rgba(0,0,0,.6);color:var(--text);font:600 15px 'Rajdhani',sans-serif;letter-spacing:.02em;text-align:left;
  animation:tfade var(--toastDur,2.6s) forwards}
@@ -140,7 +143,7 @@ svg{display:block}
 #mission .mh svg{width:14px;height:14px}
 #mission .mt{font:600 16px 'Cinzel',serif;line-height:1.35;color:var(--text);margin-bottom:10px}
 #mission .mp{display:flex;align-items:center;gap:12px}
-#mission .mp #misProg{font:700 14px 'Rajdhani',sans-serif;color:var(--gold);white-space:nowrap}
+#mission .mp #misProg{font:700 14px 'Rajdhani',sans-serif;color:var(--gold);white-space:nowrap;font-variant-numeric:tabular-nums}
 #mission.nogoal .mp{display:none}
 #mission.nogoal .mt{margin-bottom:0}
 .bar{flex:1;height:8px;border-radius:99px;background:rgba(0,0,0,.5);overflow:hidden;border:1px solid rgba(255,255,255,.08)}
@@ -151,14 +154,15 @@ svg{display:block}
 #mission.done .mh{color:var(--good)}
 #floatBtns{position:absolute;right:16px;top:16px;z-index:3;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
 #floatBtns .btn{padding:8px 14px;font-size:13px;background:var(--panel);backdrop-filter:blur(3px)}
+#floatBtns .btn svg{width:16px;height:16px;flex:none}
 #zoomCtl{position:absolute;right:16px;bottom:16px;z-index:3;display:flex;gap:4px;align-items:stretch;
  background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:5px;box-shadow:0 10px 30px rgba(0,0,0,.5);backdrop-filter:blur(3px)}
 #zoomCtl .btn{min-width:36px;height:36px;padding:0 8px;font:700 20px 'Rajdhani',sans-serif;line-height:1;display:flex;align-items:center;justify-content:center;
  background:transparent;border-color:transparent;border-radius:8px}
 #zoomCtl .btn:hover:not([disabled]){background:var(--btnHover)}
 #zoomCtl .zl{flex-direction:column;min-width:64px;gap:1px;border-radius:0;border-left:1px solid var(--line)!important;border-right:1px solid var(--line)!important}
-#zoomCtl .zl b{font:700 16px 'Rajdhani',sans-serif;color:var(--text)}
-#zoomCtl .zl small{font:600 8.5px 'Rajdhani',sans-serif;letter-spacing:.2em;color:var(--muted)}
+#zoomCtl .zl b{font:700 16px 'Rajdhani',sans-serif;color:var(--text);font-variant-numeric:tabular-nums}
+#zoomCtl .zl small{font:600 10px 'Rajdhani',sans-serif;letter-spacing:.14em;color:var(--muted)}
 #ctxBack{position:absolute;inset:0;z-index:6}
 #ctxMenu{position:absolute;z-index:46;overflow:auto;max-width:calc(100% - 16px)}   /* above the toasts: it is what the player is touching */
 #ctxMenu .ctxIn{background:var(--tipBg);border:1px solid var(--tipBorder);border-radius:14px;box-shadow:0 14px 40px rgba(0,0,0,.6);padding:12px;width:244px;display:flex;flex-direction:column;gap:7px}
@@ -186,7 +190,7 @@ svg{display:block}
 #info .psub{font:600 11.5px 'Rajdhani',sans-serif;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;margin:2px 0 6px}
 #info .pstats{font:500 13.5px 'Rajdhani',sans-serif;color:var(--soft);line-height:1.4}
 #info .empty{color:var(--muted);font:500 16px 'Rajdhani',sans-serif;letter-spacing:.03em;padding:0 4px}
-#info .empty small{display:block;font-size:12.5px;margin-top:4px;color:var(--dim)}
+#info .empty small{display:block;font-size:12.5px;margin-top:4px;color:var(--muted)}
 .hpbarO{width:180px;max-width:100%;height:7px;background:var(--hpBack);border:1px solid rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin-top:7px;flex:none}
 .hpbarI{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--hp1),var(--hp2),var(--hp1));background-size:200% 100%}
 .hpbarI.mid{--hp1:#b8862a;--hp2:#f0c060}.hpbarI.low{--hp1:#a83a24;--hp2:#e8704a}
@@ -194,6 +198,9 @@ svg{display:block}
 #multiGrid{display:flex;flex-wrap:wrap;gap:5px;align-content:flex-start;max-height:96px;overflow:hidden}
 #multiGrid canvas{width:40px;height:40px;cursor:pointer;border-radius:9px;border:1px solid var(--line);background:radial-gradient(circle at 40% 30%,rgba(233,196,106,.12),rgba(0,0,0,.35) 70%)}
 #multiGrid canvas:hover{border-color:var(--line3)}
+#multiGrid .mg{position:relative;display:block}#multiGrid .mg canvas{display:block}
+#multiGrid .mg b{position:absolute;right:2px;bottom:2px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--gold);color:#241a08;
+ font:700 10.5px/16px 'Rajdhani',sans-serif;font-variant-numeric:tabular-nums;text-align:center;pointer-events:none;box-shadow:0 2px 6px rgba(0,0,0,.5)}
 #cmds{flex:none;width:384px;position:relative;display:grid;grid-template-columns:repeat(auto-fill,52px);grid-auto-rows:52px;gap:8px;align-content:start;justify-content:center;padding:12px 10px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
 .cbtn{width:52px;height:52px;border-radius:12px;cursor:pointer;padding:5px;position:relative;
  border:1px solid var(--line);background:linear-gradient(180deg,var(--btn1),var(--btn2));transition:transform .15s,border-color .15s,background .15s}
@@ -234,7 +241,7 @@ svg{display:block}
  background:linear-gradient(180deg,#fff2c4 10%,var(--gold) 50%,var(--goldLo) 92%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 12px rgba(0,0,0,.6))}
 [data-theme="contrast"] #title h1{background:none;color:var(--gold)}
 #title .sub{font:600 clamp(10px,2.4vw,13px) 'Rajdhani',sans-serif;letter-spacing:.42em;color:var(--muted);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:6px 22px;text-align:center;text-transform:uppercase}
-#title .hint{font:500 13px 'Rajdhani',sans-serif;color:var(--dim);margin-top:6px;text-align:center;padding:0 10px;line-height:1.6;letter-spacing:.03em}
+#title .hint{font:500 13px 'Rajdhani',sans-serif;color:var(--muted);margin-top:6px;text-align:center;padding:0 10px;line-height:1.6;letter-spacing:.03em}
 #saveSummary{font:500 13px 'Rajdhani',sans-serif;color:var(--soft);text-align:center;margin-top:-4px;min-height:16px}
 #profileCard{font:500 14px 'Rajdhani',sans-serif;color:var(--soft);text-align:center;letter-spacing:.03em}
 #profileCard b{font-family:'Cinzel',serif;font-weight:700;color:var(--gold)}
@@ -242,7 +249,7 @@ svg{display:block}
 .xpbar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold2),var(--goldHi),var(--gold2));background-size:200% 100%;animation:shimmer 2.6s linear infinite}
 .menuCol{display:flex;flex-direction:column;gap:10px;align-items:center;margin-top:10px}
 .menuRow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-.parch{position:relative;background:var(--panel2);color:var(--parchText);border:1px solid var(--line2);border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.7);
+.parch{position:relative;background:linear-gradient(var(--panel2),var(--panel2)),var(--bg1);color:var(--parchText);   /* solid: the title lettering never shows through a dialog's text */border:1px solid var(--line2);border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.7);
  width:min(600px,100%);max-height:calc(100vh - 24px);overflow:auto;padding:24px clamp(18px,4vw,36px);font:500 15px 'Rajdhani',sans-serif;
  scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
 .parch.narrow{width:min(420px,100%)}
@@ -262,6 +269,7 @@ svg{display:block}
 .srow input[type=range]{width:150px;accent-color:var(--gold)}
 .parch select,.srow select{font:600 14px 'Rajdhani',sans-serif;padding:5px 8px;background:rgba(0,0,0,.35);color:var(--text);border:1px solid var(--line);border-radius:8px}
 .parch select option{background:#1e1810;color:var(--text)}
+.parch select:disabled{opacity:.6;cursor:default}
 .srow input[type=checkbox]{width:18px;height:18px;accent-color:var(--gold)}
 .srow output{min-width:42px;text-align:right;font-variant-numeric:tabular-nums;color:var(--gold);font-weight:700}
 .note{font-size:13px!important;opacity:.85;color:var(--muted)!important}
@@ -289,21 +297,30 @@ svg{display:block}
 .achList{list-style:none;margin:0!important;display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .achList li{border:1px solid var(--line);border-radius:10px;background:rgba(0,0,0,.2);padding:8px 10px;margin:0!important;line-height:1.3!important;font-size:13px!important}
 .achList li b{display:block;font:700 13px 'Cinzel',serif;color:var(--text);margin-bottom:2px}
-.achList li.locked{opacity:.45}
+.achList li.locked{opacity:.62}   /* dimmed, but the goal stays readable (4.5:1) */
 .achList li.got{border-color:var(--line2);background:linear-gradient(180deg,rgba(233,196,106,.1),rgba(0,0,0,.15))}
 .achList li.got b::before{content:'★ ';color:var(--gold)}
 .statTable{width:100%;border-collapse:collapse;font-size:14px}
 .statTable td{padding:5px 6px;border-bottom:1px solid var(--parchRule);color:var(--parchText)}
 .statTable td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:var(--goldHi)}
 .misList{list-style:none;margin:0!important}
-.misList li{font-size:14px!important;margin:0 0 4px!important}
+.misList li{position:relative;padding-left:21px;font-size:14px!important;margin:0 0 4px!important}
 .misList li.done{opacity:.55;text-decoration:line-through}
 .misList li.cur{font-weight:700;color:var(--goldHi)}
-.misList li::before{content:'☐ ';color:var(--gold2)}.misList li.done::before{content:'☑ ';}
+/* drawn check boxes: the ☐ / ☑ characters turn into emoji on some phones */
+.misList li::before{content:'';position:absolute;left:1px;top:calc(.775em - 6px);width:9px;height:9px;border:1.5px solid var(--gold2);border-radius:2px}
+.misList li.done::before{background:var(--gold2)}
+.misList li.done::after{content:'';position:absolute;left:5.5px;top:calc(.775em - 4.5px);width:2.5px;height:5.5px;border:solid var(--bg1);border-width:0 1.8px 1.8px 0;transform:rotate(45deg)}
 .hidden{display:none!important}
 #endOv .parch{text-align:center}
 #endOv .big{font:900 clamp(30px,8vw,50px) 'Cinzel',serif;letter-spacing:.24em;padding-left:.24em;margin-bottom:6px}
 #endOv .scoreLine{font:700 20px 'Cinzel',serif;margin-bottom:6px;color:var(--text)}
+#endOv .statTable td:first-child{text-align:left}
+#menuOv .menuCol{width:min(300px,100%);margin-left:auto;margin-right:auto;align-items:stretch}   /* one even column of buttons */
+#menuOv .menuRow{flex-wrap:nowrap}
+#menuOv .menuRow .btn{flex:1 1 0;min-width:0;padding-left:10px;padding-right:10px}
+#menuOv .btn.wide{min-width:0}
+.nw{white-space:nowrap}
 .badge{display:inline-block;font:700 10px 'Rajdhani',sans-serif;letter-spacing:.14em;background:var(--gold);color:#241a08;padding:2px 8px;border-radius:6px;margin-left:8px;vertical-align:middle}
 #confirmOv .parch{text-align:center}
 #saveSummary .warnT{color:var(--bad)}
@@ -373,7 +390,9 @@ svg{display:block}
  #info .pname{font-size:14px}#info .psub{display:none}#info .pstats{font-size:12px;margin-top:0;line-height:1.25}
  #info .hpbarO{display:none}
  #multiGrid{max-height:44px}#multiGrid canvas{width:30px;height:30px}
+ #info .multi{flex-direction:row;align-items:center;justify-content:flex-start;gap:10px}   /* one line: the strip is short */
  #minimap{width:96px;height:96px}
+ #mmWrap{align-self:flex-start}
  #cmds{flex:1 1 0;padding:5px;gap:5px;max-height:112px;overflow-y:auto;grid-template-columns:repeat(auto-fill,46px);grid-auto-rows:46px}
  .cbtn{width:46px;height:46px;padding:5px;border-radius:11px}
  .score-chip .sb,#saveInd{display:none}
@@ -388,6 +407,20 @@ svg{display:block}
  .ngMap{width:min(290px,100%);margin:0 auto}
  .diffGrid{gap:6px}
 }
+/* The top bar sheds detail a step at a time until it fits (fitTopbar): late-game numbers, the best score and a large UI scale
+   can need more room than the width breakpoints above allow, and an overflowing bar would cut off the age and the score. */
+#topbar.fit1 .brand b,#topbar.fit2 #saveInd{display:none}
+#topbar.fit3{gap:7px;padding-left:10px;padding-right:10px}
+#topbar.fit3 .res{padding:4px 9px 4px 5px;gap:6px}
+#topbar.fit3 .res .ric{width:24px;height:24px}
+#topbar.fit3 .res .rl,#topbar.fit3 .age-chip .as,#topbar.fit3 .lbl,#topbar.fit3 #hiVal{display:none}
+#topbar.fit4{gap:6px;padding-left:8px;padding-right:8px}
+#topbar.fit4 .brand,#topbar.fit4 .score-chip .sb,#topbar.fit4 .age-chip .an{display:none}
+#topbar.fit4 .res .rv{font-size:16px;min-width:0}
+#topbar.fit4 .score-chip{padding:3px 9px}#topbar.fit4 .score-chip .sv{font-size:16px}
+#topbar.fit4 .age-chip{padding:4px;gap:0}
+#topbar.fit5{flex-wrap:wrap;row-gap:4px;justify-content:center}
+#topbar.fit5 .spacer{display:none}
 @media (max-height:500px) and (orientation:landscape){
  #topbar{min-height:38px;padding:2px 8px}
  .res{padding:3px 8px 3px 4px;gap:5px}.res .ric{width:20px;height:20px;border-radius:6px}.res .ric svg{width:12px;height:12px}
@@ -397,7 +430,14 @@ svg{display:block}
  #cmds{gap:5px;padding:5px;overflow-y:auto;grid-template-columns:repeat(auto-fill,42px);grid-auto-rows:42px}
  #info .pstats{font-size:12px;line-height:1.3}
  #info .sel-icon{width:52px;height:52px}#info .sel-icon canvas{width:40px!important;height:40px!important}
- #title .hero{width:min(560px,80vw)}
+ /* the title art and name on the left, the menu on the right, so every button is on the first screen */
+ #title .inner{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:clamp(16px,4vw,40px);row-gap:8px;align-items:center;justify-items:center;
+  width:min(100%,920px);padding:10px 8px}
+ #title .inner>*{grid-column:1}
+ #title .menuCol{grid-column:2;grid-row:1/span 4;margin-top:0}
+ #title .hero{width:100%}
+ #title h1{font-size:clamp(28px,5.4vw,44px);margin-top:0}
+ #title .hint{display:none}
  #mission{display:none}
 }
 @media (pointer:coarse){ .btn{padding:11px 20px} .tbtn{padding:7px 10px!important} .btn.sm{padding:8px 14px} .lnk{padding:8px} }
@@ -409,6 +449,7 @@ svg{display:block}
 .touch-ui .tbtn{min-width:var(--tap)}
 .touch-ui #floatBtns{flex-direction:row;align-items:flex-start}
 .touch-ui #floatBtns .btn,.touch-ui #zoomCtl .btn{min-width:var(--tap);height:var(--tap);font-size:18px;padding:0 10px}
+.touch-ui #floatBtns .btn svg{width:20px;height:20px}
 .touch-ui #zoomCtl .zl{min-width:calc(var(--tap) * 1.6);font-size:13px}
 .touch-ui #ctxMenu .ctxIn{width:270px}
 .touch-ui .srow{min-height:var(--tap)}
@@ -425,7 +466,9 @@ svg{display:block}
  .touch-ui #bottombar{grid-row:2;grid-column:2;height:auto;min-height:0;flex-direction:column;flex-wrap:nowrap;gap:5px;padding:5px 5px calc(5px + env(safe-area-inset-bottom));overflow:hidden}
  .touch-ui #mmWrap{align-self:center}
  .touch-ui #info{order:0;flex:none;height:auto;max-height:64px;width:calc(var(--cb) * 3 + 26px);padding:4px 7px;align-items:flex-start;flex-wrap:wrap;gap:2px 6px}
- .touch-ui #info .sel-icon{display:none}
+ .touch-ui #info .sel-icon,.touch-ui #info .psub{display:none}
+ .touch-ui #info .pname{font-size:15px}
+ .touch-ui #info .sel-body{max-height:56px}   /* longer details scroll instead of being cut mid-line */
  .touch-ui #multiGrid{max-height:30px}.touch-ui #multiGrid canvas{width:28px;height:28px}
  .touch-ui #info .hpbarO{display:none}
  .touch-ui #cmds{flex:1 1 0;min-height:0;width:calc(var(--cb) * 3 + 26px);max-height:none;overflow-y:auto}
@@ -454,9 +497,9 @@ svg{display:block}
     <canvas id="game" aria-label="Game map"></canvas>
     <div id="mission" class="scaled hidden" title="Current mission — tap for the full list"><div class="mh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 3v18M6 4h12l-2.5 4L18 12H6"/></svg><span>MISSION <span id="misNum"></span></span></div><div class="mt" id="misText"></div><div class="mp"><div class="bar"><i id="misBar"></i></div><span id="misProg"></span></div></div>
     <div id="floatBtns" class="scaled">
-      <button class="btn hidden" id="cancelPlaceBtn" aria-label="Cancel build">&#10005;<span class="lbl2"> Cancel build</span></button>
-      <button class="btn hidden" id="deselectBtn" aria-label="Deselect">&#10005;<span class="lbl2"> Deselect</span></button>
-      <button class="btn hidden" id="boxBtn" title="Touch: next drag draws a selection box" aria-label="Box select">&#9633;<span class="lbl2"> Box select</span></button>
+      <button class="btn hidden" id="cancelPlaceBtn" aria-label="Cancel build"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="lbl2">Cancel build</span></button>
+      <button class="btn hidden" id="deselectBtn" aria-label="Deselect"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="lbl2">Deselect</span></button>
+      <button class="btn hidden" id="boxBtn" title="Touch: next drag draws a selection box" aria-label="Box select"></button>
     </div>
     <div id="zoomCtl" class="scaled hidden" role="group" aria-label="Zoom">
       <button class="btn" id="zoomOutBtn" title="Zoom out (− key, mouse wheel or pinch)" aria-label="Zoom out">&minus;</button>
@@ -714,11 +757,11 @@ const fmtClock=ts=>new Date(ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-
 const fmtDate=ts=>new Date(ts).toLocaleString([],{dateStyle:'medium',timeStyle:'short'});
 /** Save-slot play time: "12h 34m", "34m" or "under 1m". */
 const fmtPlay=sec=>{sec=Math.max(0,Math.floor(sec));const h=sec/3600|0,m=(sec%3600)/60|0;return h?h+'h '+String(m).padStart(2,'0')+'m':m?m+'m':'under 1m';};
-/** "Today, 14:02", "Yesterday, 09:10" or a full date. */
-function fmtSaved(ts){
+/** "Today, 14:02", "Yesterday, 09:10" or a full date; `mid` for the middle of a sentence ("today, 14:02"). */
+function fmtSaved(ts,mid=false){
  if(!ts)return'unknown';
  const day=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(),n=Math.round((day(new Date())-day(new Date(ts)))/864e5);
- return n===0?'Today, '+fmtClock(ts):n===1?'Yesterday, '+fmtClock(ts):fmtDate(ts);
+ return n===0?(mid?'today, ':'Today, ')+fmtClock(ts):n===1?(mid?'yesterday, ':'Yesterday, ')+fmtClock(ts):fmtDate(ts);
 }
 const getPath=(o,p)=>p.split('.').reduce((a,k)=>a==null?undefined:a[k],o);
 const setPath=(o,p,v)=>{const ks=p.split('.'),last=ks.pop();let t=o;for(const k of ks){if(!isObj(t[k]))t[k]={};t=t[k];}t[last]=v;};
@@ -5900,7 +5943,7 @@ let vw=800,vh=600,DPR=1,lowRes=false;
 /** Fit the canvas to its box at the screen's pixel density (up to MAX_DPR), keeping the view centred where it was. */
 function resize(){
  const keep=Game.phase!=='title'?cam.center():null;
- applyUiScale();
+ applyUiScale();fitTopbar();                       // the top bar first: if it wraps, the battlefield is shorter
  const vp=$('#vp');vw=Math.max(1,vp.clientWidth);vh=Math.max(1,vp.clientHeight);
  DPR=lowRes?1:clamp(window.devicePixelRatio||1,1,CONFIG.MAX_DPR);
  gameCv.width=Math.round(vw*DPR);gameCv.height=Math.round(vh*DPR);
@@ -6272,7 +6315,8 @@ const hudEls={w:$('#rW'),f:$('#rF'),g:$('#rG'),s:$('#rS'),p:$('#rP'),age:$('#age
  score:$('#scoreVal'),hi:$('#hiVal'),idle:$('#idleCount'),idleBtn:$('#idleBtn')};
 const AGE_ROMAN=['I','II','III'],AGE_ERA=['Expansion era','Era of craft','Era of conquest'];
 /** Set a counter's text only when it changes, and bump it when a resource goes up. */
-function hudSet(el,v,bump){const s=String(v);if(el.textContent===s)return;const up=bump&&+s>+el.textContent;el.textContent=s;
+function hudSet(el,v,bump){const s=String(v);if(el.textContent===s)return;const up=bump&&+s>+el.textContent;
+ if(s.length!==el.textContent.length)hudFit=true;el.textContent=s;
  if(up&&!(Settings.data&&Settings.data.access.reducedMotion)&&el.animate)el.animate([{transform:'scale(1)'},{transform:'scale(1.22)',color:'#fff'},{transform:'scale(1)'}],{duration:380});}
 function updHUD(){
  const R=state.res[0];
@@ -6286,7 +6330,20 @@ function updHUD(){
  hudSet(hudEls.hi,hi?' · Best '+fmtInt(hi):'');
  let idle=0;for(const u of state.units)if(u.player===0&&u.type==='villager'&&!u.cmd)idle++;
  hudSet(hudEls.idle,idle);hudEls.idleBtn.classList.toggle('none',!idle);
+ if(hudFit){const t=$('#topbar'),h=t.offsetHeight;fitTopbar();if(t.offsetHeight!==h)resize();}   // a second row takes height from the battlefield
 }
+/**
+ * Fit the top bar to its width: drop the brand name, then the save note, then the small labels, then the names, and as a last
+ * step wrap onto two rows. Runs when a counter gains or loses a digit, a save note changes, or the window or UI scale changes.
+ */
+const FIT_STEPS=['fit1','fit2','fit3','fit4','fit5'];
+let hudFit=true;
+function fitTopbar(){
+ const t=$('#topbar');hudFit=false;
+ t.classList.remove(...FIT_STEPS);
+ for(const c of FIT_STEPS){if(t.scrollWidth<=t.clientWidth+1)break;t.classList.add(c);}
+}
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(cmdsReady)resize();});   // the web fonts are wider than the fallbacks
 /** Tap (or click) a resource counter to see what it pays for: touch screens have no hover tooltips. */
 const RES_TIPS={Wood:'Chop trees. Pays for buildings, archers and siege engines.',Food:'From berry bushes and farms. Pays for villagers, soldiers and the ages.',
  Gold:'Mine it. Pays for stronger units and upgrades.',Stone:'Mine it. Pays for towers, stone walls, the Castle, the Siege Workshop and siege engines.',
@@ -6366,10 +6423,11 @@ function updInfo(){
   el.innerHTML='<div class="multi"><div class="pname">'+s.length+' units selected</div></div>';
   const g=document.createElement('div');g.id='multiGrid';
   const byType={};for(const u of s)if(u.kind==='u')(byType[u.type]=byType[u.type]||[]).push(u);
-  for(const t in byType){const c=iconCanvas(t);
-   c.title=UNITTYPES[t].name+' ×'+byType[t].length;
+  for(const t in byType){const c=iconCanvas(t),n=byType[t].length,w=document.createElement('span');
+   c.title=UNITTYPES[t].name+' ×'+n;
    c.onclick=()=>{state.sel=byType[t];updInfo();refreshCmds(true);};
-   g.appendChild(c);}
+   w.className='mg';w.appendChild(c);if(n>1)w.insertAdjacentHTML('beforeend','<b>'+n+'</b>');   // how many of each type, without a hover
+   g.appendChild(w);}
   el.firstElementChild.appendChild(g);
  }
 }
@@ -6560,7 +6618,8 @@ function unlock(id){
  const P=Profile.data;if(!P||P.achievements[id]||!ACH_BY_ID[id])return;
  P.achievements[id]=Date.now();P.xp+=SCORE.xpPerAchievement;
  if(!state.achNew.includes(id))state.achNew.push(id);
- toast('Achievement unlocked: '+ACH_BY_ID[id].name,'ach');SFX.achieve();
+ if(!state.over)toast('Achievement unlocked: '+ACH_BY_ID[id].name,'ach');   // at the end of a game the results screen lists them
+ SFX.achieve();
  if(Game.phase==='playing'&&!state.over)requestSave('achievement',true);else Profile.save();
 }
 function checkProgress(){
@@ -6987,8 +7046,9 @@ const UI={
  stack:[],
  open(id){closeCtx();hideTip();const el=$('#'+id);el.classList.remove('hidden');this.stack=this.stack.filter(x=>x!==id);this.stack.push(id);
   el.style.zIndex=String(20+this.stack.length);          // the most recently opened screen is always on top
-  const f=el.querySelector('button:not([disabled]):not(.hidden),select,input:not(.hidden)');if(f&&!isTouchUI)f.focus({preventScroll:true});},
- close(id){$('#'+id).classList.add('hidden');this.stack=this.stack.filter(x=>x!==id);},
+  const f=el.querySelector('button:not([disabled]):not(.hidden),select,input:not(.hidden)');if(f&&!isTouchUI)f.focus({preventScroll:true});
+  checkRotateHint();},
+ close(id){$('#'+id).classList.add('hidden');this.stack=this.stack.filter(x=>x!==id);checkRotateHint();},
  isOpen(id){return this.stack.includes(id);},
  top(){return this.stack[this.stack.length-1]||null;},
  anyOpen(){return this.stack.length>0;},
@@ -7033,7 +7093,7 @@ function handleEscape(){
  else if(state.sel.length){state.sel=[];selectionChanged();}
  else Game.pause(true);
 }
-function setSaveInd(cls,text){const el=$('#saveInd');el.className=cls;el.textContent=text;}
+function setSaveInd(cls,text){const el=$('#saveInd');el.className=cls;if(el.textContent!==text)hudFit=true;el.textContent=text;}
 let lastFailToast=-1e9;
 function onSaveStatus(status,reason,detail,slotId){
  const auto=slots.isAuto(slotId);
@@ -7057,7 +7117,7 @@ function updMenuSaveInfo(){
  const el=$('#menuSaveInfo');if(!el)return;
  if(!storage.persistent){el.textContent='Saving is unavailable in this browser mode — progress is lost when the tab closes.';return;}
  el.textContent=(slots.active?'Playing in '+slots.label(slots.active)+' — '+slots.activeName:'This game has no save slot yet — use Save Game')+
-  (slots.lastSavedAt?' · saved '+fmtSaved(slots.lastSavedAt):'')+(slots.lastAutoAt?' · autosaved '+fmtClock(slots.lastAutoAt):'')+
+  (slots.lastSavedAt?' · saved '+fmtSaved(slots.lastSavedAt,true):'')+(slots.lastAutoAt?' · autosaved '+fmtClock(slots.lastAutoAt):'')+
   ' · autosaves every '+CONFIG.AUTOSAVE_INTERVAL+' s';
 }
 function openPauseMenu(){
@@ -7139,8 +7199,9 @@ function drawPreview(c,W){
 function worldStats(W){const n=W.n*W.n,cnt=new Array(TERRAIN.length).fill(0),R={tree:0,gold:0,stone:0,berry:0,deer:0,fish:0};
  for(let i=0;i<n;i++)cnt[W.tiles[i]]++;for(const r of W.res)R[r.type]++;
  const pc=v=>Math.round(v/n*100)+'%',wet=cnt[TT.WATER]+cnt[TT.SHALLOW];
- return'Land '+pc(n-wet)+' · Water '+pc(wet)+' · Mountains '+pc(cnt[TT.MOUNTAIN])+' · Hills '+pc(cnt[TT.HILL])+' · Woods '+pc(R.tree)+
-  '<br>Gold '+R.gold+' · Stone '+R.stone+' · Berries '+R.berry+' · Deer '+R.deer+(R.fish?' · Fish '+R.fish:'')+
+ const line=a=>a.map(s=>'<span class="nw">'+s+'</span>').join(' · ');   // a figure never wraps away from its name
+ return line(['Land '+pc(n-wet),'Water '+pc(wet),'Mountains '+pc(cnt[TT.MOUNTAIN]),'Hills '+pc(cnt[TT.HILL]),'Woods '+pc(R.tree)])+
+  '<br>'+line(['Gold '+R.gold,'Stone '+R.stone,'Berries '+R.berry,'Deer '+R.deer].concat(R.fish?['Fish '+R.fish]:[]))+
   (W.marks.length?'<br>Landmarks: '+[...new Set(W.marks.map(m=>LANDMARKS[m.k].name))].join(', '):'');}
 let ngT=0,ngShown='';
 /** The map settings chosen in the New Game dialog. */
@@ -7281,8 +7342,8 @@ function slotCard(s,playing,isLatest){
   const R=s.resources,load=slotBtn('load','LOAD'),over=canSave?slotBtn('save','OVERWRITE'):'';
   thumb=s.thumbnail?'<img class="thumb" alt="" src="'+s.thumbnail+'">':'<div class="thumb none">?</div>';
   body=head+'<div class="sn">'+esc(s.slotName)+(s.auto&&s.linkedSlot?' <small>(Slot '+s.linkedSlot+')</small>':'')+'</div>'+
-   '<div class="sm">'+(s.level?'Level '+s.level+' · ':'')+s.progress+'% Complete · '+DIFFICULTY[s.difficulty].name+' · '+AGENAMES[s.age]+'<br>'+
-   fmtPlay(s.playtime)+' Play Time · Last Saved: '+esc(fmtSaved(s.savedAt))+'<br>'+(s.map?esc(mapLabel(s.map))+'<br>':'')+
+   '<div class="sm">'+(s.level?'Level '+s.level+' · ':'')+s.progress+'% complete · '+DIFFICULTY[s.difficulty].name+' · '+AGENAMES[s.age]+'<br>'+
+   'Played '+fmtPlay(s.playtime)+' · last saved '+esc(fmtSaved(s.savedAt,true))+'<br>'+(s.map?esc(mapLabel(s.map))+'<br>':'')+
    'Wood '+fmtInt(R.wood)+' · Food '+fmtInt(R.food)+' · Gold '+fmtInt(R.gold)+' · Stone '+fmtInt(R.stone)+' · '+esc(s.location)+'</div>';
   acts=(slotsMode==='save'?over+load:load+over)+(s.auto?slotLnk('copy','Copy to slot')+slotLnk('export','Export')+slotLnk('delete','Delete'):
    slotBtn('delete','DELETE','danger')+slotLnk('rename','Rename')+slotLnk('copy','Copy')+slotLnk('export','Export')+slotLnk('import','Import'));
@@ -7368,13 +7429,16 @@ function captureThumb(){
   return c.toDataURL('image/jpeg',.7);
  }catch(e){return null;}
 }
+/** The box-select button's picture: a dashed selection box, filled in while the next drag will draw one. */
+const BOX_ICON=armed=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">'+
+ '<rect x="4" y="4" width="16" height="16" rx="1.5" stroke-dasharray="3.2 2.8"/>'+(armed?'<rect x="8.5" y="8.5" width="7" height="7" rx="1" fill="currentColor" stroke="none"/>':'')+'</svg>';
 function updFloatBtns(){
  const playing=Game.phase==='playing'&&!state.over;
  $('#cancelPlaceBtn').classList.toggle('hidden',!(playing&&(state.placing||state.ordering)));
  $('#deselectBtn').classList.toggle('hidden',!(playing&&isTouchUI&&!state.placing&&state.sel.length));
  // Box select is a touch button only while one-finger drag scrolls the map (otherwise a drag already draws a box)
  const bb=$('#boxBtn');bb.classList.toggle('hidden',!(playing&&isTouchUI&&!state.placing&&Settings.data.touch.drag==='pan'));
- const lbl=touch.boxArmed?'&#9635;<span class="lbl2"> Drag to select…</span>':'&#9633;<span class="lbl2"> Box select</span>';
+ const lbl=touch.boxArmed?BOX_ICON(true)+'<span class="lbl2">Drag to select…</span>':BOX_ICON(false)+'<span class="lbl2">Box select</span>';
  if(bb.dataset.l!==lbl){bb.innerHTML=lbl;bb.dataset.l=lbl;}
  $('#zoomCtl').classList.toggle('hidden',!playing);
 }
@@ -8030,7 +8094,8 @@ function drawPano(){
 /* ================= boot ================= */
 let rotateDismissed=false;
 function checkRotateHint(){
- const show=isTouchUI&&!rotateDismissed&&innerHeight>innerWidth&&innerWidth<700;
+ // only on the title screen: in a dialog or a game it would sit over buttons
+ const show=isTouchUI&&!rotateDismissed&&innerHeight>innerWidth&&innerWidth<700&&UI.top()==='title';
  $('#rotateHint').style.display=show?'flex':'none';
 }
 window.addEventListener('resize',checkRotateHint);
