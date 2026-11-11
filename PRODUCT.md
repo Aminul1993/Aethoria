@@ -36,15 +36,15 @@ Aethoria is a full classic-era strategy game in one HTML file with no image or a
 - **A session:** title screen → New Game (map type, size, seed, resource level, difficulty, slot and name) → the match → the pause menu, save screen and end screen. During a match the screen has a resource bar at the top, a mission card, and a bottom panel with the minimap, the info panel and the command grid.
 - **Input:** a mouse and keyboard with hotkeys, or touch gestures: tap, long-press for the command menu and information cards, two-finger scroll, pinch zoom, and a three-finger tap for the strategic overview. On a phone held sideways, the minimap and commands move to a side column.
 - **Persistence:** browser `localStorage` only, under keys that start with `aethoria.`. Players move saves between browsers or devices by exporting and importing JSON files.
-- **Offline:** the game runs with no network. Fonts fall back when Google Fonts can't be reached.
+- **Offline:** the game runs with no network. Fonts fall back when Google Fonts can't be reached, and the classic 2D renderer takes over when PlayCanvas can't be loaded.
 
 ## Capabilities and Constraints
 
 **Binding constraints (confirmed):**
 
-- The whole game stays in one HTML file (`index.html`) with a single `<script type="module">`. There is no build step, no dependency and no framework.
-- There are no image or audio files. All art, icons, terrain, sound effects and music are generated in code with Canvas 2D and the Web Audio API.
-- Google Fonts is the only network request allowed. The game must stay fully playable offline with fallback fonts.
+- The whole game stays in one HTML file (`index.html`) with a single `<script type="module">`. There is no build step and no framework. The one dependency is PlayCanvas (pinned, 2.23.3), imported on demand from jsDelivr for the realistic 3D graphics.
+- There are no image, model or audio files. All art, 3D models, icons, terrain, sound effects and music are generated in code with PlayCanvas, Canvas 2D and the Web Audio API.
+- Google Fonts and the PlayCanvas engine are the only network requests allowed. The game must stay fully playable offline, with fallback fonts and the classic painted 2D renderer.
 - The game must stay fully playable by touch. In touch mode every control is at least 48×48 px.
 - The game supports current Chrome, Edge, Firefox (126 or later, because interface scaling uses CSS `zoom`) and Safari.
 
@@ -85,7 +85,7 @@ Aethoria is a full classic-era strategy game in one HTML file with no image or a
 
 ## Product Principles
 
-1. **One file, made in code.** Anything new lives inside `index.html` and is generated when the page loads. Work that needs an asset file, a dependency or a build step is out of scope.
+1. **One file, made in code.** Anything new lives inside `index.html` and is generated when the page loads. Work that needs an asset file, a new dependency or a build step is out of scope (PlayCanvas, for the realistic graphics, is the one exception, and the game never depends on it to be playable).
 2. **Desktop and touch are equal.** A feature is done only when it works with a mouse and keyboard and with touch, on every screen from a phone held sideways to a large monitor.
 3. **Worth coming back to.** Saves, the campaign, score and rank are part of the product. Never put a player's progress at risk.
 4. **Honest about limits.** Describe what the game does as precisely as the README does, and state its gaps rather than hiding them.

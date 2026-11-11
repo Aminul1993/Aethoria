@@ -115,7 +115,8 @@ svg{display:block}
 @keyframes advGlow{50%{box-shadow:0 0 18px rgba(233,196,106,.35)}}
 /* ===== viewport ===== */
 #vp{flex:1;position:relative;min-height:0;overflow:hidden;background:radial-gradient(1200px 800px at 50% 40%,#14110b 0%,#0a0805 60%,#050403 100%)}
-#game{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}
+#game{position:relative;display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}
+#game3d{position:absolute;inset:0;width:100%;height:100%;display:none;pointer-events:none}
 #game.placing{cursor:crosshair}
 #game.hover{cursor:pointer}
 #toasts{position:absolute;top:18px;left:50%;   /* just under the top bar, however many rows it has */transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;z-index:45;width:max-content;max-width:92%}
@@ -494,6 +495,7 @@ svg{display:block}
     <div class="age-chip" id="ageChip"><span class="rn" id="ageNum">I</span><div><span class="an" id="ageLabel">Stone Age</span><span class="as" id="ageSub">Expansion era</span></div></div>
   </div>
   <div id="vp">
+    <canvas id="game3d" aria-hidden="true"></canvas>
     <canvas id="game" aria-label="Game map"></canvas>
     <div id="mission" class="scaled hidden" title="Current mission — tap for the full list"><div class="mh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 3v18M6 4h12l-2.5 4L18 12H6"/></svg><span>MISSION <span id="misNum"></span></span></div><div class="mt" id="misText"></div><div class="mp"><div class="bar"><i id="misBar"></i></div><span id="misProg"></span></div></div>
     <div id="floatBtns" class="scaled">
@@ -1233,6 +1235,8 @@ const SETTINGS_FIELDS=[
  {path:'gameplay.autoPause',label:'Pause when the window loses focus',type:'bool',def:true},
  {path:'gameplay.showMission',label:'Show the mission tracker',type:'bool',def:true},
  {path:'display.theme',section:'Display',label:'Interface theme',type:'enum',def:'classic',options:[['classic','Gold and ember'],['midnight','Midnight'],['contrast','High contrast']]},
+ {path:'display.graphics',label:'Graphics',type:'enum',def:'realistic',options:[['realistic','Realistic 3D (PlayCanvas, WebGL 2)'],['classic','Classic painted 2D']]},
+ {path:'display.quality',label:'Realistic graphics quality',type:'enum',def:'auto',options:[['auto','Automatic: as high as runs smoothly'],['high','High: soft shadows, ambient occlusion, bloom'],['balanced','Balanced'],['fast','Fast: for older devices']]},
  {path:'display.atmosphere',label:'Atmosphere: cloud shadows, warm light, film grain and birds',type:'bool',def:true},
  {path:'display.autoScale',label:'Fit the interface to this screen automatically',type:'bool',def:true},
  {path:'display.uiScale',label:'UI scale',type:'range',min:.8,max:1.4,step:.05,def:1,fmt:pct},
@@ -1291,6 +1295,7 @@ const Settings={
   Sound.setVolumes(d.audio);
   setTeamColors(d.access.colorSafe);
   applyTouchMode();applyUiScale();               // touch mode first: the automatic scale depends on it
+  R3D.apply();                                   // realistic or classic graphics (loads PlayCanvas the first time)
   if(typeof applyMissionVisibility==='function')applyMissionVisibility();
   if(cmdsReady)updFloatBtns();
   if(typeof resize==='function')requestAnimationFrame(resize);
@@ -3432,14 +3437,16 @@ function renderTerrain(){
     const wet=wetC[i00]*w00+wetC[i10]*w10+wetC[i01]*w01+wetC[i11]*w11;if(wet>.45)h-=(wet-.45)*.6;
     if(mt>0){const r2=R2+C2[x],u=F2[x];h+=mt*(.9+((gR[r2]*(1-u)+gR[r2+1]*u)*(1-v2)+(gR[r2+W2]*(1-u)+gR[r2+W2+1]*u)*v2-.5)*1.25);}}
    Hh[p]=h+(hn-.5)*(.32+mt*.6);}}
- // pass 2: colour
+ // pass 2: colour. For the realistic renderer the ground is painted unlit (its 3D sun lights it), and the water, rock and
+ // lava outlines and the water's depth are kept per pixel, so the 3D ground's coasts and ranges fall where they are painted
+ const F3=R3D.flat()?{wet:new Uint8Array(NB),mt:new Uint8Array(NB),lava:new Uint8Array(NB),dep:new Uint8Array(NB)}:null;
  const base=cv(B,B),bg=base.getContext('2d'),img=bg.createImageData(B,B),d=img.data;
  const LX=-.52,LY=-.58,LZ=.63,HS=34/(2*wpp),DR=132,DG=114,DB=78;
  for(let y=0,p=0;y<B;y++){const R4=C4[y]*W4,v4=F4[y],v0=(y+.5)/k-.5;
  for(let x=0;x<B;x++,p++){
   const xl=x>0?p-1:p,xr=x<B-1?p+1:p,yu=y>0?p-B:p,yd=y<B-1?p+B:p;
   const gx=(Hh[xr]-Hh[xl])*HS,gy=(Hh[yd]-Hh[yu])*HS,il=1/Math.sqrt(gx*gx+gy*gy+1);
-  const dl=(-gx*LX-gy*LY+LZ)*il,L=.64+.52*(dl>0?dl:0);
+  const dl=(-gx*LX-gy*LY+LZ)*il,L=F3?.97:.64+.52*(dl>0?dl:0);
   const q=R4+C4[x],u4=F4[x],a00=(1-u4)*(1-v4),a10=u4*(1-v4),a01=(1-u4)*v4,a11=u4*v4,q1=q+1,q2=q+W4,q3=q2+1;   // the smooth lattices share one set of weights
   const hn=gH[q]*a00+gH[q1]*a10+gH[q2]*a01+gH[q3]*a11,mn=gM[q]*a00+gM[q1]*a10+gM[q2]*a01+gM[q3]*a11;
   const wu=gU[q]*a00+gU[q1]*a10+gU[q2]*a01+gU[q3]*a11,wv=gV[q]*a00+gV[q1]*a10+gV[q2]*a01+gV[q3]*a11,gn=GR[(x&255)|(y&255)<<8];
@@ -3462,7 +3469,7 @@ function renderTerrain(){
    const aa=(v,e)=>{const t=(v-e)*k*1.6+.5;return t<0?0:t>1?1:t;};   // coverage of an outline at level e, about a pixel wide
    // rock: mountains rise where their share passes one half
    const mtF=mtC[i00]*w00+mtC[i10]*w10+mtC[i01]*w01+mtC[i11]*w11;
-   if(mtF>0){const me=mtF+(.5-en)*.42;
+   if(mtF>0){const me=mtF+(.5-en)*.42;if(F3)F3.mt[p]=clamp(me,0,1)*255;
     if(me>.42&&me<=.5){const f=(me-.42)/.08*.35;r=r*(1-f)+100*L*f;g=g*(1-f)+92*L*f;b=b*(1-f)+82*L*f;}   // scree
     const c=aa(me,.5);
     if(c>0){const rn=smp(gR,C2,F2,x,y),t=clamp(hn*.9+rn*.5-.3+gn*.2,0,1);let cr=96+80*t,cg=90+74*t,cb=82+66*t;
@@ -3474,16 +3481,16 @@ function renderTerrain(){
    const lvF=lvC[i00]*w00+lvC[i10]*w10+lvC[i01]*w01+lvC[i11]*w11;
    if(lvF>0){const le=lvF+(en-.5)*.38;
     if(le>.4&&le<=.5){const f=(le-.4)/.1;r=r*(1-f)+34*f;g=g*(1-f)+22*f;b=b*(1-f)+18*f;}   // scorched rim
-    const c=aa(le,.5);
+    const c=aa(le,.5);if(F3)F3.lava[p]=c*255;
     if(c>0){const v=Math.abs(hn-.5)*2+Math.abs(en-.5),hot=1-clamp(v*2.2,0,1);
      r+=(120+135*hot-r)*c;g+=(30+140*hot*hot-g)*c;b+=(12+40*hot*hot*hot-b)*c;}}
    // water: coasts follow the wet share of the tiles; depth darkens away from the shore
    const wtF=wetC[i00]*w00+wetC[i10]*w10+wetC[i01]*w01+wetC[i11]*w11;
-   if(wtF>0){const we=wtF+(en-.5)*.36;
+   if(wtF>0){const we=wtF+(en-.5)*.36;if(F3)F3.wet[p]=clamp(we,0,1)*255;
     if(we>.4&&we<=.5){const f=(we-.4)/.1*.75;r=r*(1-f)+108*L*f;g=g*(1-f)+96*L*f;b=b*(1-f)+70*L*f;}   // wet sand
     const c=aa(we,.5);
     if(c>0){const dpF=deepC[i00]*w00+deepC[i10]*w10+deepC[i01]*w01+deepC[i11]*w11;
-     const dep=clamp(dpF*1.15+(hn-.5)*.5-.1,0,1)*clamp((we-.5)*3.2,0,1),sp=gn>.497?40:0;
+     const dep=clamp(dpF*1.15+(hn-.5)*.5-.1,0,1)*clamp((we-.5)*3.2,0,1),sp=gn>.497?40:0;if(F3)F3.dep[p]=clamp(dpF*1.15+(hn-.5)*.5-.1,0,1)*255;
      let cr=74+(18-74)*dep+gn*5+sp,cg=128+(54-128)*dep+gn*6+sp,cb=128+(74-128)*dep+gn*6+sp;
      if(we<.535){const f=clamp(1-(we-.5)/.035,0,1)*.55;cr+=(206-cr)*f;cg+=(222-cg)*f;cb+=(212-cb)*f;}   // the foam line
      r+=(cr-r)*c;g+=(cg-g)*c;b+=(cb-b)*c;}}}
@@ -3540,6 +3547,7 @@ function renderTerrain(){
  mmBase.canvas.width=mmBase.canvas.width;mmBase.imageSmoothingEnabled=true;mmBase.imageSmoothingQuality='high';
  mmBase.drawImage(terr,0,0,mmBase.canvas.width,mmBase.canvas.height);
  fogTex=null;
+ R3D.terrain(F3?{flat:true,B,h:Hh,canvas:terr,...F3}:{flat:false});   // the 3D ground is shaped and painted from this
 }
 /** What a terrain type does, for the context menu: " <small>(slow · no building)</small>", or '' for plain ground. */
 const terrainNote=k=>{const T=TERRAIN[k],n=[];if(T.blocks)n.push('impassable');else{if(T.spd<1)n.push(Math.round((1-T.spd)*100)+'% slower');if(!T.build)n.push('no building');}
@@ -6071,6 +6079,1022 @@ function drawFog(){
  ctx.imageSmoothingEnabled=true;ctx.drawImage(fogTex,-TILE,-TILE,(MAP+2)*TILE,(MAP+2)*TILE);
 }
 
+/* ================= realistic graphics: the PlayCanvas renderer ================= */
+/**
+ * Realistic graphics. PlayCanvas (WebGL 2) draws the world in 3D on a canvas under the 2D one: the ground as a lit
+ * height field, water that reflects the sky, and every building, person, horse, engine, ship, tree, mine and herd
+ * modelled in code from primitives (no model or image files), under a low sun with soft shadows, sky light, ambient
+ * occlusion, bloom and filmic tone mapping.
+ *
+ * The camera is orthographic, pitched PITCH below the horizon, and its picture is stretched so the ground keeps the 2D
+ * view's mapping (a world pixel is `zoom` screen pixels both ways). So input, picking, culling, the minimap and every
+ * overlay work unchanged: the 2D canvas still draws what sits over the world (bars, badges, missiles, effects, the fog
+ * and labels). Something h world px above the ground shows h·COT higher on the screen; the camera's reference plane is
+ * G0, the height of open land. Models are instanced: one draw per model on screen, whatever the number of copies.
+ *
+ * PlayCanvas loads on demand from a CDN. Offline, without WebGL 2, or if anything fails, the painted 2D renderer carries
+ * on (Settings → Display → Graphics switches between them).
+ */
+const R3D=(()=>{
+ const SRC='https://cdn.jsdelivr.net/npm/playcanvas@2.23.3/build/playcanvas.min.mjs';
+ const PITCH=50*Math.PI/180,SIN=Math.sin(PITCH),COS=Math.cos(PITCH),COT=COS/SIN;
+ const G0=4,DIST=3000,US=17;                   // land height; camera distance; world px a metre for people, horses and engines
+ /** Quality levels: shadow map size and filter, ambient occlusion, multisampling, bloom, the most device px per CSS px. */
+ const QUALITY={high:{shadow:4096,pcf:'SHADOW_PCF5_32F',ssao:true,msaa:4,bloom:true,dpr:2},
+  balanced:{shadow:2048,pcf:'SHADOW_PCF3_32F',ssao:false,msaa:2,bloom:true,dpr:1.5},
+  fast:{shadow:1024,pcf:'SHADOW_PCF1_32F',ssao:false,msaa:1,bloom:false,dpr:1}};
+ let pc=null,app=null,dev=null,status='idle',wanted=false,qual='high',auto=true,autoQ=null,cvs=null,failMsg='';
+ const pace={last:0,n:0,sum:0,until:0};        // Automatic quality: frame intervals while playing, after a warm-up (until) while shaders compile
+ const warm=()=>{pace.until=performance.now()+3000;pace.n=pace.sum=0;};
+ let camE=null,camF=null,sunE=null,terrE=null,waterE=null,terrMat=null,waterMat=null,MAT=null,GHOST=null,RINGM=null;
+ let fields=null,hg=null,builtFor=null,lastTime=0,fdt=0,FR=0,frames=0;
+ const TRK=new Map();                          // per unit: smoothed heading and last position
+ const clamp01=v=>v<0?0:v>1?1:v,sstep=(a,b,v)=>{const t=clamp01((v-a)/(b-a));return t*t*(3-2*t);};
+ const hashS=s=>{let h=2166136261;for(let i=0;i<s.length;i++)h=Math.imul(h^s.charCodeAt(i),16777619);return h>>>0;};
+
+ /* ---------- loading and lifecycle ---------- */
+ const isOn=()=>status==='ready'&&wanted&&Game.phase!=='title';
+ let shown=false,notice='';
+ /** Show or hide the 3D canvas (only on a change); a failure is reported once a game is on screen to read it. */
+ function show(v){v=!!v&&!!cvs;if(v!==shown){shown=v;if(cvs)cvs.style.display=v?'block':'none';}
+  if(notice&&Game.phase==='playing'){toast(notice,'bad');notice='';}}
+ /** Settings changed: start loading when wanted, switch the ground's paint between lit (2D) and flat (3D) when needed. */
+ function apply(){
+  const d=Settings.data.display;
+  if(autoQ===null)autoQ=isTouchUI?'balanced':'high';   // Automatic starts at High (Balanced on phones and tablets) and steps down
+  wanted=d.graphics==='realistic';const q=QUALITY[d.quality]?d.quality:autoQ;if(d.quality!=='auto')autoQ=null;auto=d.quality==='auto';qual=q;pace.n=0;pace.sum=0;
+  if(wanted&&status==='idle')load();
+  if(status==='ready')setQuality();
+  if(painted!==null&&painted!==flat())repaint();   // the ground was painted for the other renderer: paint it again
+  if(!isOn())show(false);
+ }
+ /** The ground is painted unlit (its light comes from the 3D sun) while the 3D renderer is wanted and has not failed. */
+ const flat=()=>wanted&&status!=='failed';
+ function repaint(){if(typeof renderTerrain==='function'&&ttype&&MAP){renderTerrain();if(Game.phase!=='title')render();}}
+ async function load(){
+  status='loading';
+  try{
+   cvs=$('#game3d');
+   if(!cvs||!document.createElement('canvas').getContext('webgl2'))throw new Error('WebGL 2 is not available');
+   pc=await import(SRC);
+   init();status='ready';
+   if(fields)buildTerrain();
+   if(Game.phase!=='title')render();
+  }catch(e){
+   status='failed';failMsg=String(e&&e.message||e);console.warn('[Aethoria] realistic graphics unavailable:',e);
+   try{if(app)app.destroy();}catch(_){}app=null;show(false);
+   if(painted)repaint();                       // paint the ground lit again for the 2D renderer
+   notice='Realistic graphics could not start ('+failMsg+'), so the classic look is on. Settings → Graphics tries again next visit.';
+  }
+ }
+ function init(){
+  app=new pc.Application(cvs,{graphicsDeviceOptions:{antialias:false,alpha:false,depth:true,stencil:false,powerPreference:'high-performance',preserveDrawingBuffer:false}});
+  dev=app.graphicsDevice;
+  app.setCanvasFillMode(pc.FILLMODE_NONE);app.setCanvasResolution(pc.RESOLUTION_FIXED);
+  app.requestAnimationFrame=()=>{};            // no loop of its own: the game's frame drives every tick
+  app.start();
+  dev.on('devicelost',()=>{toast('The graphics device was lost: switching to the classic look.','bad');status='failed';show(false);if(painted)repaint();});
+  const S=app.scene;
+  S.ambientLight=new pc.Color(0,0,0);
+  S.envAtlas=skyAtlas();S.skyboxIntensity=.75;
+  MAT=[stdMat({}),stdMat({metal:true}),stdMat({glow:2.2})];
+  GHOST={ok:ghostMat(.25,.95,.35),bad:ghostMat(1,.28,.18)};
+  RINGM=stdMat({glow:.9});RINGM.name='ring';
+  // the sun: from the south-west, behind the camera's left shoulder, so the faces the camera sees are lit and shadows
+  // fall away up the screen; a warm afternoon light (the light shines along its -Y)
+  const pivot=new pc.Entity('sunPivot');app.root.addChild(pivot);pivot.lookAt(.66,-1.05,-.52);
+  sunE=new pc.Entity('sun');pivot.addChild(sunE);sunE.setLocalEulerAngles(90,0,0);
+  sunE.addComponent('light',{type:'directional',color:new pc.Color(1,.92,.8),intensity:1.55,castShadows:true,numCascades:1,
+   shadowResolution:4096,shadowBias:.25,normalOffsetBias:.6,shadowIntensity:.82,shadowDistance:6000});
+  camE=new pc.Entity('camera');
+  camE.addComponent('camera',{projection:pc.PROJECTION_ORTHOGRAPHIC,clearColor:new pc.Color(.03,.025,.018),nearClip:10,farClip:6000,
+   aspectRatioMode:pc.ASPECT_MANUAL,aspectRatio:1,orthoHeight:300,layers:[pc.LAYERID_WORLD,pc.LAYERID_DEPTH]});
+  camE.setEulerAngles(-PITCH*180/Math.PI,0,0);app.root.addChild(camE);
+  camF=new pc.CameraFrame(app,camE.camera);
+  setQuality();
+ }
+ function setQuality(){
+  const Q=QUALITY[qual],L=sunE.light;warm();
+  L.shadowResolution=Q.shadow;L.shadowType=pc[Q.pcf];
+  const r=camF.rendering;r.toneMapping=pc.TONEMAP_ACES;r.samples=Q.msaa;r.sharpness=.15;
+  camF.ssao.type=Q.ssao?pc.SSAOTYPE_LIGHTING:pc.SSAOTYPE_NONE;camF.ssao.radius=30;camF.ssao.intensity=.85;camF.ssao.samples=12;camF.ssao.power=4;camF.ssao.minAngle=12;
+  camF.bloom.intensity=Q.bloom?.018:0;camF.bloom.blurLevel=10;camF.bloom.threshold=.9;
+  const G=camF.grading;G.enabled=true;G.saturation=.94;G.contrast=1.08;G.brightness=1;G.tint=new pc.Color(1,.985,.95);
+  const V=camF.vignette;V.intensity=Settings.data.display.atmosphere?.38:0;V.inner=.6;V.outer=1.35;V.curvature=.55;
+  camF.update();
+ }
+
+ /* ---------- materials and the sky ---------- */
+ /** A vertex-coloured PBR material: rgb the albedo, alpha the gloss; `metal` for metals, `glow` an emissive strength. */
+ function stdMat(o){const m=new pc.StandardMaterial();m.useMetalness=true;m.metalness=o.metal?1:0;
+  m.diffuse=new pc.Color(1,1,1);m.diffuseVertexColor=true;m.vertexColorGamma=true;m.gloss=1;m.glossVertexColor=true;m.glossVertexColorChannel='a';
+  if(o.glow){m.emissive=new pc.Color(1,1,1);m.emissiveVertexColor=true;m.emissiveIntensity=o.glow;}
+  m.update();return m;}
+ /** The see-through tint of a building being placed: green where it fits, red where it does not. */
+ function ghostMat(r,g,b){const m=new pc.StandardMaterial();m.diffuse=new pc.Color(r*.5,g*.5,b*.5);m.emissive=new pc.Color(r*.35,g*.35,b*.35);
+  m.opacity=.55;m.blendType=pc.BLEND_NORMAL;m.depthWrite=false;m.gloss=.4;m.useMetalness=true;m.update();m.name='ghost'+r;return m;}
+ /** Image-based light from a painted sky (equirect: zenith blue, a warm hazy horizon, earth below), prefiltered by PlayCanvas. */
+ function skyAtlas(){
+  const W=256,H=128,c=cv(W,H),g=c.getContext('2d');
+  g.fillStyle=lin(g,0,0,0,H,[[0,'#56789f'],[.3,'#7d9cc2'],[.47,'#d9dccf'],[.5,'#e8dcc0'],[.53,'#8a8a64'],[.7,'#4e5236'],[1,'#2c2a1e']]);g.fillRect(0,0,W,H);
+  g.fillStyle=radg(g,W*.875,H*.28,40,[[0,'rgba(255,240,200,.9)'],[1,'rgba(255,240,200,0)']]);g.fillRect(0,0,W,H);   // the sun's glow, to the north-west
+  const t=new pc.Texture(dev,{width:W,height:H,format:pc.PIXELFORMAT_SRGBA8,projection:pc.TEXTUREPROJECTION_EQUIRECT,mipmaps:false,
+   addressU:pc.ADDRESS_REPEAT,addressV:pc.ADDRESS_CLAMP_TO_EDGE});
+  t.setSource(c);
+  const src=pc.EnvLighting.generateLightingSource(t,{size:64});
+  return pc.EnvLighting.generateAtlas(src,{size:256});
+ }
+ /** A tileable normal map from periodic value noise (`cells` lattice cells across, `oct` octaves), for ground and water. */
+ function noiseNormals(N,cells,oct,seed,strength){
+  const R=mulberry(seed),H=new Float32Array(N*N);
+  for(let o=0,amp=1;o<oct;o++,amp*=.5){const C=cells<<o,L=new Float32Array(C*C);for(let i=0;i<L.length;i++)L[i]=R();
+   for(let y=0;y<N;y++)for(let x=0;x<N;x++){const u=x/N*C,v=y/N*C,i=Math.floor(u),j=Math.floor(v),fu=u-i,fv=v-j,su=fu*fu*(3-2*fu),sv=fv*fv*(3-2*fv);
+    const a=L[(j%C)*C+i%C],b=L[(j%C)*C+(i+1)%C],c=L[((j+1)%C)*C+i%C],d=L[((j+1)%C)*C+(i+1)%C];
+    H[y*N+x]+=amp*(a+(b-a)*su+(c-a)*sv+(a-b-c+d)*su*sv);}}
+  const c=cv(N,N),g=c.getContext('2d'),im=g.createImageData(N,N),D=im.data;
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++){const h=(dx,dy)=>H[((y+dy+N)%N)*N+(x+dx+N)%N];
+   let nx=(h(-1,0)-h(1,0))*strength,ny=(h(0,-1)-h(0,1))*strength,nz=1;const l=Math.hypot(nx,ny,nz);
+   const o=(y*N+x)*4;D[o]=(nx/l*.5+.5)*255;D[o+1]=(ny/l*.5+.5)*255;D[o+2]=(nz/l*.5+.5)*255;D[o+3]=255;}
+  g.putImageData(im,0,0);
+  const t=new pc.Texture(dev,{width:N,height:N,format:pc.PIXELFORMAT_RGBA8,mipmaps:true,addressU:pc.ADDRESS_REPEAT,addressV:pc.ADDRESS_REPEAT,anisotropy:8});
+  t.setSource(c);return t;
+ }
+
+ /* ---------- the ground and the water ---------- */
+ let painted=null;                             // whether the ground was last painted flat (for the 3D sun) or lit (2D)
+ /** renderTerrain's report: whether it painted flat, and if so the fields the 3D ground is shaped from. */
+ function terrain(F){painted=!!F.flat;fields=F.flat?F:null;hg=null;if(status==='ready'&&fields)buildTerrain();}
+ /**
+  * The 3D ground: a height field (about four vertices a tile) shaped from the painted ground's own fields, so its coasts,
+  * ranges and lava flows sit exactly where they are painted: open land at G0 rolling with the paint's height, mountains
+  * rising where their share passes one half, the bed falling away under the coastline (the water's surface is y = 0).
+  * Skirts drop from the map's edge. The paint (unlit) is its albedo, with a fine tiling normal map for grain.
+  */
+ function buildTerrain(){
+  const F=fields,n=MAP,W=WPX,R=Math.min(n*4,384),N=R+1,st=W/R,B=F.B;
+  const smp=(A,px,py,k)=>{px=px<0?0:px>B-1.001?B-1.001:px;py=py<0?0:py>B-1.001?B-1.001:py;const i=px|0,j=py|0,fu=px-i,fv=py-j,a=j*B+i;
+   return((A[a]*(1-fu)+A[a+1]*fu)*(1-fv)+(A[a+B]*(1-fu)+A[a+B+1]*fu)*fv)/k;};
+  const H0=new Float32Array(N*N);
+  for(let j=0;j<N;j++)for(let i=0;i<N;i++){const px=i*st/W*B-.5,py=j*st/W*B-.5;
+   const h=smp(F.h,px,py,1),we=smp(F.wet,px,py,255),me=smp(F.mt,px,py,255),lv=smp(F.lava,px,py,255),dp=smp(F.dep,px,py,255);
+   let y=G0+(h-.25)*12;
+   if(me>.4)y+=sstep(.4,.64,me)*(7+Math.max(0,h-.3)*30);   // the ranges
+   if(lv>0)y-=lv*1.6;                                     // lava lies in its bed
+   if(we>.42)y=we<.5?y*(.5-we)/.08:-(1.2+dp*15)*sstep(.5,.85,we);  // banks fall to the waterline at the painted coast, then a shelf and the bed
+   H0[j*N+i]=y;}
+  const H=new Float32Array(N*N);                         // soften: half itself, half its neighbours
+  for(let j=0;j<N;j++)for(let i=0;i<N;i++){let s=0,c=0;for(let dj=-1;dj<=1;dj++)for(let di=-1;di<=1;di++){const x=i+di,y=j+dj;if(x<0||y<0||x>=N||y>=N)continue;s+=H0[y*N+x];c++;}
+   H[j*N+i]=H0[j*N+i]*.5+s/c*.5;}
+  hg={H,N,st};
+  const nv=N*N+4*2*N,P=new Float32Array(nv*3),Nm=new Float32Array(nv*3),UV=new Float32Array(nv*2);
+  let v=0;
+  const put=(x,y,z,nx,ny,nz)=>{P[v*3]=x;P[v*3+1]=y;P[v*3+2]=z;Nm[v*3]=nx;Nm[v*3+1]=ny;Nm[v*3+2]=nz;UV[v*2]=x/W;UV[v*2+1]=z/W;return v++;};
+  for(let j=0;j<N;j++)for(let i=0;i<N;i++){const hx=(H[j*N+Math.min(N-1,i+1)]-H[j*N+Math.max(0,i-1)])/(2*st),hz=(H[Math.min(N-1,j+1)*N+i]-H[Math.max(0,j-1)*N+i])/(2*st);
+   const l=Math.hypot(hx,1,hz);put(i*st,H[j*N+i],j*st,-hx/l,1/l,-hz/l);}
+  const idx=[];
+  for(let j=0;j<R;j++)for(let i=0;i<R;i++){const a=j*N+i,b=a+1,c=a+N,d=c+1;idx.push(a,c,b,b,c,d);}
+  // skirts: each edge's vertices again, dropped to the bedrock
+  for(const[ex,ez,nx,nz]of[[0,0,0,-1],[0,1,0,1],[0,0,-1,0],[1,0,1,0]]){const base=v;
+   for(let k=0;k<N;k++){const i=nz?k:ex*R,j=nz?ez*R:k;put(i*st,H[j*N+i],j*st,nx,0,nz);put(i*st,-70,j*st,nx,0,nz);}
+   for(let k=0;k<R;k++){const a=base+k*2,b=a+2;idx.push(a,a+1,b,b,a+1,b+1);}}
+  const mesh=new pc.Mesh(dev);mesh.setPositions(P);mesh.setNormals(Nm);mesh.setUvs(0,UV);mesh.setIndices(new Uint32Array(idx));mesh.update(pc.PRIMITIVE_TRIANGLES);
+  // the paint as albedo; lava glows through an emissive map
+  const tex=new pc.Texture(dev,{width:F.canvas.width,height:F.canvas.height,format:pc.PIXELFORMAT_SRGBA8,mipmaps:true,anisotropy:8,
+   addressU:pc.ADDRESS_CLAMP_TO_EDGE,addressV:pc.ADDRESS_CLAMP_TO_EDGE});
+  tex.setSource(F.canvas);
+  if(terrMat){for(const t of[terrMat.diffuseMap,terrMat.emissiveMap])if(t)t.destroy();}
+  else{terrMat=new pc.StandardMaterial();terrMat.useMetalness=true;terrMat.metalness=0;terrMat.gloss=.24;terrMat.cull=pc.CULLFACE_NONE;
+   terrMat.normalMap=noiseNormals(256,8,4,911,2.4);terrMat.bumpiness=.6;}
+  terrMat.diffuseMap=tex;terrMat.normalMapTiling=new pc.Vec2(n/2,n/2);
+  let lava=false;for(let i=0;i<F.lava.length&&!lava;i+=7)lava=F.lava[i]>40;
+  if(lava){const L=256,c=cv(L,L),g=c.getContext('2d'),im=g.createImageData(L,L),D=im.data;
+   for(let y=0;y<L;y++)for(let x=0;x<L;x++){const k=smp(F.lava,(x+.5)/L*B-.5,(y+.5)/L*B-.5,255),o=(y*L+x)*4;D[o]=255*k;D[o+1]=96*k*k;D[o+2]=24*k*k*k;D[o+3]=255;}
+   g.putImageData(im,0,0);const et=new pc.Texture(dev,{width:L,height:L,format:pc.PIXELFORMAT_SRGBA8,mipmaps:true});et.setSource(c);
+   terrMat.emissiveMap=et;terrMat.emissive=new pc.Color(1,1,1);terrMat.emissiveIntensity=2.4;}
+  else{terrMat.emissiveMap=null;terrMat.emissive=new pc.Color(0,0,0);}
+  terrMat.update();terrMat.lava=lava;
+  if(terrE)terrE.destroy();
+  terrE=new pc.Entity('ground');terrE.addComponent('render',{meshInstances:[new pc.MeshInstance(mesh,terrMat)],castShadows:true,receiveShadows:true});
+  app.root.addChild(terrE);
+  buildWater();
+  builtFor=F;warm();
+ }
+ /**
+  * Water: one sheet at y = 0 over the whole map, hidden under the land by the depth test. Its vertices carry the depth
+  * below them as colour (turquoise over the shallows to deep blue) and opacity (the bed shows through near the shore).
+  * Two scrolling normal maps make the waves; the sky's reflection and the sun's glints come from the PBR light.
+  */
+ function buildWater(){
+  const n=MAP,W=WPX,R=Math.min(n*4,384),N=R+1,st=W/R,P=new Float32Array(N*N*3),Nm=new Float32Array(N*N*3),UV=new Float32Array(N*N*2),C=new Uint8Array(N*N*4);
+  const sh=[56,118,112],dp=[24,66,84],fo=[206,230,222];
+  for(let j=0;j<N;j++)for(let i=0;i<N;i++){const k=j*N+i,x=i*st,z=j*st,d=-gy(x,z);
+   P[k*3]=x;P[k*3+1]=0;P[k*3+2]=z;Nm[k*3+1]=1;UV[k*2]=x/W;UV[k*2+1]=z/W;
+   const t=sstep(1,14,d),f=d>0&&d<1.1?1-d/1.1:0;
+   for(let c=0;c<3;c++)C[k*4+c]=(sh[c]+(dp[c]-sh[c])*t)*(1-f*.6)+fo[c]*f*.6;
+   C[k*4+3]=255*clamp01(sstep(0,3,d)*.55+.3*t);}   // clear at the waterline (the painted shore shows), dark out at sea
+  const idx=new Uint32Array(R*R*6);let q=0;
+  for(let j=0;j<R;j++)for(let i=0;i<R;i++){const a=j*N+i,b=a+1,c=a+N,d=c+1;idx[q++]=a;idx[q++]=c;idx[q++]=b;idx[q++]=b;idx[q++]=c;idx[q++]=d;}
+  const mesh=new pc.Mesh(dev);mesh.setPositions(P);mesh.setNormals(Nm);mesh.setUvs(0,UV);mesh.setColors32(C);mesh.setIndices(idx);mesh.update(pc.PRIMITIVE_TRIANGLES);
+  if(!waterMat){const m=waterMat=new pc.StandardMaterial();
+   m.diffuse=new pc.Color(1,1,1);m.diffuseVertexColor=true;m.vertexColorGamma=true;m.opacityVertexColor=true;m.opacityVertexColorChannel='a';
+   m.blendType=pc.BLEND_NORMAL;m.depthWrite=false;m.useMetalness=true;m.metalness=0;m.gloss=.93;m.opacityFadesSpecular=false;
+   m.normalMap=noiseNormals(256,4,4,1201,3.2);m.bumpiness=.55;m.normalDetailMap=noiseNormals(256,6,3,1777,2.4);m.normalDetailMapBumpiness=.7;}
+  waterMat.normalMapTiling=new pc.Vec2(n/3,n/3);waterMat.normalDetailMapTiling=new pc.Vec2(n/1.2,n/1.2);waterMat.update();
+  if(waterE)waterE.destroy();
+  waterE=new pc.Entity('water');waterE.addComponent('render',{meshInstances:[new pc.MeshInstance(mesh,waterMat)],castShadows:false,receiveShadows:true});
+  app.root.addChild(waterE);
+ }
+ /** The ground's height (y) at world point (x, y), from the 3D height field (G0 before one is built). */
+ function gy(x,z){if(!hg)return G0;const{H,N,st}=hg;let u=x/st,v=z/st;u=u<0?0:u>N-1.001?N-1.001:u;v=v<0?0:v>N-1.001?N-1.001:v;
+  const i=u|0,j=v|0,fu=u-i,fv=v-j,a=j*N+i;return(H[a]*(1-fu)+H[a+1]*fu)*(1-fv)+(H[a+N]*(1-fu)+H[a+N+1]*fu)*fv;}
+
+ /* ---------- the model builder ---------- */
+ const RGB={};
+ const rgbOf=s=>RGB[s]||(RGB[s]=[parseInt(s.slice(1,3),16),parseInt(s.slice(3,5),16),parseInt(s.slice(5,7),16)]);
+ /**
+  * A model builder. Primitives are given in a local frame under a transform stack (t, rx, ry, rz, s; push and pop), take
+  * the current colour (c: hex and gloss) and material group (m: 0 painted or natural, 1 metal, 2 glowing), and are
+  * flat-shaded (boxes, roofs, rocks) or smooth (cylinders, spheres). Faces are wound to face away from the primitive's
+  * centre, so back faces can be culled. j(k) jitters each face's colour by ±k/2 for weathered stone, timber and leaves.
+  * build() returns the model: one mesh per material group used, and its top (the highest y).
+  */
+ function MB(seed){
+  const G=[{p:[],n:[],c:[]},{p:[],n:[],c:[]},{p:[],n:[],c:[]}],st=[],R=mulberry(seed||1),meta={top:0};
+  let M=[1,0,0,0,1,0,0,0,1,0,0,0],NM=null,g=G[0],col=[200,200,200,60],jit=0;
+  const xf=(x,y,z)=>[M[0]*x+M[3]*y+M[6]*z+M[9],M[1]*x+M[4]*y+M[7]*z+M[10],M[2]*x+M[5]*y+M[8]*z+M[11]];
+  const nmat=()=>{if(NM)return NM;const a=M,cr=(u,v)=>[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];
+   const c0=[a[0],a[1],a[2]],c1=[a[3],a[4],a[5]],c2=[a[6],a[7],a[8]],k=cr(c1,c2),sg=(c0[0]*k[0]+c0[1]*k[1]+c0[2]*k[2])<0?-1:1;
+   return NM=[...k,...cr(c2,c0),...cr(c0,c1)].map(v=>v*sg);};
+  const xn=(x,y,z)=>{const n=nmat(),a=n[0]*x+n[3]*y+n[6]*z,b=n[1]*x+n[4]*y+n[7]*z,c=n[2]*x+n[5]*y+n[8]*z,l=Math.hypot(a,b,c)||1;return[a/l,b/l,c/l];};
+  const mul=B=>{const A=M;NM=null;M=[A[0]*B[0]+A[3]*B[1]+A[6]*B[2],A[1]*B[0]+A[4]*B[1]+A[7]*B[2],A[2]*B[0]+A[5]*B[1]+A[8]*B[2],
+   A[0]*B[3]+A[3]*B[4]+A[6]*B[5],A[1]*B[3]+A[4]*B[4]+A[7]*B[5],A[2]*B[3]+A[5]*B[4]+A[8]*B[5],
+   A[0]*B[6]+A[3]*B[7]+A[6]*B[8],A[1]*B[6]+A[4]*B[7]+A[7]*B[8],A[2]*B[6]+A[5]*B[7]+A[8]*B[8],
+   A[0]*B[9]+A[3]*B[10]+A[6]*B[11]+A[9],A[1]*B[9]+A[4]*B[10]+A[7]*B[11]+A[10],A[2]*B[9]+A[5]*B[10]+A[8]*B[11]+A[11]];};
+  const shade=()=>{if(!jit)return col;const k=1+(R()-.5)*jit;return[Math.min(255,col[0]*k),Math.min(255,col[1]*k),Math.min(255,col[2]*k),col[3]];};
+  const emit=(P,N,C)=>{g.p.push(P[0],P[1],P[2]);g.n.push(N[0],N[1],N[2]);g.c.push(C[0],C[1],C[2],C[3]);if(P[1]>meta.top)meta.top=P[1];};
+  /** A flat convex polygon of local points, facing away from local point o. */
+  function poly(pts,o,two){
+   let P=[];for(const p of pts){const q=xf(p[0],p[1],p[2]),l=P[P.length-1];if(!l||Math.abs(l[0]-q[0])+Math.abs(l[1]-q[1])+Math.abs(l[2]-q[2])>1e-6)P.push(q);}
+   if(P.length>3){const a=P[0],l=P[P.length-1];if(Math.abs(l[0]-a[0])+Math.abs(l[1]-a[1])+Math.abs(l[2]-a[2])<1e-6)P.pop();}
+   if(P.length<3)return;
+   let nx=0,ny=0,nz=0,cx=0,cy=0,cz=0;
+   for(let i=0;i<P.length;i++){const a=P[i],b=P[(i+1)%P.length];nx+=(a[1]-b[1])*(a[2]+b[2]);ny+=(a[2]-b[2])*(a[0]+b[0]);nz+=(a[0]-b[0])*(a[1]+b[1]);cx+=a[0];cy+=a[1];cz+=a[2];}
+   const l=Math.hypot(nx,ny,nz);if(l<1e-9)return;nx/=l;ny/=l;nz/=l;
+   const O=xf(o[0],o[1],o[2]);
+   if((cx/P.length-O[0])*nx+(cy/P.length-O[1])*ny+(cz/P.length-O[2])*nz<0){nx=-nx;ny=-ny;nz=-nz;P.reverse();}
+   const C=shade(),N=[nx,ny,nz];
+   for(let i=1;i<P.length-1;i++){emit(P[0],N,C);emit(P[i],N,C);emit(P[i+1],N,C);}
+   if(two){const N2=[-nx,-ny,-nz];for(let i=1;i<P.length-1;i++){emit(P[0],N2,C);emit(P[i+1],N2,C);emit(P[i],N2,C);}}
+  }
+  /** A smooth triangle: local points and normals. */
+  function stri(a,b,c,na,nb,nc){const A=xf(...a),B=xf(...b),Cc=xf(...c),NA=xn(...na),NB=xn(...nb),NC=xn(...nc);
+   const ux=B[0]-A[0],uy=B[1]-A[1],uz=B[2]-A[2],vx=Cc[0]-A[0],vy=Cc[1]-A[1],vz=Cc[2]-A[2];
+   const fx=uy*vz-uz*vy,fy=uz*vx-ux*vz,fz=ux*vy-uy*vx;if(Math.abs(fx)+Math.abs(fy)+Math.abs(fz)<1e-12)return;
+   const C=shade();
+   if(fx*(NA[0]+NB[0]+NC[0])+fy*(NA[1]+NB[1]+NC[1])+fz*(NA[2]+NB[2]+NC[2])<0){emit(A,NA,C);emit(Cc,NC,C);emit(B,NB,C);}
+   else{emit(A,NA,C);emit(B,NB,C);emit(Cc,NC,C);}}
+  const api={
+   meta,R,
+   push(){st.push([M,NM]);return api;},pop(){[M,NM]=st.pop();return api;},
+   t(x,y,z){mul([1,0,0,0,1,0,0,0,1,x,y,z]);return api;},
+   rx(a){const c=Math.cos(a),s=Math.sin(a);mul([1,0,0,0,c,s,0,-s,c,0,0,0]);return api;},
+   ry(a){const c=Math.cos(a),s=Math.sin(a);mul([c,0,-s,0,1,0,s,0,c,0,0,0]);return api;},
+   rz(a){const c=Math.cos(a),s=Math.sin(a);mul([c,s,0,-s,c,0,0,0,1,0,0,0]);return api;},
+   s(x,y=x,z=x){mul([x,0,0,0,y,0,0,0,z,0,0,0]);return api;},
+   c(hex,gl=.25){const v=rgbOf(hex);col=[v[0],v[1],v[2],Math.round(gl*255)];return api;},
+   m(k){g=G[k];return api;},
+   j(k){jit=k;return api;},
+   poly(pts,o,two){poly(pts,o||[0,-1e3,0],two);return api;},
+   /** An axis-aligned box from (x0,y0,z0) to (x1,y1,z1); bottom face only with b. */
+   box(x0,y0,z0,x1,y1,z1,b){const o=[(x0+x1)/2,(y0+y1)/2,(z0+z1)/2];
+    poly([[x0,y1,z0],[x1,y1,z0],[x1,y1,z1],[x0,y1,z1]],o);if(b)poly([[x0,y0,z0],[x1,y0,z0],[x1,y0,z1],[x0,y0,z1]],o);
+    poly([[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0]],o);poly([[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]],o);
+    poly([[x0,y0,z0],[x0,y0,z1],[x0,y1,z1],[x0,y1,z0]],o);poly([[x1,y0,z0],[x1,y0,z1],[x1,y1,z1],[x1,y1,z0]],o);return api;},
+   /** A box whose top is inset by ix and iz (a battered wall, a tapering torso; negative flares). */
+   tbox(x0,y0,z0,x1,y1,z1,ix,iz){const o=[(x0+x1)/2,(y0+y1)/2,(z0+z1)/2];
+    const Bt=[[x0,y0,z0],[x1,y0,z0],[x1,y0,z1],[x0,y0,z1]],T=[[x0+ix,y1,z0+iz],[x1-ix,y1,z0+iz],[x1-ix,y1,z1-iz],[x0+ix,y1,z1-iz]];
+    poly(T,o);for(let i=0;i<4;i++){const k=(i+1)%4;poly([Bt[i],Bt[k],T[k],T[i]],o);}return api;},
+   /** An upright cylinder or cone (r1 = 0) at (x,y,z): radii r0 at the foot and r1 at the top, height h. o: {flat, b (bottom),
+    *  nt (no top), zs (depth scale), rot (start angle)}. */
+   cyl(x,y,z,r0,r1,h,seg=8,o={}){const zs=o.zs||1,ro=o.rot||0,ctr=[x,y+h/2,z],sl=(r0-r1)/h;
+    const at=(a,r,yy)=>[x+Math.cos(a)*r,yy,z+Math.sin(a)*r*zs];
+    for(let i=0;i<seg;i++){const a0=ro+i/seg*Math.PI*2,a1=ro+(i+1)/seg*Math.PI*2,A=at(a0,r0,y),B=at(a1,r0,y),C=at(a1,r1,y+h),D=at(a0,r1,y+h);
+     if(o.flat){poly(r1>0?[A,B,C,D]:[A,B,C],ctr);continue;}
+     const n=a=>[Math.cos(a),sl,Math.sin(a)/zs];
+     if(r1>0){stri(A,B,C,n(a0),n(a1),n(a1));stri(A,C,D,n(a0),n(a1),n(a0));}else{const am=(a0+a1)/2;stri(A,B,C,n(a0),n(a1),n(am));}}
+    if(r1>0&&!o.nt){const T=[];for(let i=0;i<seg;i++)T.push(at(ro+i/seg*Math.PI*2,r1,y+h));poly(T,ctr);}
+    if(o.b&&r0>0){const T=[];for(let i=0;i<seg;i++)T.push(at(ro+i/seg*Math.PI*2,r0,y));poly(T,ctr);}
+    return api;},
+   /** A sphere or ellipsoid; o: {half (the upper half), noise (lumpy, flat-shaded), flat, rings}. */
+   sph(x,y,z,rx,ry,rz,seg=10,o={}){const rings=o.rings||Math.max(3,seg>>1),half=!!o.half,TH=half?Math.PI/2:Math.PI,V=[];
+    const nz=o.noise?Array.from({length:(rings+1)*seg},()=>1+(R()-.5)*o.noise):null;
+    for(let j=0;j<=rings;j++){const th=j/rings*TH,row=[];
+     for(let i=0;i<=seg;i++){const ph=i/seg*Math.PI*2,k=nz?(j===0?1:nz[j*seg+i%seg]):1,sx=Math.sin(th)*Math.cos(ph),sy=Math.cos(th),sz=Math.sin(th)*Math.sin(ph);
+      row.push({p:[x+sx*rx*k,y+sy*ry*k,z+sz*rz*k],n:[sx/rx,sy/ry,sz/rz]});}V.push(row);}
+    const ctr=[x,half?y-ry*.1:y,z],flat=o.flat||!!nz;
+    for(let j=0;j<rings;j++)for(let i=0;i<seg;i++){const a=V[j][i],b=V[j][i+1],c=V[j+1][i+1],d=V[j+1][i];
+     if(flat)poly([a.p,b.p,c.p,d.p],ctr);
+     else{stri(a.p,b.p,c.p,a.n,b.n,c.n);stri(a.p,c.p,d.p,a.n,c.n,d.n);}}
+    return api;},
+   /** A gabled roof over x0..x1 × z0..z1 from height y, ridge along x, h high, eaves out by ov; the gable ends in `end`. */
+   gable(x0,z0,x1,z1,y,h,ov=0,end){const zm=(z0+z1)/2,hw=(z1-z0)/2,dy=ov*h/hw,o=[(x0+x1)/2,y-dy-1,zm];
+    poly([[x0-ov,y-dy,z0-ov],[x1+ov,y-dy,z0-ov],[x1+ov,y+h,zm],[x0-ov,y+h,zm]],o);
+    poly([[x0-ov,y-dy,z1+ov],[x1+ov,y-dy,z1+ov],[x1+ov,y+h,zm],[x0-ov,y+h,zm]],o);
+    if(end){const s=col,sj=jit;api.c(end,.15);jit=.04;poly([[x0,y,z0],[x0,y,z1],[x0,y+h,zm]],[x0+1,y,zm]);poly([[x1,y,z0],[x1,y,z1],[x1,y+h,zm]],[x1-1,y,zm]);col=s;jit=sj;}
+    return api;},
+   /** A hipped roof (ridge = share of its length along x; 0 makes a pyramid). */
+   hip(x0,z0,x1,z1,y,h,ov=0,ridge=0){const xm=(x0+x1)/2,zm=(z0+z1)/2,rx=(x1-x0)*ridge/2,dy=ov*h/Math.min((x1-x0)/2,(z1-z0)/2);
+    x0-=ov;x1+=ov;z0-=ov;z1+=ov;const yo=y-dy,A=[xm-rx,y+h,zm],Bp=[xm+rx,y+h,zm],o=[xm,yo-1,zm];
+    poly([[x0,yo,z0],[x1,yo,z0],Bp,A],o);poly([[x0,yo,z1],[x1,yo,z1],Bp,A],o);poly([[x0,yo,z0],[x0,yo,z1],A],o);poly([[x1,yo,z0],[x1,yo,z1],Bp],o);return api;},
+   /** Crenellations: merlons w long, d deep, h high along the line (x0,z0)–(x1,z1) at height y, one every w+gap. */
+   merl(x0,z0,x1,z1,y,h,w=3,d=2.4,gap=2.2){const L=Math.hypot(x1-x0,z1-z0),n=Math.max(1,Math.floor((L+gap)/(w+gap))),sp=(L-n*w)/Math.max(1,n-1),ux=(x1-x0)/L,uz=(z1-z0)/L;
+    for(let i=0;i<n;i++){const s=n===1?(L-w)/2:i*(w+sp),cx=x0+ux*(s+w/2),cz=z0+uz*(s+w/2),hx=Math.abs(ux)*w/2+Math.abs(uz)*d/2,hz=Math.abs(uz)*w/2+Math.abs(ux)*d/2;
+     api.box(cx-hx,y,cz-hz,cx+hx,y+h,cz+hz);}return api;},
+   /** A flag on a pole: the pole at (x,y,z) h high, the cloth w long blowing east, in hex. */
+   flag(x,y,z,h,hex,w=9,ht=5.5){api.c('#4a3420',.25).cyl(x,y,z,.55,.45,h,5);api.c('#d8b450',.6).m(1).sph(x,y+h+.5,z,.9,.9,.9,6).m(0);
+    api.c(hex,.2);const y1=y+h-.5,y0=y1-ht,k=w/3;
+    for(let i=0;i<3;i++){const a=x+.5+i*k,b=a+k,za=Math.sin(i*1.7)*1.1,zb=Math.sin((i+1)*1.7)*1.1;poly([[a,y0-i*.35,z+za],[b,y0-(i+1)*.35,z+zb],[b,y1-(i+1)*.2,z+zb],[a,y1-i*.2,z+za]],[a,y1,z-5],true);}
+    return api;},
+   build(){const parts=[];
+    for(let k=0;k<3;k++){const q=G[k],nv=q.p.length/3;if(!nv)continue;
+     const m=new pc.Mesh(dev);m.setPositions(q.p);m.setNormals(q.n);m.setColors32(q.c);
+     const idx=nv>65535?new Uint32Array(nv):new Uint16Array(nv);for(let i=0;i<nv;i++)idx[i]=i;m.setIndices(idx);m.update(pc.PRIMITIVE_TRIANGLES);
+     parts.push({mesh:m,mat:MAT[k]});}
+    return{parts,top:meta.top,meta};}
+  };
+  return api;
+ }
+
+ /* ---------- people, horses, engines and ships ---------- */
+ const K={wood:'#7a5230',woodD:'#4e3219',woodL:'#9c7448',plank:'#8f6a42',thatch:'#b0925a',thatchD:'#8a6f42',plaster:'#ddd0b4',
+  stone:'#a39e93',stoneD:'#7d786e',stoneL:'#bfbaad',slate:'#4f5662',tile:'#9a4a30',tileD:'#77382a',iron:'#8e949c',ironD:'#4b4f56',
+  gold:'#e2b64a',bronze:'#b5793c',rope:'#b39a6a',hide:'#8c6648',cloth:'#e8dfc8',soil:'#5e4430',straw:'#d4bb66',dark:'#2b2018',glass:'#2e2a24',
+  leather:'#6e4a28',boot:'#3a2614'};
+ /**
+  * A person, in metres (feet at the origin, facing +x, right hand at +z), from a figure look (UNIT_ART's fig, in the
+  * owner's colours) and a pose: leg/arm swing for walking, bob, and atk 1 (wind up) or 2 (strike or loose); mounted sits
+  * astride (legs out to the horse's flanks). The weapon is held at the hand, its angle set by the pose.
+  */
+ function human(b,L,q){
+  const sw=q.leg||0,mounted=!!q.mounted,W=L.weapon||'',bow=W==='bow'||W==='cbow',pole=W==='spear'||W==='halberd'||W==='jav',lance=W==='lance';
+  b.push().t(0,q.bob||0,0);
+  for(const sd of[-1,1]){                       // legs: trousers and boots
+   b.push().t(0,.9,sd*.1);
+   if(mounted)b.rx(-sd*.62).rz(.55);else b.rz(sw*sd*.5);
+   b.c(L.tunic2,.15).box(-.068,-.62,-.065,.068,0,.065).c(K.boot,.25).box(-.075,-.9,-.07,.1,-.6,.072);b.pop();}
+  b.c(L.tunic,.18).tbox(-.13,.86,-.2,.13,1.42,.2,.02,.03);                    // tunic
+  b.c(L.tunic,.18).tbox(-.165,.6,-.215,.165,.9,.215,.035,.02);              // its skirt
+  b.c(L.belt||K.leather,.3).box(-.145,.86,-.212,.145,.94,.212);
+  if(L.armor==='mail')b.m(1).c(K.iron,.45).j(.08).tbox(-.142,.94,-.214,.142,1.4,.214,.02,.03).j(0).m(0);
+  if(L.armor==='gold')b.m(1).c(K.gold,.7).tbox(-.145,.94,-.216,.145,1.41,.216,.02,.03).m(0);
+  if(L.cape)b.c(L.cape,.15).tbox(-.2,.5,-.2,-.15,1.42,.2,0,.04);
+  if(L.quiver)b.push().t(-.18,1.12,-.08).rx(.3).c(K.leather,.25).cyl(0,-.25,0,.06,.06,.5,6).c('#ece6d6',.1).cyl(0,.25,0,.05,.03,.12,5).pop();
+  b.c(L.skin,.3).cyl(0,1.4,0,.05,.05,.1,6).sph(0,1.6,0,.115,.128,.112,10);    // neck, head
+  b.c(L.hair,.1).sph(-.018,1.635,0,.122,.1,.118,8,{half:true});
+  const H=L.helm;
+  if(H==='cap')b.c(L.tunic2,.2).sph(0,1.655,0,.13,.085,.128,8,{half:true});
+  else if(H==='iron')b.m(1).c(K.iron,.6).sph(0,1.645,0,.132,.11,.13,10,{half:true}).box(.1,1.55,-.018,.14,1.68,.018).m(0);
+  else if(H==='gold')b.m(1).c(K.gold,.75).sph(0,1.645,0,.134,.115,.132,10,{half:true}).m(0).c(L.trim||'#c03a28',.2).box(-.11,1.72,-.02,.06,1.8,.02);
+  else if(H==='hood')b.c(L.hood||'#6e5432',.12).sph(-.01,1.62,0,.14,.15,.138,8).cyl(-.08,1.3,0,.2,.16,.2,8);
+  else if(H==='band')b.c(L.tunic,.2).cyl(0,1.6,0,.122,.122,.04,10);
+  if(L.plume)b.c(L.plume,.2).box(-.05,1.74,-.02,.08,1.86,.02);
+  // arms: the angle swings the arm forward (pi/2 straight ahead); the hand ends .62 down it
+  const hold=(sd,a,wrist)=>{b.push().t(0,1.36,sd*.245).rz(a).rx(sd*.06);
+   b.c(L.tunic,.18).box(-.055,-.32,-.055,.055,.03,.055).c(L.skin,.3).box(-.046,-.58,-.046,.046,-.32,.046).sph(0,-.61,0,.052,.052,.052,6);
+   b.pop();return[Math.sin(a)*.62,1.36-Math.cos(a)*.62,sd*.26];};
+  const atk=q.atk||0;
+  let ra=-(q.arm||0)*.8+.12,la=(q.arm||0)*.8+.12,wa=.35;            // arm angles; the weapon's world angle
+  if(bow){la=atk?1.5:.25;ra=atk===1?1.25:atk===2?.9:-(q.arm||0)*.8+.1;}
+  else if(pole){wa=Math.PI/2-.12;if(atk===1){ra=.35;wa=.12;}else if(atk===2){ra=1.45;wa=-.05;}}
+  else if(lance){wa=.18;if(atk===1){ra=.5;wa=.1;}else if(atk===2){ra=1.5;wa=-.06;}}
+  else{if(atk===1){ra=3.4;wa=2.1;}else if(atk===2){ra=1.05;wa=-.55;}}
+  if(W==='jav'&&atk===1){ra=3.5;wa=.25;}else if(W==='jav'&&atk===2){ra=1.2;wa=-.2;}
+  if(mounted&&!bow){la=.7;}
+  const rh=hold(1,ra),lh=hold(-1,la);
+  // the weapon, at the right hand (a bow at the left)
+  b.push();
+  if(bow){b.t(lh[0]+.03,lh[1],lh[2]);const dk=W==='cbow'?'#3e2a1a':'#6a4422';b.c(dk,.35);
+   const pts=[];for(let i=0;i<=6;i++){const t=i/6*2-1,yy=t*.55,xx=.17*(1-t*t)-(W==='cbow'?.06*Math.abs(t)**3:0);pts.push([xx,yy]);}
+   for(let i=0;i<6;i++){const[a0,b0]=pts[i],[a1,b1]=pts[i+1];b.push().t((a0+a1)/2,(b0+b1)/2,0).rz(Math.atan2(b1-b0,a1-a0)).box(-.11,-.018,-.018,.11,.018,.018).pop();}
+   if(W==='cbow')b.m(1).c(K.gold,.7).sph(pts[0][0],pts[0][1],0,.03,.03,.03,5).sph(pts[6][0],pts[6][1],0,.03,.03,.03,5).m(0);
+   const nock=atk===1?-.36:-.02;b.c('#e8e0c8',.2);
+   b.push().t(nock/2,.28,0).rz(Math.atan2(.55,nock)).box(-.006,-.31,-.006,.006,.31,.006).pop();   // the string, drawn back while aiming
+   b.push().t(nock/2,-.28,0).rz(Math.atan2(-.55,nock)).box(-.006,-.31,-.006,.006,.31,.006).pop();
+   if(atk===1)b.c(K.wood,.2).box(nock,-.01,-.01,.55,.01,.01).m(1).c(K.iron,.5).cyl(.55,0,0,.025,0,.08,4).m(0);}
+  else if(W){b.t(rh[0],rh[1],rh[2]).rz(wa);
+   const shaft=(x0,x1,r=.022)=>b.c(K.wood,.25).push().rz(-Math.PI/2).cyl(0,x0,0,r,r,x1-x0,5).pop();
+   if(W==='sword')b.c(K.leather,.3).box(-.12,-.025,-.025,0,.025,.025).m(1).c(K.iron,.6).box(0,-.07,-.02,.03,.07,.02).c('#c8ced6',.85).tbox(.03,-.03,-.008,.8,.03,.008,0,0).m(0);
+   else if(W==='club')b.c('#6a4a28',.2).push().rz(-Math.PI/2).cyl(0,-.1,0,.03,.07,.75,6).pop();
+   else if(W==='axe'||W==='tool'){shaft(-.1,W==='axe'?.72:.5);const e=W==='axe'?.72:.5;b.m(1).c(K.iron,.55).box(e-.14,-.03,-.025,e,.1,.025).box(e-.12,.1,-.02,e-.02,.16,.02).m(0);}
+   else if(W==='spear'||W==='jav'){const e=W==='jav'?1.0:1.45;shaft(-.55,e,.018);b.m(1).c(K.iron,.6).push().t(e,0,0).rz(-Math.PI/2).cyl(0,0,0,.035,0,.18,4).pop().m(0);}
+   else if(W==='halberd'){shaft(-.6,1.6,.022);b.m(1).c(K.iron,.6).push().t(1.6,0,0).rz(-Math.PI/2).cyl(0,0,0,.035,0,.2,4).pop().box(1.32,-.02,-.02,1.52,.16,.02).box(1.36,.16,-.016,1.48,.22,.016).m(0);}
+   else if(W==='lance'){shaft(-.8,2.4,.03);b.c(L.tunic,.2).box(.3,-.02,-.035,.45,.03,.035);b.m(1).c(K.iron,.6).push().t(2.4,0,0).rz(-Math.PI/2).cyl(0,0,0,.05,0,.25,5).pop().m(0);}}
+  b.pop();
+  if(L.shield&&!bow){b.push().t(lh[0]+.07,lh[1]+.12,lh[2]-.06);
+   if(L.shield==='tower')b.c(L.tunic,.25).box(-.03,-.42,-.24,.03,.42,.24).m(1).c(K.gold,.7).box(-.04,-.44,-.26,.0,.44,-.22).box(-.04,-.44,.22,0,.44,.26).box(-.045,-.06,-.06,0,.06,.06).m(0);
+   else{const r=L.shield==='wicker'?.24:.28;b.rz(-Math.PI/2).c(L.shield==='wicker'?'#9a7a44':L.tunic,.25).cyl(0,-.03,0,r,r,.05,12);b.m(1).c(K.iron,.55).cyl(0,.02,0,.07,.04,.04,8).m(0);}
+   b.pop();}
+  b.pop();
+ }
+ /** A horse in metres facing +x: body, neck, head, mane and tail, four legs in a trot by phase ph; a saddle cloth in the
+  *  owner's colour, or full barding trimmed in the horse's trim. */
+ function horse(b,H,ph,moving,main,dark){
+  b.c(H.coat,.32).sph(0,1.2,0,.74,.34,.3,12).sph(.46,1.16,0,.36,.36,.29,10).sph(-.5,1.22,0,.37,.35,.31,10);
+  b.push().t(.62,1.32,0).rz(-.85).c(H.coat,.3).tbox(-.15,0,-.12,.15,.78,.12,.04,.04).pop();     // neck, rising forward
+  b.push().t(1.08,1.8,0).rz(-.55).c(H.coat,.3).tbox(-.1,-.1,-.1,.44,.1,.1,0,.025).c(H.dark,.3).box(.38,-.09,-.07,.47,.06,.07).pop();
+  b.c(H.coat,.3).cyl(.98,1.92,-.06,.03,0,.12,4).cyl(.98,1.92,.06,.03,0,.12,4);
+  b.push().t(.66,1.42,0).rz(-.85).c(H.mane,.12).box(-.18,.05,-.03,-.06,.86,.03).pop();
+  b.push().t(-.82,1.32,0).rz(2.6).c(H.mane,.12).tbox(-.05,0,-.05,.05,.62,.05,-.03,-.02).pop();
+  const lg=[[.46,.15,0],[.46,-.15,Math.PI],[-.48,.15,Math.PI],[-.48,-.15,0]];
+  for(const[x,z,o]of lg){const a=moving?Math.sin(ph+o)*.45:0;b.push().t(x,1.0,z).rz(a);
+   b.c(H.coat,.3).cyl(0,-.55,0,.06,.09,.6,6).c(H.white?'#d8d0c0':H.dark,.3).cyl(0,-.95,0,.05,.055,.42,6).c('#1e1610',.3).cyl(0,-1.0,0,.06,.06,.06,6).pop();}
+  if(H.barded){b.c(H.trim||'#c9ced4',.5).m(H.white?0:1).sph(-.05,1.18,0,.8,.38,.33,12).m(0);
+   b.c(main,.2).tbox(-.6,.84,-.345,.55,1.3,.345,0,0).c(H.trim||'#c9ced4',.5).box(-.62,.82,-.35,.57,.88,.35);
+   b.m(1).c(H.trim||'#c9ced4',.6).push().t(1.08,1.8,0).rz(-.55).box(.02,.06,-.07,.38,.12,.07).pop().m(0);}
+  else b.c(main,.2).box(-.32,1.46,-.33,.2,1.53,.33).c(dark,.2).box(-.32,1.2,-.335,.2,1.46,-.31).box(-.32,1.2,.31,.2,1.46,.335);
+  b.c('#4a2e18',.35).box(-.24,1.53,-.2,.12,1.6,.2);                     // saddle
+ }
+ /** The look for a type and side: its art's figure in the owner's tunic, a skin tone, a belt. */
+ function lookOf(t,p){const a=artOf(t),f=a.fig||{},[main,dark]=PCOL[p];
+  return{...f,tunic:main,tunic2:dark,skin:SKIN_TONES[(f.weapon||'').length%SKIN_TONES.length],hair:'#3a2817',cape:f.cape?mixC(main,'#000000',.15):null,hood:f.helm==='hood'?'#6e5432':null};}
+ /** The frames a land unit has: idle, walk 0-3, atk 0-1 (wind up, strike), work 0-1 (a villager at a job). */
+ function unitModel(b,t,p,pose,f){
+  const a=artOf(t),U=UNITTYPES[t],[main,dark]=PCOL[p];
+  if(a.engine)return engine(b,a.engine,pose,main,dark);
+  if(a.boat||U.naval)return ship(b,t,pose,f,main,dark);
+  const ph=f/4*Math.PI*2,walk=pose==='walk',sn=Math.sin(ph),q={leg:walk?sn:0,arm:walk?sn*.6:0,bob:walk?Math.abs(Math.cos(ph))*.04:0,
+   atk:pose==='atk'||pose==='work'?f+1:0};
+  const L=lookOf(t,p),sc=(a.fig&&a.fig.s)||1;
+  b.s(US*sc*1.18,US*sc,US*sc*1.18);   // a little stocky, to read at a distance
+  if(a.horse){b.push().s(.9);horse(b,a.horse,ph,walk,main,dark);b.pop();b.push().t(-.08,.6,0);human(b,L,{...q,leg:0,bob:0,mounted:true});b.pop();}
+  else human(b,L,q);
+ }
+ /**
+  * Siege engines in metres facing +x, by ENGINES key. Poses: idle (set up), packed (travelling: arms lowered and lashed),
+  * atk (the moment of loosing). Each carries a pennant in the owner's colour.
+  */
+ function engine(b,k,pose,main,dark){
+  const atk=pose==='atk',packed=pose==='packed';b.s(US*.82);
+  const wheel=(x,z,r,w=.12)=>{b.push().t(x,r,z).rx(Math.PI/2).c(K.woodD,.25).cyl(0,-w/2,0,r,r,w,10,{b:true}).m(1).c(K.ironD,.4).cyl(0,-w/2-.01,0,r*.3,r*.3,w+.02,6,{b:true}).m(0).pop();};
+  const beam=(x0,y0,z0,x1,y1,z1,w=.09)=>{const dx=x1-x0,dy=y1-y0,dz=z1-z0,L=Math.hypot(dx,dy,dz);b.push().t(x0,y0,z0).ry(-Math.atan2(dz,dx)).rz(Math.atan2(dy,Math.hypot(dx,dz)))
+   .box(0,-w,-w,L,w,w).pop();};
+  const pennant=(x,y,z,h)=>{b.c('#4a3420',.25).cyl(x,y,z,.035,.03,h,5).c(main,.2);   // a pennant on a staff (in metres)
+   for(let i=0;i<2;i++){const a=x+.03+i*.22,c=a+.22;b.poly([[a,y+h-.32+i*.04,0+z],[c,y+h-.26+(i+1)*.04,z+.03],[c,y+h-.06,z+.03],[a,y+h-.02,z]],[a,y+h,z-1],true);}};
+  if(k==='ram'){b.c(K.woodD,.2).j(.12).box(-1.5,.45,-.62,1.5,.62,.62);for(const x of[-1,1])for(const z of[-.72,.72])wheel(x,z,.42);
+   const push=atk?.45:0;b.push().t(push,.95,0).rz(-Math.PI/2).c(K.wood,.2).cyl(0,-1.9,0,.17,.17,3.4,8).m(1).c(K.ironD,.5).cyl(0,1.5,0,.26,.16,.38,8).m(0).pop();
+   b.c(K.woodD,.2);for(const x of[-1.3,0,1.3])for(const z of[-.6,.6])b.box(x-.07,.6,z-.07,x+.07,1.55,z+.07);
+   b.c(K.hide,.15).j(.15).gable(-1.55,-.75,1.55,.75,1.5,.75,.1);b.j(0);pennant(-1.2,2.1,0,.7);return;}
+  if(k==='stonethrower'||k==='mangonel'||k==='engine'){const big=k==='stonethrower';
+   b.c(K.woodD,.2).j(.1);for(const z of[-.5,.5])b.box(-1.2,.3,z-.08,1.2,.48,z+.08);b.box(-1.2,.3,-.5,-1.05,.48,.5).box(1.05,.3,-.5,1.2,.48,.5);b.j(0);
+   for(const x of[-.85,.85])for(const z of[-.6,.6])wheel(x,z,.32,.1);
+   b.c(K.wood,.2);beam(.2,.45,-.45,.55,1.45,-.12,.07);beam(.2,.45,.45,.55,1.45,.12,.07);beam(.9,.45,-.45,.55,1.45,-.12,.07);beam(.9,.45,.45,.55,1.45,.12,.07);
+   if(!big){b.c(K.rope,.15).push().t(-.2,.6,0).rx(Math.PI/2).cyl(0,-.45,0,.16,.16,.9,8).pop();b.c(K.woodD,.2).box(.6,1.2,-.4,.75,1.35,.4);}
+   const th=packed?Math.PI+.2:atk?(big?1.24:1.45):Math.PI+(big?.42:.12),len=big?2.4:1.9,px=big?.55:-.2,py=big?1.45:.6,ex=px+Math.cos(th)*len,ey=py+Math.sin(th)*len;
+   b.push().t(px,py,0).rz(th).c(K.wood,.2).box(0,-.07,-.07,len,.07,.07).pop();   // the arm: lying back when cocked, flung up when loosing
+   if(big)b.c(K.rope,.15).box(ex-.015,ey-.45,-.015,ex+.015,ey,.015).c(K.leather,.3).sph(ex,ey-.5,0,.12,.08,.12,6);
+   else b.c(K.woodD,.2).cyl(ex,ey-.08,0,.2,.26,.16,8);
+   if(!atk)b.c('#8a8478',.2).sph(ex,big?ey-.48:ey+.14,0,.13,.13,.13,6);
+   pennant(-1.1,.48,-.5,1.1);return;}
+  if(k==='trebuchet'){b.s(.82);b.c(K.woodD,.2).j(.1);for(const z of[-.9,.9])b.box(-2,.0,z-.12,2,.25,z+.12);for(const x of[-1.6,1.6])b.box(x-.12,0,-.95,x+.12,.25,.95);b.j(0);
+   b.c(K.wood,.2);for(const z of[-.7,.7]){beam(-1.4,.2,z,0,3.4,z,.1);beam(1.4,.2,z,0,3.4,z,.1);}beam(0,3.4,-.75,0,3.4,.75,.1);
+   const th=packed?Math.PI:atk?1.2:Math.PI+.6,L1=4.2,L2=1.3,ex=Math.cos(th)*L1,ey=3.4+Math.sin(th)*L1,cx=-Math.cos(th)*L2,cy=3.4-Math.sin(th)*L2;
+   b.push().t(0,3.4,0).rz(th).c(K.wood,.2).box(-L2,-.1,-.1,L1,.1,.1).pop();   // the long arm: down to the rear when cocked, flung over when loosing
+   b.c(K.woodD,.2).box(cx-.4,cy-.95,-.45,cx+.4,cy-.15,.45).c('#8a8478',.2).j(.15).box(cx-.35,cy-.7,-.4,cx+.35,cy-.2,.4).j(0);   // the counterweight hangs level
+   if(!atk)b.c(K.rope,.15).box(ex-.03,ey-.6,-.015,ex+.03,ey,.015).c('#8a8478',.2).sph(ex,ey-.7,0,.22,.22,.22,8);
+   pennant(1.8,.25,-.9,1.4);return;}
+  if(k==='ballista'){b.c(K.woodD,.2).box(-1,.35,-.55,1,.5,.55);for(const x of[-.65,.65])for(const z of[-.62,.62])wheel(x,z,.33,.1);
+   b.c(K.wood,.2).cyl(0,.5,0,.12,.12,.45,6);const tilt=packed?.55:.08;
+   b.push().t(0,1.0,0).rz(tilt).c(K.wood,.2).box(-.9,-.07,-.09,1.0,.07,.09);
+   b.c(K.woodD,.25);for(const sd of[-1,1])b.push().t(.75,0,sd*.08).ry(sd*-.55).box(-.05,-.05,0,.08,.05,sd*.95).pop();
+   b.c('#e0d6bc',.2);const nock=atk?.7:-.55;for(const sd of[-1,1]){const ex=.75-.5,ez=sd*.9;b.push().t((ex+nock)/2,.02,ez/2).ry(-Math.atan2(ez,ex-nock)).box(-Math.hypot(ex-nock,ez)/2,-.01,-.01,Math.hypot(ex-nock,ez)/2,.01,.01).pop();}
+   if(!atk)b.c(K.wood,.2).box(-.5,.07,-.02,1.1,.11,.02).m(1).c(K.iron,.6).push().t(1.1,.09,0).rz(-Math.PI/2).cyl(0,0,0,.05,0,.18,4).pop().m(0);
+   b.pop();pennant(-.9,.5,-.5,1);return;}
+  if(k==='cannon'||k==='greatbombard'){const big=k==='greatbombard',R0=big?.42:.2,Lb=big?3.0:2.0,rec=atk?-.25:0;
+   if(big){b.c(K.woodD,.2).j(.1).box(-1.7,.15,-.6,1.5,.55,.6).j(0);for(const x of[-1.2,1.0])for(const z of[-.7,.7])wheel(x,z,.3,.12);}
+   else{for(const z of[-.55,.55])wheel(.1,z,.55,.1);b.c(K.woodD,.2);beam(.1,.55,0,-1.5,.06,0,.1);}
+   const el=packed?.0:.12;b.push().t(.1+rec,big?.95:.62,0).rz(el).m(1).c(big?K.bronze:K.ironD,big?.65:.45).push().rz(-Math.PI/2)
+    .cyl(0,-Lb*.65,0,R0*1.2,R0*.95,Lb,12).cyl(0,-Lb*.65+Lb-.05,0,R0*1.08,R0*1.08,.14,12).pop().c('#151515',.2).push().t(Lb*.35+.004,0,0).rz(-Math.PI/2).cyl(0,0,0,R0*.62,R0*.62,.02,10).pop().m(0);
+   if(atk)b.m(2).c('#ffb050',.2).sph(Lb*.35+.25,0,0,.22,.18,.18,6).m(0);b.pop();
+   pennant(-1.1,big?.55:.2,-.45,1);return;}
+  if(k==='siegetower'){b.c(K.woodD,.2).box(-1.3,.35,-1.25,1.3,.6,1.25);for(const x of[-.9,.9])for(const z of[-1.32,1.32])wheel(x,z,.36,.12);
+   b.j(.14);for(let i=0;i<4;i++){const y=.6+i*1.15;b.c(i%2?K.hide:K.plank,.15).box(-1.15,y,-1.1,1.15,y+1.15,1.1);}b.j(0);
+   b.c(K.woodD,.2);for(const x of[-1.2,1.2])for(const z of[-1.15,1.15])b.box(x-.08,.6,z-.08,x+.08,5.25,z+.08);
+   b.c(K.plank,.15).merl(-1.15,-1.15,1.15,-1.15,5.2,.35,.32,.14,.22).merl(-1.15,1.15,1.15,1.15,5.2,.35,.32,.14,.22).merl(-1.15,-1.15,-1.15,1.15,5.2,.35,.32,.14,.22);
+   b.push().t(1.2,5.15,0).rz(atk?-1.2:-.18).c(K.wood,.2).box(0,-1.6,-.9,.12,0,.9).pop();
+   pennant(-.9,5.2,-.9,1.3);return;}
+  return engine(b,'engine',pose,main,dark);
+ }
+ /**
+  * A ship in world px facing +x, from its SPRITES or BOAT_MODELS model (len, beam and hull in 2-px cells; oars; masts
+  * {u, h, w, sail}; crew; castles; ram): a lofted hull with a strake in the owner's colour, deck, oars pulling through
+  * frame f when moving, square sails with a band of the owner's colour, raised castles, a bronze ram, and the crew's arms.
+  */
+ function ship(b,t,pose,f,main,dark){
+  const U=UNITTYPES[t],M=(U.sprite&&SPRITES[U.sprite]&&SPRITES[U.sprite].model)||BOAT_MODELS[t]||BOAT_MODELS.transport;
+  const L=M.len*2,Bm=M.beam*2,Hh=M.hull*2+2,keel=-Hh*.8,n=10,hw=u=>Bm/2*Math.pow(Math.max(0,1-Math.pow(Math.abs(u),u>0?2.2:4)),.55);
+  const xs=u=>u*L/2,st=[];for(let i=0;i<=n;i++){const u=i/n*2-1;st.push([xs(u),hw(u)+(u>.97?.01:0),Hh+Math.pow(Math.abs(u),3)*Hh*.6]);}
+  const hull=(z0s,y0,y1,col,gl)=>{b.c(col,gl).j(.06);for(let i=0;i<n;i++){const[a,wa,da]=st[i],[c,wc,dc]=st[i+1];
+   for(const sd of[-1,1])b.poly([[a,y0(da),sd*wa*z0s(y0(da),da)],[c,y0(dc),sd*wc*z0s(y0(dc),dc)],[c,y1(dc),sd*wc*z0s(y1(dc),dc)],[a,y1(da),sd*wa*z0s(y1(da),da)]],[(a+c)/2,Hh*.3,0]);}b.j(0);};
+  const wid=(y,d)=>y>=0?1:1-Math.pow(y/keel,1.4)*.85;          // the hull narrows below the waterline to the keel
+  hull(wid,()=>keel,()=>0,'#3a2716',.3);
+  hull(wid,()=>0,d=>d-1.6,'#5a3b1e',.3);
+  hull(wid,d=>d-1.6,d=>d,main,.3);                                // the strake, painted
+  b.c(K.plank,.2).j(.08);for(let i=0;i<n;i++){const[a,wa,da]=st[i],[c,wc,dc]=st[i+1];b.poly([[a,da-.3,-wa*.92],[c,dc-.3,-wc*.92],[c,dc-.3,wc*.92],[a,da-.3,wa*.92]],[(a+c)/2,-50,0]);}b.j(0);
+  if(M.ram)b.m(1).c(K.bronze,.6).push().t(L/2-1,1,0).rz(-Math.PI/2).cyl(0,0,0,1.2,0,5,6).pop().m(0);
+  if(M.castles){b.c(K.woodL,.2);for(const sd of[-1,1]){const x=sd*L*.36,w=hw(sd*.72)*.85;b.box(x-L*.09,Hh,-w,x+L*.09,Hh+4,w);b.c(main,.2).merl(x-L*.09,-w,x+L*.09,-w,Hh+4,1.4,1.6,.8,1.2).merl(x-L*.09,w,x+L*.09,w,Hh+4,1.4,1.6,.8,1.2).c(K.woodL,.2);}}
+  const moving=pose==='walk'||pose==='atk';
+  if(M.oars){const ph=f/4*Math.PI*2,sw=moving?Math.sin(ph)*.45:0,lift=moving?Math.cos(ph)*.25:0;b.c(K.woodL,.2);
+   for(let i=0;i<M.oars;i++){const x=-L*.32+i*(L*.6/Math.max(1,M.oars-1));for(const sd of[-1,1]){const w=hw(x/(L/2));
+    b.push().t(x,Hh-1.2,sd*w).ry(sd*sw).rx(sd*(.55+lift)).box(-.35,-.35,0,.35,.35,sd*Bm*.75).pop();}}}
+  for(const m of M.masts||[]){const x=m.u*2,h=m.h*2,w=m.w*2;b.c(K.woodD,.25).cyl(x,Hh-1,0,.75,.55,h+2,6);
+   b.c(K.wood,.25).push().t(x+.6,Hh+h-1,0).rx(Math.PI/2).cyl(0,-w,0,.4,.4,w*2,5).pop();
+   const sail=m.sail||K.cloth,bands=[[h,h*.66,sail],[h*.66,h*.38,m.sail?mixC(m.sail,main,.45):main],[h*.38,h*.12,sail]];
+   const bl=y=>1.8*Math.sin(Math.PI*clamp01(y/h));
+   for(const[ya,yb,cc]of bands){b.c(cc,.12);
+    for(const sd of[-1,1])b.poly([[x+1.1+bl(ya),Hh+ya,0],[x+1.1,Hh+ya,sd*w],[x+1.1,Hh+yb,sd*w],[x+1.1+bl(yb),Hh+yb,0]],[x-10,Hh+h/2,0],true);}
+   b.flag(x,Hh+h+1,0,4,main,4,2.4);}
+  const crew=(x,z)=>{b.c(main,.2).cyl(x,Hh,z,1.5,1.2,5,6).c(SKIN_TONES[1],.3).sph(x,Hh+6,z,1.2,1.3,1.2,6);};
+  if(M.crew==='archers'||!M.crew&&U.role==='transport'){for(let i=0;i<(M.len>24?4:2);i++)crew(-L*.2+i*L*.14,(i%2?1:-1)*Bm*.18);}
+  if(M.crew==='ballista'){b.c(K.woodD,.2).box(L*.12,Hh,-1.5,L*.28,Hh+2,1.5).c(K.wood,.2).box(L*.08,Hh+2,-.5,L*.34,Hh+3,.5).box(L*.26,Hh+2,-5,L*.29,Hh+3,5);crew(-L*.1,0);}
+  if(M.crew==='cannons'){b.m(1).c(K.ironD,.45);for(let i=0;i<3;i++)for(const sd of[-1,1]){const x=-L*.2+i*L*.2,w=hw(x/(L/2));b.push().t(x,Hh-2.4,sd*(w+.8)).rx(sd*Math.PI/2).cyl(0,-1,0,.9,.75,3,8).pop();}b.m(0);crew(0,0);}
+  if(M.crew==='fire'){b.m(1).c(K.ironD,.4).cyl(L*.22,Hh,0,2,2.4,2.4,8).m(2).c('#ff8a30',.2).sph(L*.22,Hh+2.6,0,1.9,1,1.9,6).m(0);crew(-L*.12,0);}
+  if(M.crew==='catapult'){b.c(K.woodD,.2).box(L*.05,Hh,-2.5,L*.32,Hh+1.5,2.5);b.push().t(L*.1,Hh+2,0).rz(pose==='atk'?1.9:.35).c(K.wood,.2).box(0,-.5,-.5,10,.5,.5).c(K.woodD,.2).cyl(10,0,0,1.6,2,1.2,6).pop();crew(-L*.15,0);}
+  if(U.role==='fishing'){b.c(K.rope,.1).box(-L*.3,Hh,-2,-L*.05,Hh+1.2,2);crew(L*.12,0);}
+ }
+
+ /* ---------- buildings ---------- */
+ /**
+  * Buildings in world px, centred on their footprint with the ground at y = 0 (footings go below it, for slopes); north
+  * is -z, and the south face (+z) is the one the camera sees. meta.smoke marks a chimney top for the 2D smoke.
+  */
+ const BLD3={
+  house(b,p){const[tm]=PCOL[p];
+   b.c(K.stoneD,.2).j(.16).box(-14,-6,-12,14,3,12).j(0);
+   b.c(K.plaster,.12).j(.05).box(-12,3,-10,12,17,10).j(0);
+   b.c(K.woodD,.22);for(const x of[-12,-4,4,12])b.box(x-1,3,9.4,x+1,17,10.6);b.box(-12.4,9.6,9.4,12.4,11,10.6);
+   for(const z of[-10,0,10])b.box(11.4,3,z-1,12.6,17,z+1);b.box(11.4,9.6,-10.4,12.6,11,10.4);
+   b.c(K.dark,.3).box(-2.6,3,9.9,2.6,12,11).c(K.glass,.7).box(-9.2,6.4,9.9,-6,9.6,10.9).box(6,6.4,9.9,9.2,9.6,10.9).box(11.9,12,-6,12.9,15,-2);
+   b.c(tm,.2).box(-3.6,12,10.4,3.6,13.4,11.4);
+   b.c(K.thatch,.08).j(.1).gable(-12,-10,12,10,17,13,2.6,K.plaster).j(0).c(K.thatchD,.1).box(-15,29.2,-1.3,15,31,1.3);
+   b.c(K.stone,.2).j(.14).box(4.5,20,-7.5,9.5,35,-2.5).j(0).c(K.dark,.3).box(5.5,35,-6.5,8.5,35.6,-3.5);b.meta.smoke=[7,35.5,-5];},
+  towncenter(b,p){const[tm,td]=PCOL[p];
+   b.c(K.stoneD,.2).j(.14).box(-31,-6,-29,31,4,29).c(K.stone,.22).box(-26,4,-20,26,14,20).j(0);
+   b.c(K.plaster,.12).j(.05).box(-25,14,-19,25,27,19).j(0);
+   b.c(K.woodD,.22);for(const x of[-25,-15,-5,5,15,25])b.box(x-1,14,18.4,x+1,27,19.6);b.box(-25.4,20,18.4,25.4,21.4,19.6);
+   for(const z of[-19,-9,1,11,19])b.box(24.4,14,z-1,25.6,27,z+1);
+   b.c(K.glass,.7);for(const x of[-19,-11,11,19])b.box(x-2.4,15.8,18.9,x+2.4,19.4,19.9);for(const z of[-14,-4,6])b.box(24.9,15.8,z-2.4,25.9,19.4,z+2.4);
+   b.c(K.stoneL,.25).box(-8,4,19.6,8,15.5,21).c(K.dark,.3).box(-5.6,4,20.4,5.6,13.2,21.4);
+   b.c(K.tile,.38).j(.06).hip(-25,-19,25,19,27,16,3.6,.42).j(0);
+   b.c(K.plaster,.12).box(-7,38,-7,7,53,7).c(K.woodD,.22);for(const[x,z]of[[-7,-7],[7,-7],[-7,7],[7,7]])b.box(x-1,38,z-1,x+1,53,z+1);
+   b.c(K.dark,.3).box(-4,44,6.6,4,51,7.6).box(6.6,44,-4,7.6,51,4);b.m(1).c(K.bronze,.7).cyl(0,45,0,2.8,1.4,4.4,8).m(0);
+   b.c(K.tile,.38).hip(-7,-7,7,7,53,12,2,0);b.flag(0,64.5,0,11,tm,11,6);
+   b.c(K.wood,.22);for(const x of[-10,10])b.cyl(x,4,27,1.1,1,11,6);b.c(K.tile,.38).poly([[-12.5,15.5,19.5],[12.5,15.5,19.5],[12.5,12.5,28.5],[-12.5,12.5,28.5]],[0,0,22]);
+   b.c(tm,.18).box(-17,10,20.1,-13,22,20.8).box(13,10,20.1,17,22,20.8).m(1).c(K.gold,.7).box(-16,17,20.8,-14,19,21.2).box(14,17,20.8,16,19,21.2).m(0);
+   b.c(K.stone,.2).j(.12).box(13,32,-14,18.5,47,-8.5).j(0);b.meta.smoke=[15.7,47,-11.2];
+   b.c(K.wood,.2);for(const[x,z]of[[-28,24],[28,24]])b.cyl(x,4,z,1.6,1.6,2.4,8).c('#5a3a1e',.2);},   // barrels at the corners
+  storagepit(b,p){const[tm]=PCOL[p];
+   b.c(K.soil,.1).box(-30,-2,-30,30,.6,30);
+   b.c(K.wood,.22);for(const x of[-24,0,24])for(const z of[-22,0])b.cyl(x,0,z,1.4,1.2,18,6);
+   b.c(K.thatch,.08).j(.1).hip(-26,-26,26,4,18,12,3,.5).j(0);
+   b.c(K.woodL,.2);for(let i=0;i<4;i++)b.push().t(-14+i*.3,2.2+(i>1?3.6:0),-14+(i%2)*4.2).rz(Math.PI/2).cyl(0,-9,0,2,2,18,7,{b:true}).pop();   // logs
+   b.c(K.stoneL,.25).j(.14);for(let i=0;i<5;i++){const x=6+(i%3)*5.6,z=-16+(i/3|0)*5.6,y=(i>2?0:0);b.box(x,y,z,x+5,y+4.4,z+5);}b.box(8.8,4.4,-13.2,13.8,8.6,-8.2).j(0);
+   b.c('#7a5a34',.2);for(const[x,z]of[[-20,14],[-14,18]])b.sph(x,3.2,z,3.2,3.4,3.2,8);b.m(1).c(K.gold,.75).box(-22,6,13,-18,7.4,15).box(-21,7.4,13.5,-18.5,8.6,14.6).m(0);
+   b.c('#6a4424',.2);for(const[x,z]of[[16,14],[21,18],[18,22]])b.cyl(x,0,z,2.6,2.6,6,8);b.m(1).c(K.ironD,.4);for(const[x,z]of[[16,14],[21,18],[18,22]])b.cyl(x,1.4,z,2.7,2.7,.7,8).cyl(x,4,z,2.7,2.7,.7,8);b.m(0);
+   b.flag(27,0,27,22,tm,10,5.5);},
+  barracks(b,p){const[tm,td]=PCOL[p];
+   b.c(K.stoneD,.2).j(.14).box(-31,-6,-29,31,3,29).c(K.stone,.22).box(-28,3,-25,28,13,3).j(0);
+   b.c(K.plank,.15).j(.1).box(-27,13,-24,27,24,2).j(0);
+   b.c(K.woodD,.22);for(const x of[-27,-13,0,13,27])b.box(x-1,13,1.4,x+1,24,2.6);
+   b.c(K.dark,.3).box(-5,3,2.6,5,12,3.6).c(K.glass,.6);for(const x of[-20,-12,12,20])b.box(x-2,15,1.8,x+2,19.5,2.8);
+   b.c(K.tile,.38).j(.06).gable(-27,-24,27,2,24,13,3,K.plank).j(0).c(K.tileD,.3).box(-30,36.6,-12.4,30,38,-9.6);
+   b.c(K.wood,.22);for(let x=-28;x<=28;x+=8){b.box(x-.8,0,26.4,x+.8,6.5,28);}b.box(-28,3.6,26.8,28,4.8,27.6).box(-28,5.4,26.8,28,6.4,27.6);
+   for(let z=6;z<=26;z+=8){b.box(-29,0,z-.8,-27.4,6.5,z+.8).box(27.4,0,z-.8,29,6.5,z+.8);}
+   b.cyl(-14,0,16,1,1,12,6).box(-18,9,15.2,-10,10.4,16.8).c(K.straw,.1).sph(-14,13.6,16,2.2,2.4,2.2,7);   // a training dummy
+   b.c(K.woodD,.2).box(10,0,13,22,1.2,14).box(10,8,13,22,9,14).box(10,0,13,11,9,14).box(21,0,13,22,9,14);
+   b.m(1).c(K.iron,.6);for(let i=0;i<5;i++)b.push().t(11.6+i*2.3,0,13.5).rz(-.18).cyl(0,0,0,.35,.35,15,4).cyl(0,15,0,.6,0,2.2,4).pop();b.m(0);
+   b.flag(26,0,22,26,tm,11,6);},
+  archery(b,p){const[tm]=PCOL[p];
+   b.c(K.soil,.12).box(-31,-2,-30,31,.8,30);
+   b.c(K.plank,.15).j(.1).box(-28,0,-26,28,17,-22).j(0);
+   b.c(K.wood,.22);for(const x of[-28,-14,0,14,28])b.cyl(x,0,-4,1.3,1.1,17,6);
+   b.c(K.thatch,.08).j(.1).gable(-28,-26,28,-4,17,11,3,K.plank).j(0);
+   for(const x of[-18,0,18]){b.c(K.woodD,.2).box(x-4.5,0,20,x-3.5,12,21).box(x+3.5,0,20,x+4.5,12,21);
+    b.push().t(x,10,19).rx(Math.PI/2).c(K.straw,.08).cyl(0,-1.2,0,5.6,5.6,2.2,14).c('#e8e0d0',.2).cyl(0,-1.35,0,4,4,2.5,14).c('#c0302a',.25).cyl(0,-1.5,0,2.5,2.5,2.8,14).c('#e8e0d0',.2).cyl(0,-1.6,0,1,1,3,10).pop();}
+   b.c(K.wood,.22);for(let i=0;i<3;i++)b.box(-22+i*6,0,4,-20+i*6,9,5);b.box(-23,7,4,-9,8,5);
+   b.flag(28,0,24,24,tm,11,6);},
+  stable(b,p){const[tm,td]=PCOL[p];
+   b.c(K.stoneD,.2).j(.12).box(-31,-6,-29,31,2.5,10).j(0);
+   b.c(K.plank,.15).j(.1).box(-27,2.5,-24,27,19,6).j(0);
+   b.c(K.woodD,.22).box(-8,2.5,5.6,8,16,7);b.c(K.wood,.22);for(const s of[-1,1])b.push().t(s*4,9.2,7.2).rz(s*.75).box(-.7,-8,-.3,.7,8,.3).pop();
+   b.c(K.dark,.3).box(-20,10,5.6,-12,15,6.8).box(12,10,5.6,20,15,6.8).c(K.straw,.08).box(-19,10,6,-13,12.4,7.2);
+   b.c(K.thatch,.08).j(.1).gable(-27,-24,27,6,19,15,3,K.plank).j(0).c(K.thatchD,.1).box(-30,33.4,-10.4,30,35,-7.6);
+   b.c(K.wood,.22);for(let x=-28;x<=28;x+=7)b.box(x-.7,0,27.6,x+.7,7,29);b.box(-28,3,28,28,4,28.8).box(-28,5.6,28,28,6.6,28.8);
+   for(let z=9;z<=28;z+=6.3){b.box(-29,0,z-.7,-27.6,7,z+.7).box(27.6,0,z-.7,29,7,z+.7);}
+   b.c(K.straw,.08).j(.12);b.box(-22,0,12,-14,5,17).box(-21,5,12.5,-15,9,16.5).push().t(-8,3,15).rz(Math.PI/2).cyl(0,-4,0,3,3,8,10,{b:true}).pop().j(0);
+   b.c(K.wood,.2).box(10,0,15,22,4,19).c('#3e6a86',.85).box(10.8,3.4,15.8,21.2,4.2,18.2);
+   b.flag(-27,0,26,24,tm,11,6);},
+  siegeworkshop(b,p){const[tm]=PCOL[p];
+   b.c(K.stoneD,.2).j(.14).box(-31,-6,-29,31,3,29).c(K.stone,.22).box(-28,3,-24,4,22,6).j(0);
+   b.c(K.dark,.3).box(-18,3,5.6,-6,17,6.6).c(K.glass,.6).box(-26,13,5.6,-22,18,6.6);
+   b.c(K.tile,.38).j(.06).gable(-28,-24,4,6,22,13,3,K.stone).j(0);
+   b.c(K.wood,.22);for(const[x,z]of[[8,-24],[28,-24],[8,4],[28,4]])b.cyl(x,3,z,1.3,1.1,17,6);b.c(K.plank,.15).j(.1).gable(8,-24,28,4,20,8,2.5).j(0);
+   b.c(K.wood,.22);const beam=(x0,y0,z0,x1,y1,z1,w=1)=>{const dx=x1-x0,dy=y1-y0,dz=z1-z0,L=Math.hypot(dx,dy,dz);b.push().t(x0,y0,z0).ry(-Math.atan2(dz,dx)).rz(Math.atan2(dy,Math.hypot(dx,dz))).box(0,-w,-w,L,w,w).pop();};
+   beam(12,3,14,18,40,16);beam(24,3,18,18,40,16);beam(18,40,16,4,30,22,.8);b.c(K.rope,.1).box(4.4,14,21.6,5,30,22.4).m(1).c(K.ironD,.4).box(3.6,12.5,21,5.8,14.2,23).m(0);
+   b.c(K.woodL,.2);for(let i=0;i<5;i++)b.push().t(-20+i*.2,1.9+(i>2?3.4:0),16+(i%3)*3.8).rz(Math.PI/2).cyl(0,-8,0,1.8,1.8,16,7,{b:true}).pop();
+   b.push().t(10,7,24).rx(Math.PI/2).rz(.2).c(K.woodD,.25).cyl(0,-.8,0,7,7,1.6,14,{b:true}).c(K.wood,.2).cyl(0,-1,0,2,2,2,8,{b:true}).pop();
+   b.flag(-28,0,26,24,tm,11,6);b.meta.smoke=[-12,36,-16];},
+  dock(b,p){const[tm]=PCOL[p];
+   b.c(K.woodD,.25);for(let x=-27;x<=27;x+=13.5)for(const z of[-27,-9,9,27])b.cyl(x,-12,z,1.6,1.5,16.5,6);
+   b.c(K.plank,.15).j(.14);for(let x=-30;x<30;x+=4)b.box(x+.2,2.4,-29,x+3.8,4.2,29);b.j(0);
+   b.c(K.woodD,.22).box(-30,4.2,-29.5,30,5.2,-28.5).box(-30,4.2,28.5,30,5.2,29.5);
+   b.c(K.woodD,.25);for(const[x,z]of[[-24,26],[0,26],[24,26],[-24,-26],[24,-26]])b.cyl(x,4.2,z,1.5,1.3,4,6);
+   b.c(K.plank,.15).j(.1).box(-26,4.2,-24,-8,18,-8).j(0).c(K.tile,.38).gable(-26,-24,-8,-8,18,8,2,K.plank).c(K.dark,.3).box(-20,4.2,-8.2,-14,13,-7.4);
+   b.c(K.rope,.1).cyl(12,4.2,-18,3,3,1.6,10).cyl(12,5.8,-18,2.4,2.4,1.2,10);
+   b.c('#6a4424',.2);for(const[x,z]of[[18,-20],[22,-16]])b.cyl(x,4.2,z,2.4,2.4,5.6,8);
+   b.flag(27,4.2,-26,22,tm,11,6);},
+  farm(b,p,v){                                    // v: 2 ripe, 1 half-harvested, 0 bare
+   b.c(K.soil,.06).j(.06).box(-31,-2,-31,31,.9,31).j(0);
+   for(let z=-27;z<=27;z+=6){b.c('#4a3424',.06).box(-29,.9,z-1.3,29,1.9,z+1.3);
+    if(v>0){const R=b.R;for(let x=-28;x<=28;x+=3.2){if(v===1&&R()<.45)continue;const h=v===2?5+R()*2.2:3+R()*1.6;
+     b.c(R()<.5?'#c8b058':'#b4a24c',.12).cyl(x+(R()-.5)*1.2,1.9,z+(R()-.5)*1.2,1.25,.0,h,4);}}}
+   b.c(K.wood,.22);for(const[x,z]of[[-31,-31],[31,-31],[-31,31],[31,31]])b.cyl(x,0,z,.9,.8,6,5);
+   if(v===2){b.c(K.wood,.2).cyl(0,0,0,.6,.6,13,5).box(-5,9.5,-.5,5,10.5,.5).c('#8a6a3a',.1).cyl(0,4.5,0,2.4,1.8,6,6).c(K.straw,.1).sph(0,12.8,0,2,2.2,2,6).c('#5a4a2a',.1).cyl(0,14,0,3.4,0,2.4,8);}},
+  /* towers, by tier */
+  guard(b,p){const[tm]=PCOL[p];
+   b.c(K.stoneD,.2).j(.16).tbox(-12,-6,-12,12,12,12,1.4,1.4).j(0);
+   b.c(K.wood,.2).j(.1).box(-9,12,-9,9,30,9).j(0).c(K.woodD,.22);for(const x of[-9,9])for(const z of[-9,9])b.box(x-1.2,12,z-1.2,x+1.2,30,z+1.2);
+   b.push().t(0,21,9.2).rz(.72).box(-12,-.8,-.4,12,.8,.4).pop().push().t(0,21,9.2).rz(-.72).box(-12,-.8,-.4,12,.8,.4).pop();
+   b.c(K.dark,.3).box(-1,15,9.2,1,21,9.8);
+   b.c(K.plank,.15).box(-12.5,30,-12.5,12.5,32.6,12.5).c(K.woodD,.22);for(const x of[-11.5,11.5])for(const z of[-11.5,11.5])b.box(x-.8,32.6,z-.8,x+.8,38.6,z+.8);
+   b.c(K.wood,.2).box(-12,35,-12,12,36.2,-11).box(-12,35,11,12,36.2,12).box(-12,35,-12,-11,36.2,12).box(11,35,-12,12,36.2,12);
+   b.c('#6a4a2c',.15).j(.08).hip(-11.5,-11.5,11.5,11.5,38.6,11,1.6,0).j(0);b.flag(0,49.6,0,8,tm,9,5);},
+  watch(b,p){const[tm]=PCOL[p];
+   b.c(K.stone,.22).j(.14).tbox(-12,-6,-12,12,36,12,1.2,1.2).c(K.stoneD,.2).box(-13.4,36,-13.4,13.4,39,13.4).j(0);
+   b.c(K.stoneL,.22).merl(-13.4,-12.6,13.4,-12.6,39,3.6,3.4,1.6,2.2).merl(-13.4,12.6,13.4,12.6,39,3.6,3.4,1.6,2.2).merl(-12.6,-13.4,-12.6,13.4,39,3.6,3.4,1.6,2.2).merl(12.6,-13.4,12.6,13.4,39,3.6,3.4,1.6,2.2);
+   b.c(K.dark,.3).box(-1,12,10.6,1,19,11.4).box(-1,24,10.4,1,31,11.2).box(10.6,18,-1,11.4,25,1);
+   b.c(K.woodD,.22);for(const x of[-9,9])for(const z of[-9,9])b.box(x-.8,39,z-.8,x+.8,45,z+.8);
+   b.c(K.slate,.4).j(.06).hip(-11,-11,11,11,45,13,1.8,0).j(0);b.flag(0,57.6,0,8,tm,10,5.5);},
+  fortified(b,p,top){const[tm,td]=PCOL[p];
+   b.c(K.stoneD,.2).j(.14).tbox(-16,-6,-16,16,8,16,1,1).c(K.stone,.22).tbox(-14,8,-14,14,40,14,.6,.6).j(0);
+   b.c(K.stoneD,.2).box(-15.6,40,-15.6,15.6,44,15.6);for(let i=-12;i<=12;i+=6){b.box(i-1,38,13.2,i+1,40,15.6).box(13.2,38,i-1,15.6,40,i+1);}
+   b.c(K.stoneL,.22).merl(-15.6,-14.6,15.6,-14.6,44,4,3.6,2,2.4).merl(-15.6,14.6,15.6,14.6,44,4,3.6,2,2.4).merl(-14.6,-15.6,-14.6,15.6,44,4,3.6,2,2.4).merl(14.6,-15.6,14.6,15.6,44,4,3.6,2,2.4);
+   b.c(K.dark,.3);for(const y of[14,26])b.box(-1,y,13.2,1,y+7,14.2).box(13.2,y+3,-1,14.2,y+10,1);
+   b.c(tm,.2).box(-5,24,13.5,5,36,14.4).m(1).c(K.gold,.7).box(-1.5,30,14.4,1.5,33,14.8).m(0);
+   if(top==='ballista'){b.push().t(0,44,0).s(.78);engine(b,'ballista','idle',tm,td);b.pop();}
+   else if(top==='bombard'){b.push().t(0,44,0).s(.8);engine(b,'cannon','idle',tm,td);b.pop();}
+   else b.flag(-9,44,-9,14,tm,11,6);},
+  ballista(b,p){BLD3.fortified(b,p,'ballista');},
+  bombard(b,p){BLD3.fortified(b,p,'bombard');},
+  keep(b,p,imp){const[tm,td]=PCOL[p],H=imp?62:52;
+   b.c(K.stoneD,.2).j(.14).box(-31,-6,-31,31,4,31).c(K.stone,.22).tbox(-26,4,-26,26,H,26,1.2,1.2).j(0);
+   b.c(imp?K.gold:K.stoneL,imp?.6:.22).m(imp?1:0).box(-25.9,30,-25.9,25.9,32,25.9).m(0);
+   b.c(K.stoneL,.22).merl(-25,-24,25,-24,H,4.4,4,2.2,2.6).merl(-25,24,25,24,H,4.4,4,2.2,2.6).merl(-24,-25,-24,25,H,4.4,4,2.2,2.6).merl(24,-25,24,25,H,4.4,4,2.2,2.6);
+   b.c(K.dark,.3).box(-5,4,25.4,5,17,26.6);for(const x of[-15,15])for(const y of[12,24,40])b.box(x-1,y,25.4,x+1,y+7,26.4);
+   for(const sx of[-1,1])for(const sz of[-1,1]){b.c(K.stone,.22).j(.12).cyl(sx*24,4,sz*24,7.2,6.6,H+8,12).j(0).c(K.stoneL,.2).cyl(sx*24,H+8,sz*24,7.6,7.6,1.4,12);
+    b.c(imp?K.tile:K.slate,.4).cyl(sx*24,H+9.4,sz*24,7.8,0,imp?16:12,12);}
+   b.c(tm,.18).box(-13,28,26.3,-7,46,27.2).box(7,28,26.3,13,46,27.2);
+   if(imp){b.c(K.stone,.22).j(.12).box(-12,H,-12,12,H+22,12).j(0).m(1).c(K.gold,.7).box(-12.4,H+19,-12.4,12.4,H+20.4,12.4).m(0);
+    b.c(K.slate,.4).hip(-12,-12,12,12,H+22,14,2.4,0).m(1).c(K.gold,.75).sph(0,H+37,0,1.6,1.6,1.6,8).m(0);b.flag(-19,H+12,19,14,tm,11,6);b.flag(19,H+12,-19,14,tm,11,6);}
+   else b.flag(0,H,0,18,tm,13,7);},
+  imperialkeep(b,p){BLD3.keep(b,p,true);},
+  castle(b,p){const[tm,td]=PCOL[p];
+   b.c(K.stoneD,.2).j(.14).box(-47,-6,-47,47,3,47).j(0).c('#8c7c5c',.1).box(-40,3,-40,40,3.6,40);
+   b.c(K.stone,.22).j(.12).box(-40,3,-44,40,30,-36).box(-44,3,-40,-36,30,40).box(36,3,-40,44,30,40).box(-40,3,36,-9,30,44).box(9,3,36,40,30,44).j(0);
+   b.c(K.stoneL,.22);for(const[x0,z0,x1,z1]of[[-40,-43,40,-43],[-40,-37,40,-37],[-43,-40,-43,40],[-37,-40,-37,40],[43,-40,43,40],[37,-40,37,40],[-40,43,-9,43],[9,43,40,43]])b.merl(x0,z0,x1,z1,30,4,3.6,2,2.6);
+   for(const sx of[-1,1])for(const sz of[-1,1]){b.c(K.stone,.22).j(.12).cyl(sx*40,3,sz*40,11,10,40,14).j(0).c(K.stoneD,.2).cyl(sx*40,40,sz*40,11.6,11.6,2.2,14).c(K.slate,.42).cyl(sx*40,42.2,sz*40,11.8,0,17,14);}
+   b.c(K.stone,.22).j(.12);for(const sx of[-1,1])b.cyl(sx*12.5,3,40,7.5,7,36,12);b.j(0).c(K.stoneD,.2).box(-9,22,36,9,34,44).c(K.dark,.3).box(-6,3,43.6,6,19,44.6).m(1).c(K.ironD,.4);for(let x=-5;x<=5;x+=2.5)b.box(x-.4,6,44,x+.4,19,44.8);b.m(0);
+   b.c(K.stoneL,.22).merl(-9,43,9,43,34,4,3.4,2,2.4);
+   b.c(K.stone,.22).j(.12).tbox(-18,3,-18,18,58,18,.8,.8).j(0).c(K.stoneL,.22).merl(-17.6,-16.6,17.6,-16.6,58,4,3.6,2,2.4).merl(-17.6,16.6,17.6,16.6,58,4,3.6,2,2.4).merl(-16.6,-17.6,-16.6,17.6,58,4,3.6,2,2.4).merl(16.6,-17.6,16.6,17.6,58,4,3.6,2,2.4);
+   for(const sx of[-1,1])for(const sz of[-1,1])b.c(K.stone,.22).cyl(sx*16,58,sz*16,4.6,4.4,8,10).c(K.slate,.42).cyl(sx*16,66,sz*16,5,0,9,10);
+   b.c(K.dark,.3);for(const x of[-9,0,9])b.box(x-1,30,17.6,x+1,38,18.4);b.c(tm,.18).box(-6,36,18.3,6,54,19.2);
+   b.flag(0,58,0,22,tm,14,7.5);b.flag(-40,59,-40,12,tm,10,5.5);b.flag(40,59,40,12,tm,10,5.5);},
+  citadel(b,p){const[tm,td]=PCOL[p];
+   b.c(K.stoneD,.2).j(.14).box(-63,-6,-63,63,3,63).j(0).c('#8c7c5c',.1).box(-56,3,-56,56,3.6,56);
+   b.c(K.stone,.22).j(.12).box(-56,3,-61,56,34,-52).box(-61,3,-56,-52,34,56).box(52,3,-56,61,34,56).box(-56,3,52,-10,34,61).box(10,3,52,56,34,61).j(0);
+   b.c(K.stoneL,.22);for(const[x0,z0,x1,z1]of[[-56,-60,56,-60],[-56,-53,56,-53],[-60,-56,-60,56],[-53,-56,-53,56],[60,-56,60,56],[53,-56,53,56],[-56,60,-10,60],[10,60,56,60]])b.merl(x0,z0,x1,z1,34,4.4,3.8,2.2,2.6);
+   const tower=(x,z,r,h)=>{b.c(K.stone,.22).j(.12).cyl(x,3,z,r,r-1,h,14).j(0).c(K.stoneD,.2).cyl(x,h+3,z,r+.6,r+.6,2.4,14).c(K.slate,.42).cyl(x,h+5.4,z,r+.8,0,r*1.6,14);};
+   for(const sx of[-1,1])for(const sz of[-1,1])tower(sx*56,sz*56,12,44);for(const[x,z]of[[0,-56],[-56,0],[56,0]])tower(x,z,10,40);
+   for(const sx of[-1,1])tower(sx*14,57,8.5,40);b.c(K.stoneD,.2).box(-10,26,52,10,40,61).c(K.dark,.3).box(-7,3,60.6,7,22,61.6);
+   b.c(K.stone,.22).j(.12).box(-34,3,-36,34,40,-30).box(-36,3,-34,-30,40,34).box(30,3,-34,36,40,34).box(-34,3,30,34,40,36).j(0);
+   for(const sx of[-1,1])for(const sz of[-1,1])tower(sx*33,sz*33,8,48);
+   b.c(K.stone,.22).j(.12).tbox(-20,3,-20,20,72,20,.8,.8).j(0).m(1).c(K.gold,.7).box(-20,48,-20,20,50,20).m(0).c(K.stoneL,.22).merl(-19.4,-18.4,19.4,-18.4,72,4.4,4,2.2,2.6).merl(-19.4,18.4,19.4,18.4,72,4.4,4,2.2,2.6).merl(-18.4,-19.4,-18.4,19.4,72,4.4,4,2.2,2.6).merl(18.4,-19.4,18.4,19.4,72,4.4,4,2.2,2.6);
+   b.c(K.stone,.22).box(-8,72,-8,8,92,8).c(K.slate,.42).hip(-8,-8,8,8,92,16,1.6,0).m(1).c(K.gold,.75).sph(0,109,0,2,2,2,8).m(0);
+   b.c(tm,.18).box(-8,40,20.2,8,66,21.2).m(1).c(K.gold,.7).box(-3,58,21.2,3,62,21.6).m(0);
+   b.flag(-56,64,-56,14,tm,11,6);b.flag(56,64,56,14,tm,11,6);b.flag(-14,82,14,16,tm,13,7);},
+  bastion(b,p){const[tm,td]=PCOL[p];
+   b.c(K.stone,.22).j(.12).cyl(0,-6,0,33,28.5,32,5,{flat:true,rot:Math.PI/2}).j(0).c(K.stoneD,.2).cyl(0,26,0,28.8,28.8,2,5,{flat:true,rot:Math.PI/2});
+   b.c(K.stoneL,.22);for(let i=0;i<5;i++){const a0=Math.PI/2+i/5*Math.PI*2,a1=a0+Math.PI*2/5,r=27.4;b.merl(Math.cos(a0)*r,Math.sin(a0)*r,Math.cos(a1)*r,Math.sin(a1)*r,28,4,3.6,2,2.6);}
+   b.push().t(0,28,-2).s(.8);engine(b,'mangonel','idle',tm,td);b.pop();b.flag(-14,28,-14,14,tm,11,6);},
+ };
+ /** A building site: a patch of bare earth, poles at the corners and middles, scaffold rails. */
+ function scaffold(b,w,h){const X=w*16-3,Z=h*16-3,H=10+Math.min(w,h)*10;
+  b.c('#7a6044',.08).box(-X-2,-.6,-Z-2,X+2,.6,Z+2);b.c(K.woodL,.2);
+  for(const x of[-X,0,X])for(const z of[-Z,0,Z])if(x||z)b.cyl(x,0,z,.8,.7,H,5);
+  for(const y of[H*.45,H*.9]){b.box(-X,y,-Z-.5,X,y+1,-Z+.5).box(-X,y,Z-.5,X,y+1,Z+.5).box(-X-.5,y,-Z,-X+.5,y+1,Z).box(X-.5,y,-Z,X+.5,y+1,Z);}
+  b.c(K.plank,.15).box(-X,H*.45+1,Z-3,X,H*.45+1.6,Z+.5);}
+
+ /* ---------- walls, gates, moats, bridges and traps ---------- */
+ /** Wall looks: height, thickness, colour and how the line is built. */
+ const WALL3={palisade:{h:19,th:5,kind:'logs',col:'#7c5430'},wall:{h:20,th:6,kind:'planks',col:'#8a6440'},
+  mudbrick:{h:20,th:9,kind:'block',col:'#b48c62',foot:K.stoneD,merl:'#c49c70'},stonewall:{h:25,th:11,kind:'block',col:K.stone,foot:K.stoneD,merl:K.stoneL},
+  curtainwall:{h:33,th:13,kind:'block',col:'#8f8b80',foot:K.stoneD,merl:'#a6a296',tower:true},boilingoil:{h:25,th:11,kind:'block',col:K.stone,foot:K.stoneD,merl:K.stoneL,oil:true}};
+ const DIRS=[[0,-1],[1,0],[0,1],[-1,0]];          // N E S W: mask bits 1 2 4 8
+ /** One wall segment: a post at the centre and an arm to each joined side (mask), in its look. */
+ function wallPiece(b,type,p,mask){const S=WALL3[type]||WALL3.stonewall,hw=S.th/2,R=b.R;
+  const arms=DIRS.filter((d,i)=>mask&1<<i);
+  const span=([dx,dz],x0,x1,z0,z1)=>dx?[Math.min(0,dx*16),Math.max(0,dx*16),-hw,hw]:[-hw,hw,Math.min(0,dz*16),Math.max(0,dz*16)];
+  if(S.kind==='logs'){const logs=[[0,0]];for(const[dx,dz]of arms)for(let s=4.6;s<16;s+=4.6)logs.push([dx*s,dz*s]);
+   for(const[x,z]of logs){const h=S.h-2+R()*3;b.c(R()<.5?'#7c5430':'#6e4a28',.2).cyl(x,-3,z,2.3,2.1,h+3,7).c('#a07848',.2).cyl(x,h,z,2.1,0,3.6,7);}
+   b.c(K.rope,.1);for(const d of arms){const[x0,x1,z0,z1]=span(d);b.box(x0-.2,9,z0-.3,x1+.2,10.4,z1+.3);}return;}
+  if(S.kind==='planks'){b.c(S.col,.15).j(.12);for(const d of arms){const[x0,x1,z0,z1]=span(d);b.box(x0,-3,z0,x1,S.h,z1);
+    const L=Math.max(x1-x0,z1-z0);for(let s=1.5;s<L;s+=3){const x=d[0]?x0+s:0,z=d[0]?0:z0+s;b.cyl(x,S.h,z,1.4,0,2.6,4);}}
+   b.j(0).c(K.woodD,.22).box(-4,-3,-4,4,S.h+3,4).c(K.wood,.2).box(-4.6,S.h+3,-4.6,4.6,S.h+4,4.6);return;}
+  if(S.foot){b.c(S.foot,.2).j(.12);for(const d of arms){const[x0,x1,z0,z1]=span(d);b.box(x0,-4,z0-1,x1,4,z1+1);}b.j(0);}
+  b.c(S.col,.2).j(.12);for(const d of arms){const[x0,x1,z0,z1]=span(d);b.box(x0,0,z0,x1,S.h,z1);}
+  const tw=S.tower&&mask!==5&&mask!==10,pr=tw?0:hw+1.6,ph=tw?0:S.h+2.5;
+  if(tw){b.cyl(0,-4,0,hw+3.4,hw+2.6,S.h+9,12).j(0).c(S.merl,.22);for(let i=0;i<8;i++){const a=i/8*Math.PI*2;b.push().t(Math.cos(a)*(hw+2.2),S.h+5,Math.sin(a)*(hw+2.2)).ry(-a).box(-1,0,-1.6,1,4,1.6).pop();}}
+  else b.box(-pr,-4,-pr,pr,ph,pr);
+  b.j(0).c(S.merl,.22);
+  for(const d of arms){const[x0,x1,z0,z1]=span(d);if(d[0]){b.merl(x0+(d[0]<0?0:pr),z0+.9,x1-(d[0]<0?pr:0),z0+.9,S.h,3.6,3,1.8,2).merl(x0+(d[0]<0?0:pr),z1-.9,x1-(d[0]<0?pr:0),z1-.9,S.h,3.6,3,1.8,2);}
+   else{b.merl(x0+.9,z0+(d[1]<0?0:pr),x0+.9,z1-(d[1]<0?pr:0),S.h,3.6,3,1.8,2).merl(x1-.9,z0+(d[1]<0?0:pr),x1-.9,z1-(d[1]<0?pr:0),S.h,3.6,3,1.8,2);}}
+  if(!tw&&!arms.length)b.merl(-pr,-pr+.9,pr,-pr+.9,ph,3,3,1.8,2).merl(-pr,pr-.9,pr,pr-.9,ph,3,3,1.8,2);
+  if(S.tower&&mask===5||S.tower&&mask===10){b.c(S.col,.2);const v=mask===5;b.box(v?-hw-3:-3,-4,v?-3:-hw-3,v?hw+3:3,S.h*.7,v?3:hw+3);}   // a buttress
+  if(S.oil){b.m(1).c(K.ironD,.45).sph(0,S.h+5.5,0,4.6,3.8,4.6,10).m(0).c(K.woodD,.2).box(-5.5,S.h,-.8,5.5,S.h+2,.8);b.m(2).c('#ff7a24',.2).cyl(0,S.h+8.6,0,3.6,3.6,.5,10).m(0);}
+ }
+ /** A gate, in a frame where its wall runs along x and the way through along z (turned for a north-south wall). */
+ function gatePiece(b,type,p,vertical,open){const[tm,td]=PCOL[p];
+  if(vertical)b.ry(Math.PI/2);
+  const doors=(w,h,col,iron)=>{for(const sd of[-1,1]){b.push().t(sd*w,0,0).ry(open?sd*1.35:0).c(col,.18).j(.1).box(sd<0?0:-w,0,-1,sd<0?w:0,h,1).j(0);
+   if(iron)b.m(1).c(K.ironD,.4).box(sd<0?0:-w,h*.25,-1.3,sd<0?w:0,h*.25+1,1.3).box(sd<0?0:-w,h*.7,-1.3,sd<0?w:0,h*.7+1,1.3).m(0);b.pop();}};
+  if(type==='palisadegate'){b.c('#6e4a28',.2);for(const sd of[-1,1]){b.cyl(sd*12,-3,0,3,2.8,26,8).c('#a07848',.2).cyl(sd*12,23,0,2.8,0,4,8).c('#6e4a28',.2);b.cyl(sd*15.4,-3,0,2.2,2,20,7);}
+   b.c(K.woodD,.2).box(-14,19,-1.6,14,21.6,1.6);
+   for(const sd of[-1,1]){b.push().t(sd*10,0,0).ry(open?sd*1.35:0);for(let i=0;i<4;i++){const x=sd*(-1.3-i*2.5);b.c(i%2?'#7c5430':'#6e4a28',.2).cyl(x,0,0,1.2,1.1,16,6).c('#a07848',.2).cyl(x,16,0,1.1,0,2.4,6);}b.c(K.rope,.1).box(sd<0?0:-10,7,-1.4,sd<0?10:0,8.2,1.4).pop();}return;}
+  if(type==='gate'){b.c(K.woodD,.22).box(-16,-3,-3.5,-10,30,3.5).box(10,-3,-3.5,16,30,3.5).c(K.wood,.2).box(-16,24,-4,16,28,4).c(K.plank,.15);
+   for(const sd of[-1,1])for(const dx of[-1.5,1.5])b.cyl(sd*13+dx,30,0,1.5,0,3,4);doors(10,22,K.plank,true);return;}
+  if(type==='stonegate'){b.c(K.stone,.22).j(.12).box(-16,-4,-6,-10,32,6).box(10,-4,-6,16,32,6).box(-10,22,-6,10,32,6).j(0).c(K.stoneL,.22).merl(-16,-5,16,-5,32,3.6,3,1.8,2).merl(-16,5,16,5,32,3.6,3,1.8,2);
+   doors(10,22,'#6a4626',true);return;}
+  if(type==='gatehouse'){b.c(K.stone,.22).j(.12).box(-16,-4,-8,-7,42,8).box(7,-4,-8,16,42,8).box(-7,26,-7,7,42,7).j(0);
+   b.c(K.stoneL,.22).merl(-16,-7,16,-7,42,4,3.4,2,2.4).merl(-16,7,16,7,42,4,3.4,2,2.4).merl(-15,-8,-15,8,42,4,3.4,2,2.4).merl(15,-8,15,8,42,4,3.4,2,2.4);
+   b.c(K.dark,.3);for(const sd of[-1,1])b.box(sd*11.5-1,16,7.6,sd*11.5+1,24,8.4);
+   b.m(1).c(K.ironD,.42);const up=open?17:0;for(let x=-6;x<=6;x+=2.4)b.box(x-.4,up,-.4,x+.4,up+26,.4);for(let y=3;y<=24;y+=5)b.box(-6.6,up+y,-.5,6.6,up+y+.8,.5);b.m(0);
+   b.c(tm,.18).box(-4,28,7.2,4,40,8.2).m(1).c(K.gold,.7).box(-1.4,33,8.2,1.4,36,8.6).m(0);b.flag(11.5,42,0,12,tm,10,5.5);return;}
+  b.c(K.stone,.22).box(-16,0,-5,-10,30,5).box(10,0,-5,16,30,5);doors(10,22,K.plank,false);
+ }
+ /** A moat segment: dark water in a cut, with banks (or stone lining) on the sides that do not join another moat. */
+ function moatPiece(b,type,mask){const stone=type==='reinforcedmoat',I=stone?3.5:5;
+  b.c(stone?'#20475e':'#2a5268',.9).box(-16,-1.2,-16,16,.45,16);
+  for(let i=0;i<4;i++){if(mask&1<<i)continue;const[dx,dz]=DIRS[i];
+   const x0=dx?(dx>0?16-I:-16):-16,x1=dx?(dx>0?16:-16+I):16,z0=dz?(dz>0?16-I:-16):-16,z1=dz?(dz>0?16:-16+I):16;
+   if(stone)b.c(K.stoneL,.25).j(.14).box(x0,-1,z0,x1,1.6,z1).j(0);
+   else b.c('#5e4a2c',.08).j(.1).box(x0,-1,z0,x1,1.1,z1).j(0);}
+ }
+ /** A drawbridge: a timber deck over the moat, lowered (open) or raised on its chains; the moat under it as for a segment. */
+ function bridgePiece(b,p,vertical,open){const[tm]=PCOL[p];moatPiece(b,'moat',vertical?5:10);
+  if(vertical)b.ry(Math.PI/2);
+  b.c(K.woodD,.22);for(const sd of[-1,1])b.box(sd*12-1.6,0,-16,sd*12+1.6,26,-12.8);
+  b.m(1).c(K.ironD,.4);
+  if(open){for(const sd of[-1,1])b.push().t(sd*10.5,24,-14).rx(-1.0).box(-.4,-22,-.4,.4,0,.4).pop();b.m(0).c(K.plank,.15).j(.12);for(let x=-10;x<10;x+=3.4)b.box(x+.2,.4,-16,x+3.2,2.2,16);b.j(0);}
+  else{for(const sd of[-1,1])b.box(sd*10.5-.4,14,-14.4,sd*10.5+.4,24,-13.6);b.m(0).c(K.plank,.15).j(.12);for(let x=-10;x<10;x+=3.4)b.box(x+.2,0,-15.6,x+3.2,30,-13.4);b.j(0);}
+  b.c(tm,.2).box(-3,22,-13.2,3,27,-12.6);
+ }
+ const TRAP3={
+  spiketrap(b){b.c('#5a4028',.06).box(-11,-.5,-11,11,.7,11);b.c('#9a7448',.2);for(let x=-7;x<=7;x+=7)for(let z=-7;z<=7;z+=7)b.push().t(x,0,z).rz((x-z)*.02).cyl(0,0,0,1,0,6,4).pop();},
+  firetrap(b){b.c('#4a3420',.06).box(-9,-.5,-9,9,.6,9);b.c('#a0522d',.3).sph(0,1.4,0,4.6,3.4,4.6,10).m(2).c('#ff6a14',.2).cyl(0,4.4,0,2,2,.4,8).m(0);},
+  pittrap(b){b.c('#2a1c10',.06).box(-11,-.5,-11,11,.5,11);b.c('#7a6a3a',.1).j(.2);for(let i=-9;i<=9;i+=3)b.box(i-1,.5,-10,i+1,1.1,10);b.j(0).c('#5a7a34',.1).box(-6,1.1,-4,4,1.5,6);},
+  caltrops(b){const R=b.R;b.m(1).c(K.ironD,.45);for(let i=0;i<14;i++){const x=(R()-.5)*22,z=(R()-.5)*22;b.cyl(x,0,z,1.1,0,1.8,3,{flat:true,rot:R()*6});}b.m(0);}
+ };
+ /** Anything without a model of its own: a plain hall of its footprint in timber and plaster. */
+ function genericBld(b,w,h,p){const[tm]=PCOL[p],X=w*16-4,Z=h*16-4;
+  b.c(K.stoneD,.2).box(-X-1,-6,-Z-1,X+1,3,Z+1).c(K.plaster,.12).box(-X+2,3,-Z+2,X-2,14+w*4,Z-2).c(K.tile,.38).gable(-X+2,-Z+2,X-2,Z-2,14+w*4,8+w*3,2.4,K.plaster);b.flag(X-2,0,Z-2,18,tm,9,5);}
+
+ /* ---------- trees, mines, bushes, herds and shoals ---------- */
+ const LEAF=['#3d6a26','#4a7a2c','#55852f','#36612a','#5e8a34'],JUNGLE=['#2a5a22','#2f6a28','#24521e','#3a7430'];
+ const RES3={
+  /** A broadleaf tree: a tapering trunk with two boughs, and a crown of lumpy clumps in mixed greens. */
+  oak(b,v,pal=LEAF,big=1){const R=mulberry(v*7919+3);
+   b.c(K.wood,.15).j(.1).cyl(0,-2,0,2.7*big,1.8*big,17*big,7);
+   for(let i=0;i<2;i++)b.push().t(0,10*big+i*3,0).ry(R()*6).rz(.75).c(K.wood,.15).cyl(0,0,0,1.1,.7,8*big,5).pop();
+   const n=5+(R()*3|0);for(let i=0;i<n;i++){const a=i/n*Math.PI*2+R(),d=i?4+R()*4:0,r=(7+R()*3.5)*big;
+    b.c(pal[(R()*pal.length)|0],.12).j(.14).sph(Math.cos(a)*d*big,(i?19+R()*7:27)*big,Math.sin(a)*d*big,r,r*.86,r,8,{noise:.32});}b.j(0);},
+  /** A pine: a straight trunk and four tiers of needles, snow on each tier in the cold. */
+  pine(b,v,snow){const R=mulberry(v*104729+7);
+   b.c(K.woodD,.15).cyl(0,-2,0,2,1.4,12,6);const h=36+R()*8;
+   for(let i=0;i<4;i++){const y=8+i*(h-10)/4,r=12-i*2.4+R()*1.2,th=(h-8)/3.2;b.c(R()<.5?'#2c4a2c':'#335434',.1).j(.1).cyl(0,y,0,r,0,th,9,{flat:true,rot:R()*6});
+    if(snow)b.c('#eef2f6',.35).j(.05).cyl(0,y+th*.42,0,r*.62,0,th*.6,9,{flat:true,rot:R()*6});}b.j(0);},
+  /** A palm: a ringed trunk bending as it rises, a crown of drooping fronds and a few coconuts. */
+  palm(b,v){const R=mulberry(v*15485863+11),lean=(R()-.5)*.25;b.push();
+   for(let i=0;i<6;i++){b.c(i%2?'#8a6a40':'#7a5a34',.15).cyl(0,0,0,1.7-i*.06,1.6-i*.06,5.6,6).t(0,5.4,0).rz(lean+.05).rx(.03);}
+   b.c('#5a3e1e',.2).sph(.8,0,0,1.2,1.2,1.2,6).sph(-.5,-.3,.8,1.2,1.2,1.2,6);
+   for(let f=0;f<9;f++){b.push().ry(f/9*Math.PI*2+R()*.3).c(f%2?'#4f7f2c':'#5c8e33',.15);
+    const P=[[0,0],[5,2.2],[10,1.4],[14,-2],[16.5,-5.5]],wd=[2.6,3,2.2,1.2,.2];
+    for(let i=0;i<4;i++){const[x0,y0]=P[i],[x1,y1]=P[i+1];b.poly([[x0,y0+.4,-wd[i]],[x1,y1,-wd[i+1]],[x1,y1,wd[i+1]],[x0,y0+.4,wd[i]]],[ (x0+x1)/2,-20,0],true);}
+    b.pop();}
+   b.pop();},
+  gold(b,v){const R=mulberry(v+51);
+   for(let i=0;i<5;i++){const a=i/5*6.28+R(),d=i?6+R()*3:0,r=i?5+R()*2.5:8;b.c(R()<.5?'#6e6658':'#5e574c',.22).j(.16).sph(Math.cos(a)*d,r*.45,Math.sin(a)*d,r,r*.85,r,7,{noise:.38});}
+   b.j(.2).m(1).c(K.gold,.82);for(let i=0;i<12;i++){const a=R()*6.28,d=2+R()*9,y=2+R()*6,r=1.1+R()*1.6;b.sph(Math.cos(a)*d,y,Math.sin(a)*d,r,r*.8,r,5,{noise:.5});}b.m(0).j(0);},
+  stone(b,v){const R=mulberry(v+97);
+   for(let i=0;i<6;i++){const a=i/6*6.28+R(),d=i?6.5+R()*3:0,r=i?4.6+R()*2.6:8;b.c(R()<.5?'#8c8a84':'#7a7872',.25).j(.14).sph(Math.cos(a)*d,r*.5,Math.sin(a)*d,r,r*.8,r,7,{noise:.4});}
+   b.c('#a29e94',.25).j(.08).box(4,0,5,9,4,9).push().t(-8,0,6).ry(.5).box(-2.5,0,-2,2.5,3.4,2).pop().j(0);},
+  /** A berry bush: leafy clumps dotted with berries (fewer as it is picked: v 2, 1, 0). */
+  berry(b,v){const R=mulberry(77+v);const cl=[];
+   for(let i=0;i<4;i++){const a=i/4*6.28+R(),d=i?4+R()*2:0,r=5+R()*1.8;cl.push([Math.cos(a)*d,4+R()*2,Math.sin(a)*d,r]);b.c(R()<.5?'#3f6a2c':'#4a7832',.12).j(.14).sph(Math.cos(a)*d,4+R()*2,Math.sin(a)*d,r,r*.8,r,7,{noise:.3});}
+   b.j(0).c('#c42838',.6);const n=[5,13,26][v];for(let i=0;i<n;i++){const c=cl[i%4],th=R()*1.3,ph=R()*6.28;b.sph(c[0]+Math.sin(th)*Math.cos(ph)*c[3]*.95,c[1]+Math.cos(th)*c[3]*.8,c[2]+Math.sin(th)*Math.sin(ph)*c[3]*.95,.95,.95,.95,5);}},
+  /** A deer facing +x: grazing (head down, v 0) or alert (head up, v 1); a stag carries antlers. */
+  deer(b,v,stag){const up=v===1;
+   b.c('#8a5a32',.25).sph(0,11,0,7,4,3.2,10).c('#c8a07a',.2).sph(0,9.4,0,5.6,2.4,2.6,8);
+   b.c('#8a5a32',.25);for(const[x,z]of[[4.6,1.6],[4.6,-1.6],[-4.6,1.6],[-4.6,-1.6]])b.cyl(x,0,z,.55,.85,10,5).c('#2a1e14',.3).cyl(x,0,z,.6,.6,.8,5).c('#8a5a32',.25);
+   b.push().t(5.6,12.6,0).rz(up?-.45:-2.2).tbox(-1.2,0,-1.2,1.2,6,1.2,.3,.3).t(0,6.2,0).rz(up?-1.1:.4).sph(1.2,0,0,2.6,1.5,1.5,8).c('#2a1e14',.3).sph(3.6,0,0,.5,.5,.5,4);
+   b.c('#8a5a32',.25).cyl(-.4,.8,1,.5,0,2,4).cyl(-.4,.8,-1,.5,0,2,4);
+   if(stag){b.c('#d8c8a0',.3);for(const sd of[-1,1]){b.push().t(0,1,sd*.7).rx(sd*-.5).cyl(0,0,0,.35,.25,4.6,4).t(0,3.2,0).rz(.6).cyl(0,0,0,.25,.15,2.4,4).pop();}}
+   b.pop();b.c('#f2ece0',.2).sph(-7.2,12.4,0,.9,1.2,.9,5);},
+  /** A shoal: a loose school of silver fish swimming together under the surface (the whole school turns slowly). */
+  fish(b){const R=b.R;for(let i=0;i<7;i++){const a=R()*6.28,d=R()*8;b.push().t(Math.cos(a)*d,-1-R()*2.2,Math.sin(a)*d*.7).ry((R()-.5)*.6).s(.7+R()*.4).c(R()<.5?'#8e9ea8':'#a2acb2',.7).sph(0,0,0,2.8,.9,.8,7).c('#6e8090',.5).poly([[-2.4,0,0],[-4.2,1.2,0],[-4.2,-1.2,0]],[-3,0,2],true).pop();}},
+  stump(b){b.c(K.wood,.15).cyl(0,-1,0,2.8,2.5,4.4,8).c('#c4a074',.2).cyl(0,3.3,0,2.3,2.3,.2,8);},
+  rubble(b){const R=b.R;for(let i=0;i<9;i++){const a=R()*6.28,d=R()*12,r=2+R()*3.4;b.c(R()<.6?'#8a857a':'#6e6458',.2).j(.18).sph(Math.cos(a)*d,r*.3,Math.sin(a)*d*.8,r,r*.6,r,6,{noise:.45});}
+   b.j(0).c('#3a2a1e',.15);for(let i=0;i<3;i++)b.push().t((R()-.5)*14,1.2,(R()-.5)*10).ry(R()*3).rz(.15).box(-7,-.9,-.9,7,.9,.9).pop();},
+  ring(b,red){b.c(red?'#e8503a':'#d9a93e',.2);const n=40;for(let i=0;i<n;i++){const a0=i/n*6.283,a1=(i+1)/n*6.283;
+   b.poly([[Math.cos(a0)*.88,0,Math.sin(a0)*.88],[Math.cos(a1)*.88,0,Math.sin(a1)*.88],[Math.cos(a1),0,Math.sin(a1)],[Math.cos(a0),0,Math.sin(a0)]],[0,-1,0]);}}
+ };
+
+ /* ---------- instancing ---------- */
+ const MOD=new Map(),BAT=new Map(),M16=new Float32Array(16);
+ function model(key,fn){let m=MOD.get(key);if(!m){const b=MB(hashS(key));fn(b);m=b.build();MOD.set(key,m);}return m;}
+ /** Queue one copy of model `key` (built by fn on first use) with the matrix in M16; `ov` draws it in another material. */
+ function put(key,fn,ov,noShadow){
+  const k=ov?key+'|'+ov.name:key;let B=BAT.get(k);
+  if(!B){const m=model(key,fn);B={m,cap:0,n:0,f:-1,vb:null,data:null,mis:[],ent:new pc.Entity(),on:false};
+   for(const p of m.parts)B.mis.push(new pc.MeshInstance(p.mesh,ov||p.mat));
+   if(B.mis.length){B.ent.addComponent('render',{meshInstances:B.mis,castShadows:!ov&&!noShadow,receiveShadows:!ov});app.root.addChild(B.ent);}
+   B.ent.enabled=false;grow(B,8);BAT.set(k,B);}
+  if(!B.mis.length)return B.m;
+  if(B.f!==FR){B.f=FR;B.n=0;}
+  if(B.n>=B.cap)grow(B,B.cap*2);
+  B.data.set(M16,B.n*16);B.n++;return B.m;
+ }
+ function grow(B,cap){const d=new Float32Array(cap*16);if(B.data)d.set(B.data);B.data=d;B.cap=cap;
+  if(!B.mis.length)return;if(B.vb)B.vb.destroy();
+  B.vb=new pc.VertexBuffer(dev,pc.VertexFormat.getDefaultInstancingFormat(dev),cap,{usage:pc.BUFFER_DYNAMIC});
+  for(const mi of B.mis)mi.setInstancing(B.vb);}
+ function flush(){for(const B of BAT.values()){const on=B.f===FR&&B.n>0;
+  if(on){B.vb.setData(B.data);for(const mi of B.mis)mi.instancingCount=B.n;}
+  if(on!==B.on){B.on=on;B.ent.enabled=on;}}}
+ /** M16 = translate(x, y, z) · turn a about the vertical (0 faces east, + turns toward the north) · roll · pitch · scale. */
+ function mat(x,y,z,a,s=1,sy=s,roll=0,pitch=0){
+  const ca=Math.cos(a),sa=Math.sin(a);let X0=ca,X1=0,X2=-sa,Y0=0,Y1=1,Y2=0,Z0=sa,Z1=0,Z2=ca;
+  if(roll){const c=Math.cos(roll),s2=Math.sin(roll),y0=Y0*c+Z0*s2,y1=Y1*c+Z1*s2,y2=Y2*c+Z2*s2;Z0=Z0*c-Y0*s2;Z1=Z1*c-Y1*s2;Z2=Z2*c-Y2*s2;Y0=y0;Y1=y1;Y2=y2;}
+  if(pitch){const c=Math.cos(pitch),s2=Math.sin(pitch),x0=X0*c+Y0*s2,x1=X1*c+Y1*s2,x2=X2*c+Y2*s2;Y0=Y0*c-X0*s2;Y1=Y1*c-X1*s2;Y2=Y2*c-X2*s2;X0=x0;X1=x1;X2=x2;}
+  M16[0]=X0*s;M16[1]=X1*s;M16[2]=X2*s;M16[3]=0;M16[4]=Y0*sy;M16[5]=Y1*sy;M16[6]=Y2*sy;M16[7]=0;M16[8]=Z0*s;M16[9]=Z1*s;M16[10]=Z2*s;M16[11]=0;
+  M16[12]=x;M16[13]=y;M16[14]=z;M16[15]=1;}
+
+ /* ---------- what to draw: keys and builders by entity ---------- */
+ const pk=p=>p+PCOL[p][0];                     // models carry the owner's colours: keyed by both
+ /** A building's model key and builder, by its type and state (as bldSprite picks its picture). */
+ function bldDesc(type,p,b){
+  const B=BLDTYPES[type],set=B.spriteSet&&SPRITES[B.spriteSet],kind=set&&set.kind;
+  if(kind==='line')return['w:'+type+':'+pk(p)+':'+b.mask,m=>wallPiece(m,type,p,b.mask)];
+  if(kind==='moat')return['m:'+type+':'+b.mask,m=>moatPiece(m,type,b.mask)];
+  if(kind==='gate')return['g:'+type+':'+pk(p)+':'+(b.vert?1:0)+(b.open?1:0),m=>gatePiece(m,type,p,b.vert,b.open)];
+  if(kind==='bridge')return['br:'+pk(p)+':'+(b.vert?1:0)+(b.open?1:0),m=>bridgePiece(m,p,b.vert,b.open)];
+  if(TRAP3[type])return['tr:'+type,TRAP3[type]];
+  if(type==='farm')return['farm:'+b.v,m=>BLD3.farm(m,p,b.v)];
+  const id=b.tier||type,f=BLD3[id];
+  return f?['b:'+id+':'+pk(p),m=>f(m,p)]:['gen:'+type+':'+pk(p),m=>genericBld(m,B.w,B.h,p)];
+ }
+ const BD={mask:0,vert:false,open:false,v:2,tier:null};
+ function descOf(b){const B=BLDTYPES[b.type];BD.mask=0;BD.vert=false;BD.open=!!b.open;BD.tier=null;BD.v=2;
+  const set=B.spriteSet&&SPRITES[B.spriteSet];
+  if(set){if(set.kind==='gate'||set.kind==='bridge')BD.vert=gateVertical(b);else BD.mask=wallMask(b);
+   if(b.type==='boilingoil'&&!BD.mask)BD.mask=oilMask(b);}
+  else{const t=tierOf(b);if(t)BD.tier=t.id;}
+  if(b.type==='farm')BD.v=b.amount<80?0:b.amount<FARM_FOOD*.6?1:2;
+  return bldDesc(b.type,b.player,BD);}
+ /** Boiling oil sits on a wall: join it to the owner's walls round it. */
+ function oilMask(b){let m=0;DIRS.forEach(([dx,dz],i)=>{const x=b.tx+dx,y=b.ty+dz;if(x<0||y<0||x>=MAP||y>=MAP)return;const o=ENT[occ[y*MAP+x]];if(o&&o.player===b.player&&joinOf(o.type))m|=1<<i;});return m;}
+ /** The ground under a building: the lowest of its corners and centre, so it never floats (footings run below). */
+ function bldY(b){const B=BLDTYPES[b.type];if(B.dock)return 0;const x0=b.tx*TILE+3,y0=b.ty*TILE+3,x1=(b.tx+b.w)*TILE-3,y1=(b.ty+b.h)*TILE-3;
+  return Math.max(.4,Math.min(gy(x0,y0),gy(x1,y0),gy(x0,y1),gy(x1,y1),gy((x0+x1)/2,(y0+y1)/2)));}
+ function bldInst(b,ov){
+  const cx=(b.tx+b.w/2)*TILE,cz=(b.ty+b.h/2)*TILE,y=bldY(b),[key,fn]=descOf(b);
+  const p=b.done?1:clamp01(b.progress);
+  mat(cx,y,cz,0,1,b.done?1:Math.max(.04,p));const m=put(key,fn,ov);
+  if(!b.done&&!ov){mat(cx,y,cz,0);put('scaf:'+b.w+'x'+b.h,s=>scaffold(s,b.w,b.h));}
+  return m;}
+ /** A unit's pose: walking (4 frames), striking (wind up, strike), at work (villagers), set up or packed (engines), or idle. */
+ function poseOf(u,U,moving){
+  if(U.naval)return moving?['walk',((state.time*3+u.id*.3)|0)%4]:['idle',0];
+  if(U.cls==='siege')return[u.atkT>0?'atk':U.deploy&&!u.dep?'packed':'idle',0];
+  if(u.atkT>0)return['atk',u.atkT>.12?0:1];
+  if(moving)return['walk',((u.anim*5.5)|0)%4];
+  const c=u.cmd;if(U.cls==='villager'&&c&&(c.type==='gather'||c.type==='build'||c.type==='repair')){const t=ENT[c.tid??c.bid];
+   if(t){const p=t.kind==='b'?bldCenter(t):t.kind==='r'?resCenter(t):t;if(Math.hypot(p.x-u.x,p.y-u.y)<(t.kind==='b'?t.w*TILE*.75+14:28))return['work',((state.time*2.4+u.id*.37)|0)%2];}}
+  return['idle',0];}
+ const uKey=(t,p,pose,f)=>'u:'+t+':'+pk(p)+':'+pose+f;
+ /** Smooth a unit's heading toward where it walks, or toward what it works on or fights; ships use their own heading. */
+ function heading(u,U,moving){let s=TRK.get(u.id);
+  if(!s){s={hd:U.naval?u.hd||0:(u.face<0?Math.PI:0),x:u.x,y:u.y,f:FR};TRK.set(u.id,s);}
+  s.f=FR;
+  if(U.naval){s.hd=u.hd||0;s.x=u.x;s.y=u.y;return s.hd;}
+  const dx=u.x-s.x,dy=u.y-s.y;let want=null;
+  if(dx*dx+dy*dy>.0025&&(moving||u.kiting>0))want=Math.atan2(dy,dx);
+  else{const c=u.cmd,t=c&&ENT[c.tid??c.bid];if(t){const p=t.kind==='b'?bldCenter(t):t.kind==='r'?resCenter(t):t;if(p.x!==u.x||p.y!==u.y)want=Math.atan2(p.y-u.y,p.x-u.x);}
+   else if(Math.cos(s.hd)*u.face<-.2)want=u.face<0?Math.PI:0;}
+  if(want!==null){let d=want-s.hd;d=Math.atan2(Math.sin(d),Math.cos(d));s.hd+=d*Math.min(1,fdt*11);}
+  s.x=u.x;s.y=u.y;return s.hd;}
+ function unitInst(u){
+  const U=UNITTYPES[u.type],moving=!(u.depT>0)&&(u.path.length>0||u.kiting>0),[pose,f]=poseOf(u,U,moving),hd=heading(u,U,moving);
+  const t=state.time;let y,roll=0,pitch=0;
+  if(U.naval){y=Math.sin(t*1.3+u.id)*.5;roll=Math.sin(t*1.1+u.id*1.7)*.035;pitch=Math.sin(t*.8+u.id)*.025;}
+  else y=gy(u.x,u.y);
+  mat(u.x,y,u.y,-hd,1,1,roll,pitch);
+  return put(uKey(u.type,u.player,pose,f),b=>unitModel(b,u.type,u.player,pose,f));}
+ function corpseInst(c){const U=UNITTYPES[c.t];if(!U)return;
+  const age=6-c.life,k=Math.min(1,age/.35),sink=c.life<1.5?(1.5-c.life)*7:0,key=uKey(c.t,c.p,'idle',0),fn=b=>unitModel(b,c.t,c.p,'idle',0);
+  if(U.naval){const s=Math.min(1,age/3);mat(c.x,-s*14,c.y,-(c.h||0),1,1,.35*s,.3*s);}
+  else{const y=gy(c.x,c.y)-sink,hd=c.f<0?Math.PI:0;mat(c.x,y+(U.cls==='siege'?0:1.5*k),c.y,-hd,1,1,(U.cls==='siege'?.18:U.cls==='cavalry'?1.35:1.45)*k,0);}
+  put(key,fn);}
+ const TREEK=r=>{const k=ttype[r.ty*MAP+r.tx],lay=state.map&&state.map.layout;
+  if(k===TT.SNOW||k===TT.TUNDRA||lay==='tundra')return k===TT.SNOW||lay==='tundra'?'snowpine':'pine';
+  if(k===TT.SAND||(lay==='desert'||lay==='oasis')&&k===TT.GRASS)return'palm';
+  return k===TT.JUNGLE||lay==='jungle'?'jungle':'oak';};
+ function resInst(r){const x=r.tx*TILE+16,z=r.ty*TILE+16,hh=h2(r.tx,r.ty),y=r.type==='fish'?-2.6:gy(x,z);
+  if(r.type==='tree'){const k=TREEK(r),v=(r.tx*7+r.ty*13)%(k==='oak'?6:4);mat(x+(hh-.5)*6,y,z+(h2(r.ty,r.tx)-.5)*6,hh*6.28,.88+hh*.28);
+   return put('t:'+k+':'+v,b=>k==='oak'?RES3.oak(b,v):k==='jungle'?RES3.oak(b,v+20,JUNGLE,1.15):k==='palm'?RES3.palm(b,v):RES3.pine(b,v,k==='snowpine'));}
+  if(r.type==='gold'||r.type==='stone'){const s=.6+.4*clamp01(r.amount/RES_AMOUNT[r.type]);mat(x,y,z,hh*6.28,s);return put('r:'+r.type,b=>RES3[r.type](b,1));}
+  if(r.type==='berry'){const v=r.amount>100?2:r.amount>40?1:0;mat(x,y,z,hh*6.28);return put('r:berry:'+v,b=>RES3.berry(b,v));}
+  if(r.type==='deer'){const up=((state.time*.25+hh*7)|0)%3===0?1:0,stag=hh>.6;mat(x,y,z,(r.tx+r.ty)&1?Math.PI:0,.95);return put('r:deer:'+up+stag,b=>RES3.deer(b,up,stag));}
+  if(r.type==='fish'){mat(x,y+Math.sin(state.time*2.2+r.tx*1.7+r.ty)*.6,z,state.time*.6+hh*6.28);return put('r:fish',RES3.fish,null,true);}}
+ /** The 3D model's top over a unit, building or resource, as an overlay y (for bars, badges and labels). */
+ const unitTopY=u=>{const U=UNITTYPES[u.type],m=MOD.get(uKey(u.type,u.player,'idle',0));return u.y-((U.naval?0:gy(u.x,u.y))-G0+(m?m.top:28))*COT;};
+ const bldTopY=b=>{const[key]=descOf(b),m=MOD.get(key);return(b.ty+b.h/2)*TILE-(bldY(b)-G0+(m?m.top:30))*COT;};
+
+ /* ---------- each frame ---------- */
+ /**
+  * Draw the world for the current camera: fit the canvas and the camera to the 2D view, queue every visible model
+  * (o: {icons, X0, Y0, X1, Y1}: the strategic zoom leaves units to the 2D icons; the box is the padded view), and tick
+  * PlayCanvas once. Called from render(), so the 3D picture and the 2D overlay always show the same moment.
+  */
+ function frame(o){
+  if(!app||!terrE)return;
+  FR++;frames++;fdt=clamp(state.time-lastTime,0,.1);lastTime=state.time;
+  const z=cam.zoomCurrent,Q=QUALITY[qual],k=Math.min(DPR,Q.dpr)/DPR,W=Math.max(1,Math.round(gameCv.width*k)),H=Math.max(1,Math.round(gameCv.height*k));
+  if(dev.width!==W||dev.height!==H)dev.setResolution(W,H);
+  const vwW=vw/z,vhW=vh/z,cx=cam.x+vwW/2,cz=cam.y+vhW/2,C=camE.camera;
+  C.orthoHeight=vhW/2*SIN;C.aspectRatio=vwW/(vhW*SIN);
+  const half=vhW/2*COS+180;C.nearClip=Math.max(1,DIST-half-60);C.farClip=DIST+half+60;
+  camE.setPosition(cx,G0+SIN*DIST,cz+COS*DIST);
+  sunE.light.shadowDistance=C.farClip;
+  const X0=o.X0-30,Y0=o.Y0-110,X1=o.X1+30,Y1=o.Y1+60,seen=(x,y)=>x>X0&&x<X1&&y>Y0&&y<Y1;
+  for(const r of state.ress)if(!r.dead&&explored[r.ty*MAP+r.tx]&&seen(r.tx*TILE+16,r.ty*TILE+16))resInst(r);
+  for(const d of state.decals)if(seen(d.x,d.y)){const k2=RES3[d.k]?d.k:'rubble';mat(d.x,gy(d.x,d.y-8),d.y-8,h2(d.x|0,d.y|0)*6.28);put('d:'+k2,RES3[k2]);}
+  for(const b of state.blds){const B=BLDTYPES[b.type];
+   if(!(b.player===0||explored[((b.ty+b.h/2)|0)*MAP+((b.tx+b.w/2)|0)]&&!B.hidden))continue;
+   if(seen((b.tx+b.w/2)*TILE,(b.ty+b.h/2)*TILE))bldInst(b);}
+  if(!o.icons){
+   for(const u of state.units)if((u.player===0||vis[(u.y/TILE|0)*MAP+(u.x/TILE|0)])&&seen(u.x,u.y))unitInst(u);
+   for(const c of state.corpses)if(c.t&&seen(c.x,c.y)&&(c.p===0||vis[clamp(c.y/TILE|0,0,MAP-1)*MAP+clamp(c.x/TILE|0,0,MAP-1)]))corpseInst(c);
+   for(const e of state.sel){if(e.kind==='u'&&ENT[e.id]){const r=UNITTYPES[e.type].size+4,U=UNITTYPES[e.type];mat(e.x,(U.naval?0:gy(e.x,e.y))+.5,e.y,0,r*1.15);put(e.player===0?'ring':'ringE',b=>RES3.ring(b,e.player!==0),RINGM,true);}
+    else if(e.kind==='r'){const x=e.tx*TILE+16,z2=e.ty*TILE+16;mat(x,gy(x,z2)+.5,z2,0,16);put('ring',b=>RES3.ring(b,false),RINGM,true);}}}
+  ghosts();
+  flush();
+  // the water's waves and the lava's glow move with time
+  const t=Settings.data.access.reducedMotion?0:performance.now()/1000;
+  if(waterMat){waterMat.normalMapOffset=new pc.Vec2(t*.011,t*.0065);waterMat.normalDetailMapOffset=new pc.Vec2(-t*.008,t*.012);waterMat.update();}
+  if(terrMat&&terrMat.lava){terrMat.emissiveIntensity=2.1+Math.sin(t*1.7)*.5;terrMat.update();}
+  const now=performance.now();app.tick(now);
+  if(auto&&qual!=='fast'){const d=now-pace.last;pace.last=now;   // Automatic: step down a level while frames run slower than ~45 a second
+   if(now>pace.until&&d>0&&d<250&&!Game.paused){pace.sum+=d;pace.n++;if(pace.sum>=2500){if(pace.sum/pace.n>22){autoQ=qual=qual==='high'?'balanced':'fast';setQuality();
+     console.info('[Aethoria] realistic graphics: quality '+qual+' to keep the frame rate up');}pace.n=0;pace.sum=0;}}}
+  if(frames%120===0)for(const[id,s]of TRK)if(s.f<FR-60)TRK.delete(id);
+ }
+ /** What the player is placing, as see-through models: green where it fits and they can pay, red where not (as the 2D ghost). */
+ function ghosts(){
+  if(!state.placing||!(mouse.in||state.wallFrom))return;
+  const t=state.placing,B=BLDTYPES[t],tx=Math.round(mouse.wx/TILE-B.w/2),ty=Math.round(mouse.wy/TILE-B.h/2);
+  const one=(x,y,ok,mask,vert)=>{const d=bldDesc(t,0,{mask,vert,open:false,v:2,tier:B.tiers?'guard':null}),cx=(x+B.w/2)*TILE,cz=(y+B.h/2)*TILE;
+   mat(cx,Math.max(.4,gy(cx,cz)),cz,0);put(d[0],d[1],ok?GHOST.ok:GHOST.bad);};
+  if(B.lay==='line'){const from=state.wallFrom||{tx,ty},line=layTiles(state.layMode,from.tx,from.ty,tx,ty),key=new Set(line.map(([x,y])=>y*MAP+x));let money=0;
+   const g=joinOf(t),joins=(x,y)=>key.has(y*MAP+x)||(x>=0&&y>=0&&x<MAP&&y<MAP&&(o=>!!o&&o.player===0&&joinOf(o.type)===g)(ENT[occ[y*MAP+x]]));
+   for(const[x,y]of line){const m=(joins(x,y-1)?1:0)|(joins(x+1,y)?2:0)|(joins(x,y+1)?4:0)|(joins(x-1,y)?8:0);
+    const ok=canPlace(t,x,y)&&Object.entries(B.cost).every(([k,v])=>state.res[0][k]>=v*(money+1));if(ok)money++;one(x,y,ok,m,!!(m&5)&&!(m&10));}}
+  else one(tx,ty,canPlace(t,tx,ty)&&canAfford(0,B.cost),0,false);
+ }
+ /** Copy the 3D picture into a 2D context (a save's thumbnail): drawn afresh, as the canvas keeps no frame. */
+ function capture(g,sx,sy,sw,sh,dw,dh){if(!isOn()||!app)return false;try{render();g.drawImage(cvs,sx*cvs.width/gameCv.width,sy*cvs.height/gameCv.height,sw*cvs.width/gameCv.width,sh*cvs.height/gameCv.height,0,0,dw,dh);return true;}catch(e){return false;}}
+ /** The chimney top of a building's model, as an overlay point, or null. */
+ function smoke(b){const[key]=descOf(b),m=MOD.get(key);if(!m||!m.meta.smoke)return null;const[x,y,z]=m.meta.smoke,cx=(b.tx+b.w/2)*TILE+x,cz=(b.ty+b.h/2)*TILE+z;
+  return{x:cx,y:cz-(bldY(b)+y-G0)*COT};}
+ return{
+  get on(){return isOn()&&!!fields&&builtFor===fields;},   // ready, wanted, in a game, and the 3D ground is this map's
+  get status(){return status;},
+  flat,apply,terrain,frame,capture,smoke,unitTopY,bldTopY,show,
+  /** Overlay lift for a ground point: how far above the 2D spot its 3D ground shows. */
+  lift:(x,y)=>(gy(x,y)-G0)*COT,
+  COT,G0,
+  dbg:()=>({app,camF,sunE,BAT,MOD,pc,qual})
+ };
+})();
+
 /* ================= rendering ================= */
 const gameCv=$('#game'),ctx=gameCv.getContext('2d');
 let vw=800,vh=600,DPR=1,lowRes=false;
@@ -6087,8 +7111,11 @@ function resize(){
 }
 window.addEventListener('resize',resize);
 window.addEventListener('orientationchange',()=>setTimeout(resize,250));
-/** Draw a unit with its animation: attack pose, two-frame walk, or a slow idle breath. Far zoom (`simple`) skips the extras. */
-function drawUnit(u,simple){
+/**
+ * Draw a unit with its animation: attack pose, two-frame walk, or a slow idle breath. Far zoom (`simple`) skips the extras.
+ * `ui` (realistic graphics): the 3D model is the unit, so only its dust, wake, bars and badges are drawn here.
+ */
+function drawUnit(u,simple,ui){
  const A=UANIM[u.player][u.type];if(!A)return;
  const busy=u.depT>0,moving=!busy&&(u.path.length>0||u.kiting>0),U=UNITTYPES[u.type],S=U.size;
  const spr=u.atkT>0?A.atk:moving?A.walk[(u.anim*8.6|0)%A.walk.length]:A.packed&&!u.dep?A.packed:simple?A.idle[0]:A.idle[((state.time+u.id*.37)/.7|0)%2];   // a deploying engine shows its travel pose until set up
@@ -6099,19 +7126,20 @@ function drawUnit(u,simple){
    for(let i=1;i<=3;i++){ctx.beginPath();ctx.arc(u.x-u.face*(S+i*5),u.y-1-(i%2)*2,2+i,0,7);ctx.fill();}}
   if(U.naval){ctx.strokeStyle='rgba(225,240,255,.6)';ctx.lineWidth=1;            // a ring of ripples, and a wake behind a moving ship
    const hx=SK?Math.cos(u.hd||0):u.face,hy=SK?Math.sin(u.hd||0)*.5:0,wy=SK?0:4;   // a sprite ship's wake follows its heading
-   ctx.beginPath();if(SK){ctx.save();ctx.translate(u.x,u.y);ctx.scale(1,.5);ctx.rotate(u.hd||0);ctx.ellipse(0,0,S*1.5,S*.6,0,0,7);ctx.restore();}else ctx.ellipse(u.x,u.y+4,S+4,3.5,0,0,7);ctx.stroke();
+   if(!ui){ctx.beginPath();if(SK){ctx.save();ctx.translate(u.x,u.y);ctx.scale(1,.5);ctx.rotate(u.hd||0);ctx.ellipse(0,0,S*1.5,S*.6,0,0,7);ctx.restore();}else ctx.ellipse(u.x,u.y+4,S+4,3.5,0,0,7);ctx.stroke();}
    if(moving){const t=(state.time*3+u.id)%1,bx=u.x-hx*S*(SK?1.4:1),by=u.y+wy-hy*S*1.4;ctx.globalAlpha=.7*(1-t);ctx.beginPath();
     for(const sgn of[-1,1]){ctx.moveTo(bx,by);ctx.lineTo(bx-hx*(10+t*14)-hy*sgn*(3+t*5),by-hy*(10+t*14)+hx*sgn*(3+t*5)*(SK?.5:1));}ctx.stroke();ctx.globalAlpha=1;}}
-  else{ctx.fillStyle='rgba(0,0,0,.25)';ctx.beginPath();ctx.ellipse(u.x,u.y+1,S+1,3,0,0,7);ctx.fill();}}
+  else if(!ui){ctx.fillStyle='rgba(0,0,0,.25)';ctx.beginPath();ctx.ellipse(u.x,u.y+1,S+1,3,0,0,7);ctx.fill();}}
  if(u.holdT>0&&!simple){ctx.fillStyle='rgba(28,18,6,.7)';ctx.beginPath();ctx.ellipse(u.x,u.y+2,S+2,4,0,0,7);ctx.fill();}   // held fast in a pit
- if(SK){const SP=SPRITES[SK],an=u.atkT>0?'attack':moving?'move':'idle',An=SP.animations[an];   // a sprite: its animation's frame by time
+ if(ui);
+ else if(SK){const SP=SPRITES[SK],an=u.atkT>0?'attack':moving?'move':'idle',An=SP.animations[an];   // a sprite: its animation's frame by time
   const f=an==='attack'?clamp(Math.floor((An.frames*An.speed-u.atkT)/An.speed),0,An.frames-1):Math.floor((state.time+u.id*.37)/An.speed)%An.frames;
   drawSpriteFrame(SK,u.player,u.hd||0,an,simple?0:f,u.x,u.y);}
  else{ctx.save();ctx.translate(Math.round(u.x),Math.round(u.y-bob));
   if(u.face<0)ctx.scale(-1,1);
   ctx.drawImage(spr,-SW(spr)/2,-SH(spr)+6,SW(spr),SH(spr));
   ctx.restore();}
- const top=A.top!==undefined?u.y-A.top+4:u.y-SH(A.idle[0]);   // the idle height: a stone thrower's raised arm does not lift its bar
+ const top=ui?R3D.unitTopY(u)-2:A.top!==undefined?u.y-A.top+4:u.y-SH(A.idle[0]);   // the idle height: a stone thrower's raised arm does not lift its bar
  if(u.flash>0){ctx.globalAlpha=.5;ctx.fillStyle='#ff4020';ctx.fillRect(u.x-8,top-2,16,3);ctx.globalAlpha=1;}
  if(selSet.has(u)||u.hp<u.maxhp)hpBar(u.x,top,S>9?30:22,clamp(u.hp/u.maxhp,0,1),3.4);
  if(u.cargo&&u.cargo.length&&(u.player===0||vis[tileOf(u)])){   // a transport's cargo: a badge with how many are aboard
@@ -6137,17 +7165,18 @@ function drawUnitMarker(u){
   ctx.fillStyle='#241a0c';ctx.fillRect(x,y+s+h*.4,s,h);
   ctx.fillStyle=p>.5?'#3fae3f':p>.25?'#e0a020':'#c03020';ctx.fillRect(x,y+s+h*.4,s*p,h);}
 }
-function drawBld(b){
+/** Draw a building (`ui`, realistic graphics: the 3D model is the building, so only its site outline, bars and badges). */
+function drawBld(b,ui){
  const spr=bldSprite(b);
- const cx=(b.tx+b.w/2)*TILE,bot=(b.ty+b.h)*TILE;
+ const cx=(b.tx+b.w/2)*TILE,bot=(b.ty+b.h)*TILE,sprTop=ui?R3D.bldTopY(b):bot-SH(spr);
  if(!b.done){                                     // a building site: staked out and rising, a progress bar under it
   const x=b.tx*TILE+2,y=b.ty*TILE+2,w=b.w*TILE-4,h=b.h*TILE-4,p=clamp(b.progress,0,1);
-  ctx.fillStyle='rgba(110,86,52,.45)';rrect(ctx,x,y,w,h,4);ctx.fill();
+  if(!ui){ctx.fillStyle='rgba(110,86,52,.45)';rrect(ctx,x,y,w,h,4);ctx.fill();}
   ctx.strokeStyle='rgba(233,196,106,.7)';ctx.lineWidth=1.2;ctx.setLineDash([4,3]);rrect(ctx,x,y,w,h,4);ctx.stroke();ctx.setLineDash([]);
-  for(const[sx,sy]of[[x,y],[x+w,y],[x,y+h],[x+w,y+h]]){ctx.fillStyle='#6a4a28';ctx.fillRect(sx-1,sy-5,2,6);}   // corner stakes
-  ctx.globalAlpha=.25+.75*p;ctx.drawImage(spr,cx-SW(spr)/2,bot-SH(spr),SW(spr),SH(spr));ctx.globalAlpha=1;
+  if(!ui){for(const[sx,sy]of[[x,y],[x+w,y],[x,y+h],[x+w,y+h]]){ctx.fillStyle='#6a4a28';ctx.fillRect(sx-1,sy-5,2,6);}   // corner stakes
+   ctx.globalAlpha=.25+.75*p;ctx.drawImage(spr,cx-SW(spr)/2,bot-SH(spr),SW(spr),SH(spr));ctx.globalAlpha=1;}
   progBar(cx,bot+6,32,p,'#e0a83c');
- }else{
+ }else if(ui);else{
   const off=b.type==='farm'?{x:b.tx*TILE-1,y:bot-56}:{x:cx-SW(spr)/2,y:bot-SH(spr)};
   ctx.drawImage(spr,Math.round(off.x),Math.round(off.y),SW(spr),SH(spr));
   if(b.type==='farm'&&b.amount<80){ctx.globalAlpha=.35;ctx.fillStyle='#6a5a38';ctx.fillRect(b.tx*TILE+2,b.ty*TILE+2,b.w*TILE-4,b.h*TILE-4);ctx.globalAlpha=1;}
@@ -6156,7 +7185,7 @@ function drawBld(b){
   const t=queueTime(b.queue[0]);
   progBar(cx,bot+5,34,clamp(1-b.qt/t,0,1),isTechItem(b.queue[0])||isUpItem(b.queue[0])?'#9fd0ff':'#ffd76a');}
  if(b.garrison&&b.garrison.length&&(b.player===0||vis[b.ty*MAP+b.tx])){   // a badge with how many are inside
-  countBadge(cx+SW(spr)/2-4,bot-SH(spr)+6,b.garrison.length,b.player);}
+  countBadge(cx+(ui?b.w*TILE*.4:SW(spr)/2-4),sprTop+6,b.garrison.length,b.player);}
  if(selSet.has(b)){
   selBrackets(b.tx*TILE,b.ty*TILE,b.w*TILE,b.h*TILE);
   if(b.hp<b.maxhp||!b.done)hpBar(cx,bot+10,Math.min(64,b.w*TILE-8),clamp(b.hp/b.maxhp,0,1),4.2);}
@@ -6250,9 +7279,14 @@ function render(){
  const X0=cam.x-128,Y0=cam.y-48,X1=cam.x+vw/z+128,Y1=cam.y+vh/z+160;    // the view, padded for wide and tall sprites
  const seen=(x,y)=>x>X0&&x<X1&&y>Y0&&y<Y1;
  selSet.clear();for(const e of state.sel)selSet.add(e);
- ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#000';ctx.fillRect(0,0,gameCv.width,gameCv.height);
+ const g3=R3D.on;                                  // realistic graphics: the world is drawn in 3D below, this canvas only overlays it
+ R3D.show(g3);
+ ctx.setTransform(1,0,0,1,0,0);
+ if(g3)ctx.clearRect(0,0,gameCv.width,gameCv.height);else{ctx.fillStyle='#000';ctx.fillRect(0,0,gameCv.width,gameCv.height);}
  ctx.imageSmoothingEnabled=true;                   // painted sprites and ground, drawn smooth at any zoom
  ctx.setTransform(S,0,0,S,-ox,-oy);
+ if(g3)R3D.frame({icons,X0,Y0,X1,Y1});
+ else{
  const ax=clamp(Math.floor(cam.x),0,WPX),ay=clamp(Math.floor(cam.y),0,WPX),bx=clamp(Math.ceil(cam.x+vw/z)+1,0,WPX),by=clamp(Math.ceil(cam.y+vh/z)+1,0,WPX);
  const k=TPX/TILE;                                 // the ground is painted at TPX pixels a tile
  if(bx>ax&&by>ay)ctx.drawImage(terr,ax*k,ay*k,(bx-ax)*k,(by-ay)*k,ax,ay,bx-ax,by-ay);
@@ -6260,7 +7294,7 @@ function render(){
   if(seen(c.x,c.y+w*.3))ctx.drawImage(RSPR.wear,c.x-w/2,c.y-w*.28,w,w*.62);}
  for(const d of state.decals)if(seen(d.x,d.y)){const spr=RSPR[d.k]||RSPR.rubble;ctx.drawImage(spr,d.x-SW(spr)/2,d.y-SH(spr),SW(spr),SH(spr));}
  for(const b of state.blds)if(BLDTYPES[b.type].layer==='ground'&&(b.player===0||explored[b.ty*MAP+b.tx]&&!BLDTYPES[b.type].hidden)&&seen((b.tx+.5)*TILE,(b.ty+1)*TILE)){   // hidden traps: only their owner sees them
-  if(BLDTYPES[b.type].hidden)ctx.globalAlpha=.65;drawBld(b);ctx.globalAlpha=1;}   // render layer 'ground': moats and drawbridges lie flat under everything
+  if(BLDTYPES[b.type].hidden)ctx.globalAlpha=.65;drawBld(b);ctx.globalAlpha=1;}}   // render layer 'ground': moats and drawbridges lie flat under everything
  if(inflEdges.length){                             // castle territory borders (the enemy's only where explored)
   ctx.lineWidth=Math.max(1.5,1.5/z);ctx.setLineDash([5,4]);
   for(const p of[0,1]){ctx.strokeStyle=PCOL[p][0];ctx.globalAlpha=.6;ctx.beginPath();
@@ -6269,17 +7303,21 @@ function render(){
    ctx.stroke();}
   ctx.setLineDash([]);ctx.globalAlpha=1;}
  if(!icons){
-  for(const c of state.corpses)if(seen(c.x,c.y))drawCorpse(c,simple);
+  if(!g3)for(const c of state.corpses)if(seen(c.x,c.y))drawCorpse(c,simple);
   for(const f of state.fires)if(seen(f.x,f.y)&&(f.owner===0||vis[clamp(f.y/TILE|0,0,MAP-1)*MAP+clamp(f.x/TILE|0,0,MAP-1)]))drawFire(f);
-  for(const e of state.sel)if(e.kind==='u'&&ENT[e.id])selRing(e.x,e.y+1,UNITTYPES[e.type].size+4,(UNITTYPES[e.type].size+4)*.42);}
+  if(!g3)for(const e of state.sel)if(e.kind==='u'&&ENT[e.id])selRing(e.x,e.y+1,UNITTYPES[e.type].size+4,(UNITTYPES[e.type].size+4)*.42);}
  drawQ.length=0;let culled=0,units=0;
+ if(g3){                                           // the 3D world has its models: here only their bars, badges, brackets and icons
+  for(const b of state.blds)if((b.player===0||explored[((b.ty+b.h/2)|0)*MAP+((b.tx+b.w/2)|0)]&&!BLDTYPES[b.type].hidden)&&seen((b.tx+b.w/2)*TILE,(b.ty+b.h)*TILE))drawBld(b,true);
+  for(const u of state.units)if(u.player===0||vis[(u.y/TILE|0)*MAP+(u.x/TILE|0)]){if(seen(u.x,u.y)){icons?drawUnitMarker(u):drawUnit(u,simple,true);units++;}else culled++;}}
+ else{
  for(const r of state.ress)if(explored[r.ty*MAP+r.tx]){if(seen(r.tx*TILE+16,(r.ty+1)*TILE))queueDraw((r.ty+1)*TILE,0,r);else culled++;}
  for(const b of state.blds)if(BLDTYPES[b.type].layer!=='ground'&&(b.player===0||explored[((b.ty+b.h/2)|0)*MAP+((b.tx+b.w/2)|0)])){
   if(seen((b.tx+b.w/2)*TILE,(b.ty+b.h)*TILE))queueDraw((b.ty+b.h)*TILE-1,1,b);else culled++;}
  for(const u of state.units)if(u.player===0||vis[(u.y/TILE|0)*MAP+(u.x/TILE|0)]){
   if(seen(u.x,u.y)){queueDraw(u.y,2,u);units++;}else culled++;}
  drawQ.sort(byY);
- for(const o of drawQ)o.k===0?drawRes(o.e):o.k===1?drawBld(o.e):icons?drawUnitMarker(o.e):drawUnit(o.e,simple);
+ for(const o of drawQ)o.k===0?drawRes(o.e):o.k===1?drawBld(o.e):icons?drawUnitMarker(o.e):drawUnit(o.e,simple);}
  if(!icons){for(const f of state.fx)if(seen(f.x,f.y)&&vis[clamp(f.y/TILE|0,0,MAP-1)*MAP+clamp(f.x/TILE|0,0,MAP-1)]){
   if(f.k==='splash'){const k=1-f.life/.5;ctx.globalAlpha=.8*(1-k);ctx.strokeStyle='#e8f4ff';ctx.lineWidth=1.5;   // someone boarding or wading ashore
    ctx.beginPath();ctx.ellipse(f.x,f.y+2,4+k*12,2+k*5,0,0,7);ctx.stroke();ctx.globalAlpha=1;continue;}
@@ -6304,23 +7342,23 @@ function render(){
    for(const[x,y]of line){
     const m=(joins(x,y-1)?1:0)|(joins(x+1,y)?2:0)|(joins(x,y+1)?4:0)|(joins(x-1,y)?8:0);
     const ok=canPlace(t,x,y)&&Object.entries(B.cost).every(([k,v])=>state.res[0][k]>=v*(money+1));if(ok)money++;
-    const spr=B.spriteSet?setPiece(0,B.spriteSet,m,false,false):BSPR[0][t];ctx.globalAlpha=.6;ctx.drawImage(spr,x*TILE,(y+1)*TILE-SH(spr),SW(spr),SH(spr));ctx.globalAlpha=1;   // a line with no joined set shows its own picture
+    if(!g3){const spr=B.spriteSet?setPiece(0,B.spriteSet,m,false,false):BSPR[0][t];ctx.globalAlpha=.6;ctx.drawImage(spr,x*TILE,(y+1)*TILE-SH(spr),SW(spr),SH(spr));ctx.globalAlpha=1;}   // a line with no joined set shows its own picture (3D: see-through models)
     ctx.fillStyle=ok?'rgba(60,200,60,.22)':'rgba(220,50,30,.3)';ctx.fillRect(x*TILE,y*TILE,TILE,TILE);}
    ctx.font='bold '+Math.round(11/Math.min(1,z))+'px sans-serif';ctx.textBaseline='bottom';ctx.fillStyle='#f4ead0';   // segments that fit, and what they cost
    ctx.fillText(money+' × '+costStr(B.cost),tx*TILE+TILE+4,ty*TILE);
   }else{
    const ok=canPlace(t,tx,ty)&&canAfford(0,B.cost);
    const spr=BSPR[0][t];
-   ctx.globalAlpha=.65;ctx.drawImage(spr,(tx+B.w/2)*TILE-SW(spr)/2,(ty+B.h)*TILE-SH(spr),SW(spr),SH(spr));ctx.globalAlpha=1;
+   if(!g3){ctx.globalAlpha=.65;ctx.drawImage(spr,(tx+B.w/2)*TILE-SW(spr)/2,(ty+B.h)*TILE-SH(spr),SW(spr),SH(spr));ctx.globalAlpha=1;}
    ctx.fillStyle=ok?'rgba(60,200,60,.25)':'rgba(220,50,30,.3)';
    ctx.fillRect(tx*TILE,ty*TILE,B.w*TILE,B.h*TILE);
    ctx.strokeStyle=ok?'#5ce05c':'#e05038';ctx.lineWidth=1;ctx.strokeRect(tx*TILE+.5,ty*TILE+.5,B.w*TILE-1,B.h*TILE-1);}}
  const atmo=Settings.data.display.atmosphere;
- if(!icons)drawAmbient(simple,X0,Y0,X1,Y1,atmo);
+ if(!icons)drawAmbient(simple,X0,Y0,X1,Y1,atmo,g3);
  if(atmo)drawClouds(X0,Y0,X1,Y1);
  drawFog();
  ctx.setTransform(DPR,0,0,DPR,0,0);                // screen-space overlays, in CSS pixels
- if(atmo)drawLight();
+ if(atmo&&!g3)drawLight();                         // (3D: its camera grades and vignettes the picture itself)
  drawHover(z);
  if(drag.on){const x=Math.min(drag.x0,drag.x1),y=Math.min(drag.y0,drag.y1),w=Math.abs(drag.x1-drag.x0),h=Math.abs(drag.y1-drag.y0);
   ctx.fillStyle='rgba(233,196,106,.08)';ctx.fillRect(x,y,w,h);ctx.strokeStyle='rgba(255,233,173,.9)';ctx.lineWidth=1.2;ctx.setLineDash([6,4]);ctx.strokeRect(x+.5,y+.5,w,h);ctx.setLineDash([]);}
@@ -6331,11 +7369,12 @@ function render(){
 const WEAR={towncenter:2.3,house:1.5,barracks:1.5,archery:1.5,stable:1.5,siegeworkshop:1.5,storagepit:1.6,castle:1.4,keep:1.4,citadel:1.3};
 /**
  * Life in the world, in world space: glints moving on open water, smoke from the chimneys of town centres and houses,
- * a few birds crossing. Skipped at far zoom (the glints) and with reduced motion (the movement).
+ * a few birds crossing. Skipped at far zoom (the glints) and with reduced motion (the movement). In 3D (`g3`) the water
+ * makes its own glints, and the smoke rises from the chimneys of the models.
  */
-function drawAmbient(simple,X0,Y0,X1,Y1,atmo){
+function drawAmbient(simple,X0,Y0,X1,Y1,atmo,g3){
  const t=state.time,still=Settings.data.access.reducedMotion;
- if(!simple){const tx0=Math.max(0,X0/TILE|0),ty0=Math.max(0,Y0/TILE|0),tx1=Math.min(MAP-1,X1/TILE|0),ty1=Math.min(MAP-1,Y1/TILE|0);
+ if(!simple&&!g3){const tx0=Math.max(0,X0/TILE|0),ty0=Math.max(0,Y0/TILE|0),tx1=Math.min(MAP-1,X1/TILE|0),ty1=Math.min(MAP-1,Y1/TILE|0);
   const p1=new Path2D(),p2=new Path2D();let any=false;
   for(let ty=ty0;ty<=ty1;ty++)for(let tx=tx0;tx<=tx1;tx++){const i=ty*MAP+tx;if(ttype[i]!==TT.WATER||!explored[i])continue;
    for(let k=0;k<2;k++){const h=h2(tx*3+k,ty*5),ph=(still?0:t*.55)+h*6.283,s=Math.sin(ph);if(s<.15)continue;any=true;
@@ -6343,7 +7382,7 @@ function drawAmbient(simple,X0,Y0,X1,Y1,atmo){
     P.moveTo(x-l,y);P.quadraticCurveTo(x,y-1.2,x+l,y);}}
   if(any){ctx.lineWidth=1;ctx.strokeStyle='rgba(225,245,240,.28)';ctx.stroke(p1);ctx.strokeStyle='rgba(225,245,240,.13)';ctx.stroke(p2);}}
  for(const b of state.blds){if(!b.done||b.type!=='towncenter'&&b.type!=='house')continue;
-  const tc=b.type==='towncenter',cx=(b.tx+b.w/2)*TILE,bot=(b.ty+b.h)*TILE,x=tc?cx+18:cx+8.2,y=tc?bot-58:bot-37;
+  const tc=b.type==='towncenter',cx=(b.tx+b.w/2)*TILE,bot=(b.ty+b.h)*TILE,c3=g3&&R3D.smoke(b),x=c3?c3.x:tc?cx+18:cx+8.2,y=c3?c3.y:tc?bot-58:bot-37;
   if(x<X0||x>X1||y<Y0||y>Y1+40||!(b.player===0||vis[b.ty*MAP+b.tx]))continue;
   for(let i=0;i<6;i++){const a=((still?.5:t*(tc?.32:.26))+i/6+b.id*.37)%1,r=(tc?1.8:1.2)+a*(tc?6:4);
    ctx.fillStyle='rgba(196,194,190,'+(.34*(1-a)*Math.min(1,a*6)).toFixed(3)+')';ctx.beginPath();ctx.arc(x+a*7+Math.sin(a*6+i)*1.5,y-a*(tc?30:20),r,0,7);ctx.fill();}}
@@ -6388,11 +7427,12 @@ function drawHover(z){
  const wx=mouse.wx,wy=mouse.wy,e=unitAt(wx,wy,0)||bldAt(wx,wy)||resAt(wx,wy,0);
  gameCv.classList.toggle('hover',!!e);if(!e)return;hovered=e;
  const sx=x=>(x-cam.x)*z,sy=y=>(y-cam.y)*z;let x,y,top;
- if(e.kind==='u'){const A=UANIM[e.player][e.type];x=e.x;y=e.y+1;top=A&&A.top!==undefined?e.y-A.top:e.y-30;
+ const g3=R3D.on;                                  // in 3D, labels sit over the models' own tops
+ if(e.kind==='u'){const A=UANIM[e.player][e.type];x=e.x;y=e.y+1;top=g3?R3D.unitTopY(e):A&&A.top!==undefined?e.y-A.top:e.y-30;
   if(!selSet.has(e)){const r=UNITTYPES[e.type].size+4;ctx.strokeStyle='rgba(255,255,255,.5)';ctx.lineWidth=1.2;ctx.setLineDash([4,4]);ctx.lineDashOffset=-state.time*16;
    ctx.beginPath();ctx.ellipse(sx(x),sy(y),r*z,r*.42*z,0,0,7);ctx.stroke();ctx.setLineDash([]);}}
- else if(e.kind==='b'){const c=bldCenter(e),spr=bldSprite(e);x=c.x;y=(e.ty+e.h)*TILE;top=y-(spr?SH(spr):e.h*TILE);}
- else{x=e.tx*TILE+16;y=(e.ty+1)*TILE;const spr=e.type==='tree'?treeSprite(e):RSPR[e.type];top=y-(spr?SH(spr):TILE);}
+ else if(e.kind==='b'){const c=bldCenter(e),spr=bldSprite(e);x=c.x;y=(e.ty+e.h)*TILE;top=g3?R3D.bldTopY(e):y-(spr?SH(spr):e.h*TILE);}
+ else{x=e.tx*TILE+16;y=(e.ty+1)*TILE;const spr=e.type==='tree'?treeSprite(e):RSPR[e.type];top=g3?y-16-(e.type==='tree'?34:12)*R3D.COT-R3D.lift(x,y-16):y-(spr?SH(spr):TILE);}
  const label=entityName(e)+(e.kind!=='r'&&e.player===1?' · Enemy':'');
  ctx.font='600 12px Rajdhani, sans-serif';const w=ctx.measureText(label).width+18,lx=sx(x),ly=sy(top)-14;
  ctx.fillStyle='rgba(10,8,5,.78)';rrect(ctx,lx-w/2,ly-10,w,20,8);ctx.fill();
@@ -7108,7 +8148,7 @@ const Game={
  /** Back to the title. With `save`, the game is written to its slot (or to the autosaves when it has none). */
  quitToTitle(save=true){
   if(save&&this.canSave()&&!(slots.active&&slots.saveToSlot(slots.active,{reason:'quit'}).ok))slots.autoSave('quit');
-  this.phase='title';this.paused=false;cancelPlacing();state.sel=[];
+  this.phase='title';this.paused=false;cancelPlacing();state.sel=[];R3D.show(false);
   UI.closeAll();UI.open('title');refreshTitle();applyMissionVisibility();updFloatBtns();
  },
  /** Called from the main loop with real elapsed time: flushes debounced saves and runs the 30 s autosave. */
@@ -7559,6 +8599,7 @@ function captureThumb(){
  try{
   const W=160,H=90,c=cv(W,H),g=c.getContext('2d'),sw=Math.min(gameCv.width,gameCv.height*W/H),sh=sw*H/W;
   g.imageSmoothingQuality='high';
+  R3D.capture(g,(gameCv.width-sw)/2,(gameCv.height-sh)/2,sw,sh,W,H);   // the 3D world first, the overlay over it
   g.drawImage(gameCv,(gameCv.width-sw)/2,(gameCv.height-sh)/2,sw,sh,0,0,W,H);
   return c.toDataURL('image/jpeg',.7);
  }catch(e){return null;}
@@ -8292,7 +9333,7 @@ function start(settingsLoad){
    Ferry,GEN_VERSION,get NAV(){return NAV;},regionsOf,dockWater,regionOf,acrossWater,landNear,nearestSail,orderBoard,unloadAt,resumeOrder,slotsOf,cargoSlots,capacityOf,
    nearestDepot,nearestRes,orderGather,orderDeposit,orderBuild,dockSides,separateShips,FERRY,nearestFree,entityStats,aiNavy,aiSeas,WSPR,GSPR,TSPR,get inflEdges(){return inflEdges;},
    get fires(){return state.fires;},
-   ZOOM,renderStats,renderMM,applyUiScale,autoUiScale,applyTouchMode,openCtxMenu,closeCtx,unitAt,resAt,selectSameType,
+   R3D,ZOOM,renderStats,renderMM,applyUiScale,autoUiScale,applyTouchMode,openCtxMenu,closeCtx,unitAt,resAt,selectSameType,
    touch,mouse,drag,pickPad,mmZoomTo,showTip,hideTip,cameraPrefs,watchFrameCost,get lowRes(){return lowRes;},get isTouchUI(){return isTouchUI;},get DPR(){return DPR;},get vw(){return vw;},get vh(){return vh;}};
  requestAnimationFrame(loop);
 }
